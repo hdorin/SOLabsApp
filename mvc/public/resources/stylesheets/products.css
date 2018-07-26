@@ -1,0 +1,168 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+}
+
+.wrapper {
+    display: block;
+    margin-left: 150px;
+}
+
+.wrapper button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 10px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.image-class div div {
+    margin: 5px 15px;
+}
+
+.wrapper button {
+    background-color: white;
+    color: black;
+    border: 2px solid #008CBA;
+}
+
+.wrapper button:hover {
+    background-color: #008CBA;
+    color: white;
+}
+
+
+.index-links div:first-child {
+    margin: 16px 16px 0;
+    width: calc(100% - 32px);
+    height: fit-content;
+    background: #ffffff url("../images/bg.jpg") no-repeat;
+    overflow: hidden;
+}
+
+.index-links div h3 {
+    font-family: Bahnschrift, serif;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 100px;
+    color: #111;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.index-links div img {
+    margin: 10px 10px 10px 10px;
+    float: left;
+}
+
+.index-links div div {
+    text-align: right;
+    float: right;
+}
+
+/******************************************************/
+
+.product{
+    border-left: 6px solid blue;
+    background-color: lightblue;
+    width: 60%;
+    margin-top: 0%;
+    overflow-x: hidden;
+    font-size: 20px;
+    font-family: Helvetica;
+    text-rendering: optimizeLegibility;
+    padding: 15px;
+    border-radius: 10px 30px 10px;
+    padding-right: 16%;
+    display: inline-block;
+    position: relative;
+}
+
+.product a{
+    text-align: center;
+    display: block;
+    float: left;
+    color: black;
+    float: left;
+    width: 40%;
+
+
+}
+
+
+.product a:hover{
+    color: #5e5e5e;
+}
+
+.product a img{
+    margin-top: 10%;
+    height: auto;
+    width: auto;
+    border-radius: 50%;
+
+}
+
+.product .rightSide{
+    display: block;
+    text-align: center;
+    margin-top: 3%;
+    float: right;
+    width: 60%;
+}
+.product .rightSide .inner{
+    margin-top: 3%;
+}
+.product .rightSide .prices{
+    display: block;
+    margin-top: 4%;
+}
+
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  margin-top: 1%;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}

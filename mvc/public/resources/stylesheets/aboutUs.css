@@ -1,0 +1,99 @@
+#about-us{
+	display:block; 
+	width:100%; 
+	line-height:1.6em;
+}
+
+#about-us #team{
+    margin-bottom:30px;
+}
+ #about-us #team ul{
+     margin:0;
+     padding:0;
+     list-style:none;
+}
+ #about-us #team ul li{
+    margin-bottom:20px;
+     padding-bottom:20px;
+     border-bottom:1px solid #CCCCCC;
+}
+ #about-us #team ul li p{
+    margin:0 0 0 0;
+     padding:0;
+}
+ #about-us #team ul li figure figcaption .team_name{
+    font-weight:bold;
+    font-size: 17px;
+    font-family: Helvetica;
+	text-rendering: optimizeLegibility;
+}
+ #about-us #team ul li figure figcaption .team_title{
+     font-size: 14px;
+     font-family: Helvetica;
+	text-rendering: optimizeLegibility;
+}
+#about-us #team ul li figure figcaption .team_description{
+	font-size:14px;
+	margin-top: 4%;
+	font-family: Helvetica;
+	text-rendering: optimizeLegibility;
+}
+
+ #about-us #team ul ul{
+    margin-top:20px;
+}
+ #about-us #team ul ul li{
+    display:inline;
+     margin:0 0 0 6px;
+     padding:0;
+     border:none;
+}
+ #about-us #team ul ul li:first-child{
+    margin-left:0;
+}
+ #about-us #team ul ul li a{
+}
+ #about-us #team ul ul li a img{
+    margin:0;
+}
+
+.one_quarter{
+	display:inline-block; 
+	float:left; 
+	margin:0 0 0 20px; 
+	list-style:none;
+}
+
+.one_quarter.first {
+	margin-left:0;
+}
+
+.one_quarter{
+	width:23%;
+}
+
+
+.wrapper.row2{
+	margin-bottom: 50%;
+	margin-top: 5%;
+}
+
+#aboutUsText p, #aboutUsText .sections, #aboutUsText .title, #team .sections{
+	font-size: 18px;
+	font-family: Helvetica;
+	text-align: center;
+	text-rendering: optimizeLegibility;
+}
+#aboutUsText .title{
+	font-size: 25px;
+	margin-bottom: 3%;
+	text-decoration: underline;
+}
+#aboutUsText .sections, #team .sections{
+	font-size: 22px;
+}
+#aboutUsText .sections, #aboutUsText .title, #team .sections{
+	font-weight: bold;
+}
+
+#team

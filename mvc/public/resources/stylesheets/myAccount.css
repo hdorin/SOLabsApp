@@ -1,0 +1,222 @@
+.accordion {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0 auto;
+    font-size: 14px;
+    border: 1px solid #542437;
+    border-radius: 10px;
+    width: 600px;
+    padding: 10px;
+    background: #fff;
+}
+
+    .accordion ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        margin-bottom: 3%;
+    }
+
+    .accordion li {
+        margin: 0;
+        padding: 0;
+    }
+
+    .accordion [type=radio], .accordion [type=checkbox] {
+        display: none;
+    }
+
+    .accordion label {
+        display: block;
+        font-size: 16px;
+        line-height: 16px;
+        /*background: #D95B43;*/
+        background: linear-gradient(to bottom, rgba(184,225,252,1) 0%,rgba(169,210,243,1) 10%,rgba(144,186,228,1) 25%,rgba(144,188,234,1) 37%,rgba(144,191,240,1) 50%,rgba(107,168,229,1) 51%,rgba(162,218,245,1) 83%,rgba(189,243,253,1) 100%);
+        border: 1px solid #542437;
+        color: #542437;
+        text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+        font-weight: 700;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+
+    .accordion ul li label:hover, .accordion [type=radio]:checked ~ label, .accordion [type=checkbox]:checked ~ label {
+        background: linear-gradient(to bottom, rgba(73,155,234,1) 0%,rgba(32,124,229,1) 100%);
+        color: #FFF;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5)
+    }
+
+    .accordion .content {
+        padding: 0 10px;
+        overflow: hidden;
+        border: 1px solid #fff; /* Make the border match the background so it fades in nicely */
+    }
+
+    .accordion p {
+        color: #333;
+        margin: 0 0 10px;
+    }
+
+    .accordion h3 {
+        color: #542437;
+        padding: 0;
+        margin: 10px 0;
+    }
+
+
+/* Vertical */
+.vertical ul li {
+    overflow: hidden;
+    margin: 0 0 1px;
+}
+
+    .vertical ul li label {
+        padding: 10px;
+    }
+
+.vertical [type=radio]:checked ~ label, .vertical [type=checkbox]:checked ~ label {
+    border-bottom: 0;
+}
+
+.vertical ul li label:hover {
+    border: 1px solid #542437; 
+}
+
+.vertical ul li .content {
+    height: 0px;
+    border-top: 0;
+}
+
+.vertical [type=radio]:checked ~ label ~ .content, .vertical [type=checkbox]:checked ~ label ~ .content {
+    height: auto;
+    border: 1px solid #542437;
+}
+
+#innerUl{
+    margin-top: 40px;
+    list-style: none;
+}
+
+#innerUl li {
+    margin-top: 15px;
+}
+
+#confirmBtn1 {
+    background-color: #f6be10;
+    border: none;
+    border-radius: 50px;
+    padding: 6px 6px 6px 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#confirmBtn2 {
+    background-color: #e1f026;
+    border: none;
+    border-radius: 50px;
+    padding: 6px 6px 6px 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.accordion ul li .content .creditcard {
+    border: 2px solid grey;
+    border-radius: 3px 4px;
+    margin-top: 25px;
+    padding: 8px 8px 8px 8px;
+}
+
+.accordion ul li .content .creditcard li {
+    font-size: 16px;
+    font-family: Helvetica;
+}
+
+.accordion ul li .content .creditcard li:not(:first-child){
+    margin-top: 3%;
+}
+
+/****************************/
+
+.addnewcard {
+    float:right;
+    position: relative;
+    bottom: 30px;
+    box-shadow: 0px 1px 0px 0px #f0f7fa;
+    background: linear-gradient(to bottom, #33bdef 5%, #019ad2 100%);
+    background-color: #33bdef;
+    border-radius: 6px;
+    border: 1px solid #057fd0;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 6px 24px;
+    text-decoration: none;
+    text-shadow: 0px -1px 0px #5b6178;
+}
+
+    .addnewcard:hover {
+        background: linear-gradient(to bottom, #019ad2 5%, #33bdef 100%);
+        background-color: #019ad2;
+    }
+
+    .addnewcard:active {
+        position:relative;
+        bottom: 29px;
+    }
+
+    /*******************************/
+
+.accordion ul li .content .addressbox .liSpec .transparent_btn,
+ .accordion ul li .content .creditcard .liSpec .transparent_btn{
+    display: inline-block;
+    padding: 6px 10px;
+    border: 1px solid #FFF;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 120%;
+    background-color: rgba(255,255,255, 0);
+    border-radius: 4px;
+    transition: background-color 300ms ease;
+    cursor: pointer;
+    color: #aeddf5;
+    border-color: #aeddf5;
+}
+
+    .accordion ul li .content .addressbox .liSpec .transparent_btn:hover,
+    .accordion ul li .content .creditcard .liSpec .transparent_btn:hover {
+        background-color: rgba(174, 221, 245, 0.3);
+        color: #FFF;
+    }
+
+.accordion ul li .content .addressbox {
+    border: 1px solid black;
+    border-radius: 3px 4px;
+    margin-top: 25px;
+    padding: 8px 8px 8px 8px;
+}
+
+    .accordion ul li .content .addressbox .liSpec,
+    .accordion ul li .content .creditcard .liSpec {
+        float: right;
+        margin-left: 15px;
+        position: relative;
+        bottom: 6px;
+    }
+    .accordion ul li .content .creditcard .liSpec{
+        bottom: 20px;
+    }
+
+#responseMsg{
+            position: relative;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            color:red;
+            border-radius: 6px;
+            text-align: center;
+        }

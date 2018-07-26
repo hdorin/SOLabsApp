@@ -1,0 +1,327 @@
+﻿html {
+}
+
+body {
+    background: url(../images/bg.jpg) no-repeat #fff center top;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    margin: 0px auto auto auto;
+    color: #000;
+    font-family: 'Segoe UI', sans-serif;
+    width: 1024px;
+    height: auto;
+    margin: auto;
+    padding: 0px;
+}
+
+header {
+}
+
+
+
+/* Add a black background color to the top navigation bar */
+.topnav {
+    overflow: hidden;
+}
+
+    .topnav .firstrow {
+        display: inline-block;
+        width:100%;
+    }
+
+#advsearch {
+    float: left;
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    margin-top: 46px;
+    margin-left: 0px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+
+#logo {
+    float: left;
+    margin-left: 0px;
+    height: 130px;
+    width: 190px;
+}
+
+/************ MENU TAB ***************/
+
+#menu_tab {
+    width: 1000px;
+    height: 50px;
+    background-color: #fff;
+}
+
+.left_menu_corner {
+    width: 9px;
+    height: 50px;
+    float: left;
+    background: url(../images/menu_left.gif) no-repeat center;
+}
+
+.right_menu_corner {
+    width: 9px;
+    height: 50px;
+    float: left;
+    background: url(../images/menu_right.gif) no-repeat center;
+}
+
+ul.menu {
+    list-style-type: none;
+    float: left;
+    display: block;
+    width: 982px;
+    margin: 0px;
+    padding: 0px;
+    background: url(../images/menu_bg.gif) repeat-x;
+}
+
+    ul.menu li {
+        display: inline;
+        font-size: 11px;
+        font-weight: bold;
+        line-height: 50px;
+    }
+
+        ul.menu li.divider {
+            display: inline;
+            width: 2px;
+            height: 50px;
+            float: left;
+            background: url(../images/menu_divider.gif) no-repeat center;
+        }
+
+a.nav1:link, a.nav1:visited {
+    display: block;
+    float: left;
+    padding: 0px 8px 0px 22px;
+    margin: 0 14px 0 14px;
+    height: 50px;
+    text-decoration: none;
+    background: url(../images/home.png) no-repeat left;
+    color: #676d77;
+}
+
+a.nav2:link, a.nav2:visited {
+    display: block;
+    float: left;
+    padding: 0px 8px 0px 22px;
+    margin: 0 14px 0 14px;
+    height: 50px;
+    text-decoration: none;
+    background: url(../images/services.png) no-repeat left;
+    color: #676d77;
+}
+
+a.nav3:link, a.nav3:visited {
+    display: block;
+    float: left;
+    padding: 0px 8px 0px 22px;
+    margin: 0 14px 0 14px;
+    height: 50px;
+    text-decoration: none;
+    background: url(../images/favs.png) no-repeat left;
+    color: #676d77;
+}
+
+a.nav4:link, a.nav4:visited {
+    display: block;
+    float: left;
+    padding: 0px 8px 0px 22px;
+    margin: 0 14px 0 14px;
+    height: 50px;
+    text-decoration: none;
+    background: url(../images/clock.png) no-repeat left;
+    color: #676d77;
+}
+
+a.nav5:link, a.nav5:visited {
+    display: block;
+    float: left;
+    padding: 0px 8px 0px 22px;
+    margin: 0 14px 0 14px;
+    height: 50px;
+    text-decoration: none;
+    background: url(../images/user_add.png) no-repeat left;
+    color: #676d77;
+}
+
+a.nav6:link, a.nav6:visited {
+    display: block;
+    float: left;
+    padding: 0px 8px 0px 22px;
+    margin: 0 14px 0 14px;
+    height: 50px;
+    text-decoration: none;
+    background: url(../images/car.png) no-repeat left;
+    color: #676d77;
+}
+
+a.nav7:link, a.nav7:visited {
+    display: block;
+    float: left;
+    padding: 0px 8px 0px 22px;
+    margin: 0 14px 0 14px;
+    height: 50px;
+    text-decoration: none;
+    background: url(../images/contact-new.png) no-repeat left;
+    color: #676d77;
+}
+
+a.nav1:hover, a.nav2:hover, a.nav3:hover, a.nav4:hover, a.nav5:hover, a.nav6:hover {
+    color: #333333;
+}
+
+
+li.currencies {
+    width: 180px;
+    float: left;
+    padding: 0 0 0 15px;
+    _padding: 12px 0 0 15px;
+    color: #676d77;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/************ END OF MENU TAB ***************/
+
+
+/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+@media screen and (max-width: 600px) {
+    #btnLogin, #btnReg, #menu_tab, .topnav .firstrow [type=text] {
+        float: none;
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+        margin: 0;
+        padding: 14px;
+    }
+
+    .topnav .firstrow input[type=text] {
+        border: 1px solid #ccc;
+    }
+}
+
+#btnLogin {
+    background: url(../images/btn-login.png) no-repeat 5px 7px #e29817;
+    width: 100px;
+    float: left;
+    cursor: pointer;
+    border-radius: 50px;
+    padding: 10px 20px 10px 0;
+    color: White;
+    font-size: 14px;
+    text-align: left;
+    text-indent: 45px;
+    display: block;
+    margin-top: 50px;
+    margin-left: 15px;
+    text-decoration: none;
+}
+
+    #btnLogin:hover {
+        background-image: url(../images//btn-login-hover.png);
+        /*background-position: 65px 5px;
+            text-indent: 20px;*/
+    }
+
+#btnReg {
+    background: url(../images//btn-login.png) no-repeat 5px 7px #e29817;
+    width: 100px;
+    float: left;
+    cursor: pointer;
+    border-radius: 50px;
+    padding: 10px 20px 10px 0;
+    color: White;
+    font-size: 14px;
+    text-align: left;
+    text-indent: 40px;
+    display: block;
+    margin-top: 50px;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+    #btnReg:hover {
+        background-image: url(../images//btn-login-hover.png);
+        /*background-position: 65px 5px;
+        text-indent: 20px;*/
+    }
+
+
+
+
+/*--------------footer----------------*/
+#pushDownward{
+    margin-top: 5%;
+    height: 60px;
+}
+
+.footer {
+    /*position: relative;*/
+    display: block;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    clear: both;
+    height: 60px;
+    border-radius: 5px;
+    background-color: #ccc;
+}
+
+.right_footer {
+    float: right;
+    padding: 15px 30px 0 0;
+}
+
+    .right_footer a {
+        padding: 0 0 0 7px;
+        text-decoration: none;
+        color: #666666;
+    }
+
+        .right_footer a:hover {
+            text-decoration: underline;
+        }
+
+.left_footer {
+    float: left;
+    width: 200px;
+    text-align: center;
+    color: #666666;
+    padding: 10px 0 0 60px;
+}
+
+#welcome{
+    display: block;
+    margin-top: 60px;
+    margin-left: 8%;
+    font-size: 15px;
+    float: left;
+    width:14%;
+    text-decoration: overline;
+    color: #D8461E;
+}
+#btnLogout{
+    display: block;
+    margin-top: 60px;
+    margin-left: 2%;
+    text-decoration: underline;
+    float: left;
+    
+}
+
+#sitemap{
+    margin-top: 5%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}

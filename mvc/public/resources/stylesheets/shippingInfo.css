@@ -1,0 +1,17 @@
+#shippingInfo .insideText, #shippingInfo .secTitle, #shippingInfo .title, #team .secTitle{
+	font-size: 18px;
+	font-family: Helvetica;
+	text-align: center;
+	text-rendering: optimizeLegibility;
+}
+#shippingInfo .title{
+	font-size: 25px;
+	margin-bottom: 3%;
+	text-decoration: underline;
+}
+#shippingInfo .secTitle, #team .secTitle{
+	font-size: 22px;
+}
+#shippingInfo .secTitle, #shippingInfo .title, #team .secTitle{
+	font-weight: bold;
+}

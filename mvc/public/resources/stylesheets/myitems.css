@@ -1,0 +1,215 @@
+/**********  CART  ************/
+.cart {
+    display: block;
+    position: relative;
+    margin-top: 5%;
+    margin-left: 1%;
+    font-size: 14px;
+    font-family: 'Courier New';
+    font-weight:bold;
+}
+    
+.cart .table{
+    border-spacing:20px;
+    text-align:center;
+}
+
+    .cart .title{
+        color: #261636;
+        text-decoration: underline;
+        text-decoration-style: wavy;
+    }
+
+#removeBtn {
+    border-radius: 3px;
+    border: none;
+    padding: 4px 4px 4px 4px;
+    background-color: #ff5c5c;
+    color: #000000;
+}
+
+/************************************************/
+.products_wrapper {
+    display: block;
+    width: 55%;
+    margin: auto;
+}
+
+.products_wrapper .tab{
+    background-color: #ff9900;
+    border: 3px solid black;
+    border-radius: 50px;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 22px;
+    font-family: Trebuchet MS;
+    margin-right: 6%;
+    margin-bottom: 5%;
+    margin-top: 5%;
+}
+
+.products_wrapper .tab.active{
+    border: 3px solid white;
+}
+
+
+#product_insert{
+    display: block;
+    height: auto;
+    width: 50%;
+    margin: 60px auto 0;
+    margin: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: 1px 2px 3px 0 rgba(0,0,0,.10);
+    text-align:center;
+}
+
+#uploadBtn {
+    position: relative;
+    cursor: pointer;
+    font-size: 18px;
+    width: 75%;
+    border-color: transparent;
+    border-radius: 6px;
+    margin-top: 4%;
+    margin-bottom: 5%;
+    background: #7dc855;
+}
+
+.prod_form:not(:first-child){
+    margin-top: 3%;
+}
+
+.prod_form{
+    width: 85%;
+    padding: 12px 20px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
+#responseMsg{
+            position: relative;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            color:red;
+            border-radius: 6px;
+            text-align: center;
+}
+
+.upl_items{
+    border: 2px solid lightgrey;
+    border-radius: 1px 50px 1px;
+    margin-top: 3%;
+    padding: 8px 8px 8px 8px;
+   
+}
+
+.upl_items .table{
+    border-spacing:20px;
+    text-align:center;
+}
+
+.upl_items .table td{
+    font-size: 20px;
+    font-family: Helvetica;
+    text-rendering: optimizeLegibility;
+    color: blue;
+}
+
+.upl_items .table th{
+    font-size: 15px;
+    font-family: Helvetica;
+    text-rendering: optimizeLegibility;
+    color: darkblue;
+}
+
+.upl_items .table { 
+    border: none; 
+    border-collapse: collapse; 
+}
+.upl_items .table td, .upl_items .table th { 
+    border-left: 1px solid #000; 
+    padding:10px 10px 10px 10px;
+}
+
+.upl_items .table td{
+    padding-top: 20px;
+}
+
+.upl_items .table td:first-child, .upl_items .table th:first-child { 
+    border-left: none; 
+}
+
+.upl_items .table thead{
+    background-color: #d3e4ff;
+}
+
+.upl_items .prod_img{
+    display: block;
+    margin: auto;
+    width: auto;
+    height: auto;
+}
+
+/*************************************/
+
+.won_items{
+    border: 2px solid #6d6c5d;
+    border-radius: 1px 50px 1px;
+    margin-top: 3%;
+    padding: 8px 8px 8px 8px;
+   
+}
+
+.won_items .table{
+    border-spacing:20px;
+    text-align:center;
+}
+
+.won_items .table td{
+    font-size: 20px;
+    font-family: Helvetica;
+    text-rendering: optimizeLegibility;
+    color: #f2ac43;
+}
+
+.won_items .table th{
+    font-size: 15px;
+    font-family: Helvetica;
+    text-rendering: optimizeLegibility;
+    color: #000000;
+}
+
+.won_items .table { 
+    border: none; 
+    border-collapse: collapse; 
+}
+.won_items .table td, .won_items .table th { 
+    border-left: 1px solid #000; 
+    padding:10px 10px 10px 10px;
+}
+
+.won_items .table td{
+    padding-top: 20px;
+}
+
+.won_items .table td:first-child, .won_items .table th:first-child { 
+    border-left: none; 
+}
+
+.won_items .table thead{
+    background-color: #938807;
+}
+
+.won_items .prod_img{
+    display: block;
+    margin: auto;
+    width: auto;
+    height: auto;
+}
