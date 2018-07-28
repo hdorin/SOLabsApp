@@ -8,33 +8,34 @@ class Login extends Controller
         }else{
             $error_msg=$_SESSION["error_msg"];
         }
-        if(isset($_SESSION['user_id'])==false){
+        //if(isset($_SESSION['user_id'])==false){
             $this->view('home/login',['error_msg' => $error_msg]);
-        }else{
-            echo "You must first logout!";
-        }
-        unset($_SESSION["error"]);
+       // }else{
+        //    echo "You must first logout!";
+        //}
+        unset($_SESSION["error_msg"]);
     }
     public function reload($data=''){
-        $_SESSION["error"]=$data;
+        $_SESSION["error_msg"]=$data;
         $new_url="../login";
         header('Location: '.$new_url);
         die;
     }
     public function process(){
         if(empty($user=$_POST["user_field"])==1){
-            $this->reload("You did not enter an email!");
+            $this->reload("You did not enter a username!");
         }
         if(empty($pass=$_POST["pass_field"])==1){
             $this->reload("You did not enter a password!");
         }
-        echo $user ;
-        echo $pass;
         $connection=$this->model('SSHConnection');
         try{
-            $connection->connect($user,$pass);
+            if(!$connection->connect($user,$pass,true)){
+                $this->reload("Invalid username/password!");
+            }
         }catch(Exception $e){
-            die($e->getMessage());
+            $this->reload($e->getMessage());
         }
+        die("LOGAT!");
     }
 }

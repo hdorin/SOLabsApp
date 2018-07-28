@@ -3,7 +3,7 @@ class Index extends Controller
 {
     public function index()
     {
-            die("dasda");
+            die("eee");
             $this->view('home/login');
 
     }
