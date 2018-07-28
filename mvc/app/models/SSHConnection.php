@@ -3,16 +3,15 @@
 class SSHConnection
 {
 
-    public function connect($host,$port,$user,$pass){
-
-    set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
-
-    include('phpseclib/Net/SSH2.php');
-
-        $ssh = new Net_SSH2($host,$port);
-        $ssh->login($user,$pass);
-        return $ssh;
- 
-       
+    public function connect($user,$pass){
+        if (!($connection = ssh2_connect('127.0.0.1', '22'))) {
+            throw new Exception('Cannot connect to server!');
+        } 
+    
+        if (ssh2_auth_password($connection, $user, $pass)) {
+            return 0;
+          } else {
+            return 1;
+          }
     }
 }

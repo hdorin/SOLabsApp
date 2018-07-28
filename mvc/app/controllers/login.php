@@ -30,16 +30,11 @@ class Login extends Controller
         }
         echo $user ;
         echo $pass;
-        $this->check_data($user,$pass);
-    }
-    public function check_data($user,$pass){
-        $ssh=$this->model('SSHConnection');
-        if (!($ssh->connect('127.0.0.1','2222',$user,$pass))) {
-            die('Cannot connect to server with SSH');
+        $connection=$this->model('SSHConnection');
+        try{
+            $connection->connect($user,$pass);
+        }catch(Exception $e){
+            die($e->getMessage());
         }
-        
-        die;
-
-        
     }
 }
