@@ -4,11 +4,9 @@
     <meta charset="utf-8" />
     <title>Login Page</title>
     <link rel="stylesheet" href="resources/stylesheets/login.css" type="text/css" />
-    <link rel="stylesheet" href="resources/stylesheets/app.css" type="text/css" />
 </head>
 <body id="bodyMain">
     <form id="lgnPanel" action="login/process" method="POST">
-
         <h1>Login</h1>
         <p id="errorMsg"><?=$data['error_msg']?></p>
         <h2>Username</h2>
