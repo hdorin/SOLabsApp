@@ -2,35 +2,29 @@
 
 class SSHConnection
 {
-    private $user,$pass;
-    public function create_new_user(){
-        if (!($connection = ssh2_connect('127.0.0.1', '22'))) {
+    private $host;
+    private $port;
+    public function configure($host,$port){
+        $this->host=$host;
+        $this->port=$port;
+        
+    }
+    public function create_user($user,$pass){
+        if (!($connection = ssh2_connect($this->host, $this->port))) {
             throw new Exception('Could not establish SSH connection!');
         } 
         if (!ssh2_auth_password($connection, 'dorin', 'halogenuri')) {
             throw new Exception('Could not access administrator account!');
         }
-        ssh2_exec($connection, 'sudo ./CreateUser.sh ' . $this->pass . ' '. $this->user);
+        ssh2_exec($connection, 'sudo ./CreateUser.sh ' . $pass . ' '. $user);
         unset($connection);
     }
-    public function connect($user,$pass,$first_login){
-        $this->user=$user;
-        $this->pass=$pass;
-        if($first_login==true){
-            if (!($external_cconnection = ssh2_connect('students.info.uaic.ro', '22'))){
-                throw new Exception('Could not establish external SSH connection!');
-            }
-                if (!ssh2_auth_password($external_cconnection, $this->user, $this->pass)) {
-                    unset($external_cconnection);
-                    return false;
-                }
-            unset($external_cconnection);  
-            $this->create_new_user();
-        }
-        if (!($connection = ssh2_connect('127.0.0.1', '22'))) {
+    public function check_user($user,$pass){
+        
+        if (!($connection = ssh2_connect($this->host, $this->port))) {
             throw new Exception('Could not establish SSH connection!');
         }
-        if (ssh2_auth_password($connection, $this->user, $this->pass)) {
+        if (ssh2_auth_password($connection, $user, $pass)) {
             unset($connection);
             return true;
         }else{

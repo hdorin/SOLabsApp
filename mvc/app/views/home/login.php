@@ -15,11 +15,6 @@
         <input id="userField" name="user_field" type="text" required/>
         <h2>Password</h2>
         <input id="passField" name="pass_field" type="password" required/>
-        
-        <div id="rememberMe" >
-            <input type="checkbox" name="rememberMe"/>
-            Remember Me<br>
-        </div>
         <input id="lgnButton" type="submit" value="Login" />
     </form> 
 

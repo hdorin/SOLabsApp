@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2018 at 12:04 PM
+-- Generation Time: Jul 30, 2018 at 04:48 PM
 -- Server version: 5.7.22-0ubuntu18.04.1
 -- PHP Version: 7.2.7-0ubuntu0.18.04.2
 
@@ -30,9 +30,16 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `users` (
   `id` int(5) NOT NULL,
-  `username` varchar(30) NOT NULL,
+  `user_name` varchar(30) NOT NULL,
   `date_created` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `user_name`, `date_created`) VALUES
+(3, 'dorin.haloca', '2018-07-30');
 
 --
 -- Indexes for dumped tables
@@ -42,7 +49,8 @@ CREATE TABLE `users` (
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_name` (`user_name`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -52,7 +60,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
