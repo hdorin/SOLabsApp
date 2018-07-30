@@ -3,16 +3,16 @@ class Command extends Controller
 {
     public function index()
     {
-        if(isset($_SESSION["error_msg"])==false){
+        $this->check_login();
+        if(empty($error_msg=$_SESSION["error_msg"])==true){
             $error_msg="";
-        }else{
-            $error_msg=$_SESSION["error_msg"];
         }
-        unset($_SESSION["error_msg"]);
-        if(isset($_SESSION['user_name'])==false){
-            die('You are not logged in!');
+        if(empty($exec_msg=$_SESSION["exec_msg"])==true){
+            $exec_msg="";
         }
-        $this->view('home/command',['error_msg' => $error_msg]);
+        unset($_SESSION['error_msg']);
+        unset($_SESSION['exec_msg']);
+        $this->view('home/command',['error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     public function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -21,18 +21,19 @@ class Command extends Controller
         die;
     }
     public function process(){
-        if(empty($command=$_POST["command_field"])==1){
+        if(empty($command=$_POST["command_field"])==true){
             $this->reload("You did not enter a command!");
         } 
         $ssh_connection=$this->model('SSHConnection');
-        $ssh_connection->configure('127.0.0.1','22');
+        $ssh_connection->configure('127.0.0.1','22');/*hadcoded*/
         
             try{
-                $ssh_connection->connect('dorin.haloca','C0demasters');
+                $ssh_connection->connect('dorin.haloca','C0demasters');/*hadcoded*/
             }catch(Exception $e){
                 $this->reload($e->getMessage());
             }
-            
-        $ssh_connection->execute($command);
+        $_SESSION["exec_msg"]=$ssh_connection->execute($command);/*hadcoded*/
+        header('Location: ../command');
+        die;
     }
 }

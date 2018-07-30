@@ -14,11 +14,10 @@ class SSHConnection
         if (!($connection = ssh2_connect($this->host, $this->port))) {
             throw new Exception('Could not establish SSH connection!');
         } 
-        if (!ssh2_auth_password($connection, 'dorin', 'halogenuri')) {
+        if (!ssh2_auth_password($connection, 'dorin', 'halogenuri')) {/*hadcoded*/
             throw new Exception('Could not access administrator account!');
         }
-        ssh2_exec($connection, '/var/www/html/AplicatieSO');
-        ssh2_exec($connection, 'sudo ./CreateUser.sh ' . $pass . ' '. $user);
+        ssh2_exec($connection, 'cd /var/www/html/AplicatieSO;' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user);/*hadcoded*/
         unset($connection);
     }
     public function check_user($user,$pass){
@@ -44,6 +43,9 @@ class SSHConnection
         }
     }
     public function execute($command){
-        $stream = ssh2_exec($this->connection, $command);
+        $stream = ssh2_exec($this->connection, 'timeout 1 ' . $command);/*hardcoded + adaugat comentariu*/ 
+        stream_set_blocking($stream, true);
+        $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+        return stream_get_contents($stream_out);
     }
 }

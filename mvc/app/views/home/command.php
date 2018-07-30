@@ -9,6 +9,7 @@
     
     <form id="commandPanel" action="command/process" method="POST">
         <p id="errorMsg"><?=$data['error_msg']?></p>
+        <p id="execMsg"><?=$data['exec_msg']?></p>
         <input id="commandField" name="command_field" type="text" required/>
         <input id="submitButton" type="submit" value="Submit" />
     </form> 

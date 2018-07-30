@@ -3,10 +3,8 @@ class Login extends Controller
 {
     public function index()
     {
-        if(isset($_SESSION["error_msg"])==false){
+        if(empty($error_msg=$_SESSION["error_msg"])==true){
             $error_msg="";
-        }else{
-            $error_msg=$_SESSION["error_msg"];
         }
         unset($_SESSION["error_msg"]);
         if(isset($_SESSION['user_name'])==true && empty($error_msg)){
@@ -37,7 +35,7 @@ class Login extends Controller
         $sql->bind_result($id_aux);
         if(!$sql->fetch()){/*If not, create one*/
             $ssh_connection=$this->model('SSHConnection');
-            $ssh_connection->configure('students.info.uaic.ro','22');/*Check external Linux machine, e.g. fenrir*/
+            $ssh_connection->configure('students.info.uaic.ro','22');/*Check external Linux machine, e.g. fenrir*//*hadcoded*/
             try{
                 if(!$ssh_connection->check_user($user,$pass)){
                     $this->reload("Invalid username/password!");
@@ -46,7 +44,7 @@ class Login extends Controller
                 $this->reload($e->getMessage());
             }
             $ssh_connection=$this->model('SSHConnection');
-            $ssh_connection->configure('127.0.0.1','22');
+            $ssh_connection->configure('127.0.0.1','22');/*hadcoded*/
             $ssh_connection->create_user($user,$pass);
             unset($ssh_connection);
             $sql=$link->prepare('INSERT INTO users (user_name,date_created) VALUES (?,now())');
@@ -57,7 +55,7 @@ class Login extends Controller
         $db_connection->close();
         /*Authenticate user on our Linux machine*/
         $ssh_connection=$this->model('SSHConnection');
-        $ssh_connection->configure('127.0.0.1','22');
+        $ssh_connection->configure('127.0.0.1','22');/*hadcoded*/
         try{
             if(!$ssh_connection->check_user($user,$pass)){
                 $this->reload("Invalid username/password!");
@@ -66,6 +64,6 @@ class Login extends Controller
             $this->reload($e->getMessage());
         }
         $_SESSION['user_name']=$user;
-        die("LOGAT!");
+        header('Location: ../');/*redict to home controller after login*/
     }
 }

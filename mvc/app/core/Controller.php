@@ -11,4 +11,9 @@ class Controller
     {
         require_once '../app/views/' . $view . '.php';
     }
+    public function check_login(){
+        if(isset($_SESSION['user_name'])==false){
+            die('You are not logged in!');
+        }
+    }
 }
