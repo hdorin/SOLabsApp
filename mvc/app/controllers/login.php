@@ -3,8 +3,10 @@ class Login extends Controller
 {
     public function index()
     {
-        if(empty($error_msg=$_SESSION["error_msg"])==true){
+        if(isset($_SESSION["error_msg"])==false){
             $error_msg="";
+        }else{
+            $erro_msg=$_SESSION["error_msg"];
         }
         unset($_SESSION["error_msg"]);
         if(isset($_SESSION['user_name'])==true && empty($error_msg)){

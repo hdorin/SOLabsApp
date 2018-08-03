@@ -4,11 +4,15 @@ class Command extends Controller
     public function index()
     {
         $this->check_login();
-        if(empty($error_msg=$_SESSION["error_msg"])==true){
+        if(isset($_SESSION["error_msg"])==false){
             $error_msg="";
+        }else{
+            $error_msg=$_SESSION["error_msg"];
         }
-        if(empty($exec_msg=$_SESSION["exec_msg"])==true){
+        if(isset($_SESSION["exec_msg"])==false){
             $exec_msg="";
+        }else{
+            $exec_msg=$_SESSION["exec_msg"];
         }
         unset($_SESSION['error_msg']);
         unset($_SESSION['exec_msg']);

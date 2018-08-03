@@ -46,6 +46,10 @@ class SSHConnection
         $stream = ssh2_exec($this->connection, 'timeout 1 ' . $command);/*hardcoded + adaugat comentariu*/ 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+        if(isset($stream_out)==true){
+            $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
+            return stream_get_contents($stream_err);    
+        }
         return stream_get_contents($stream_out);
     }
 }
