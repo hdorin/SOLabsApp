@@ -2,36 +2,15 @@
 
 class SSHConnection
 {
-    private $host;
-    private $port;
+    private $host,$port;
     private $connection;
+    private $sudo_user,$sudo_pass;
     public function configure($host,$port){
         $this->host=$host;
         $this->port=$port;
-        
     }
-    public function create_user($user,$pass){
-        if (!($connection = ssh2_connect($this->host, $this->port))) {
-            throw new Exception('Could not establish SSH connection!');
-        } 
-        if (!ssh2_auth_password($connection, 'dorin', 'halogenuri')) {/*hadcoded*/
-            throw new Exception('Could not access administrator account!');
-        }
-        ssh2_exec($connection, 'cd /var/www/html/AplicatieSO;' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user);/*hadcoded*/
-        unset($connection);
-    }
-    public function check_user($user,$pass){
-        
-        if (!($connection = ssh2_connect($this->host, $this->port))) {
-            throw new Exception('Could not establish SSH connection!');
-        }
-        if (ssh2_auth_password($connection, $user, $pass)) {
-            unset($connection);
-            return true;
-        }else{
-            unset($connection);
-            return false;
-        }
+    public function create_user($user,$pass,$newuser_script_path){
+        $stream=ssh2_exec($this->connection, 'cd ' . $newuser_script_path  . ';' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user);
     }
     public function connect($user,$pass){
         if (!($this->connection = ssh2_connect($this->host, $this->port))) {
@@ -39,17 +18,24 @@ class SSHConnection
         }
         if (!ssh2_auth_password($this->connection, $user, $pass)){
             unset($this->connection);
-            throw new Exception('Could not acces Linux machine!');
+            return false;
         }
+        return true;
     }
-    public function execute($command){
-        $stream = ssh2_exec($this->connection, 'timeout 1 ' . $command);/*hardcoded + adaugat comentariu*/ 
+    public function close(){
+        ssh2_disconnect($this->connection);
+        //unset($this->connection);
+    }
+    public function execute($command,$timeout_seconds){
+        $stream = ssh2_exec($this->connection, 'timeout ' . $timeout_seconds . ' ' . $command);/*hardcoded + adaugat comentariu*/ 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
-        if(isset($stream_out)==true){
+        $out_msg=stream_get_contents($stream_out);
+        if(empty($out_msg)==true){
             $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
-            return stream_get_contents($stream_err);    
+            $err_msg=stream_get_contents($stream_err);    
+            return $err_msg;
         }
-        return stream_get_contents($stream_out);
+        return $out_msg;
     }
 }

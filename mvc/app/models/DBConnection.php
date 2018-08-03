@@ -3,8 +3,8 @@
 class DBConnection
 {
     private $connection;
-    public function connect(){
-        $this->connection = mysqli_connect("127.0.0.1", "bot", "123", "AplicatieSO");/*hadcoded*/
+    public function connect($host,$user,$pass,$db_name){
+        $this->connection = mysqli_connect($host, $user, $pass, $db_name);
  
         if($this->connection === false){
             die("ERROR: Could not connect. " . mysqli_connect_error());

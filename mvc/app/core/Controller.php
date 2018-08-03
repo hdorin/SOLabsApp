@@ -12,7 +12,7 @@ class Controller
         require_once '../app/views/' . $view . '.php';
     }
     public function check_login(){
-        if(isset($_SESSION['user_name'])==false){
+        if(isset($_SESSION['user'])==false){
             die('You are not logged in!');
         }
     }

@@ -27,17 +27,25 @@ class Command extends Controller
     public function process(){
         if(empty($command=$_POST["command_field"])==true){
             $this->reload("You did not enter a command!");
-        } 
+        }
+        $config=$this->model('JSONConfig');
+        $ssh_host=$config->get('ssh','host');
+        $ssh_port=$config->get('ssh','port');
+        $ssh_timeout_seconds=$config->get('ssh','timeout_seconds');
+        $ssh_user=$_SESSION['user'];
+        $ssh_pass=$_SESSION['pass'];
         $ssh_connection=$this->model('SSHConnection');
-        $ssh_connection->configure('127.0.0.1','22');/*hadcoded*/
-        
-            try{
-                $ssh_connection->connect('dorin.haloca','C0demasters');/*hadcoded*/
-            }catch(Exception $e){
-                $this->reload($e->getMessage());
+        $ssh_connection->configure($ssh_host,$ssh_port);
+        try{
+            if(!$ssh_connection->connect($ssh_user,$ssh_pass)){
+                $ssh_connection->close();
+                $this->reload("Could not access Linux machine!");
             }
-        $_SESSION["exec_msg"]=$ssh_connection->execute($command);/*hadcoded*/
+        }catch(Exception $e){
+            $this->reload($e->getMessage());
+        }
+        $_SESSION["exec_msg"]=$ssh_connection->execute($command,$ssh_timeout_seconds);
+        $ssh_connection->close();
         header('Location: ../command');
-        die;
     }
 }
