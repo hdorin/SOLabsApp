@@ -13,8 +13,10 @@
 <?php
     include "header.php"
 ?>
-    <div class="newsBox">
-        <p class="news">News go here!</p>
+    <div class="chaptersBox">
+        <div class="chapter">
+            <a href="chapter_commands">Commands</p>
+        </div>
     </div>
 </body>
 </html>

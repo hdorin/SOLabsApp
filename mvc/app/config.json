@@ -9,7 +9,7 @@
         "sudo_user":"dorin",
         "sudo_pass":"halogenuri",
         "newuser_script_path":"/var/www/html/AplicatieSO",
-        "timeout_seconds":"1"
+        "timeout_seconds":"1s"
     },
     "db": {
         "host":"127.0.0.1",

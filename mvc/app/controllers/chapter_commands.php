@@ -1,5 +1,5 @@
 <?php
-class Command extends Controller
+class Chapter_Commands extends Controller
 {
     public function index()
     {
@@ -16,17 +16,24 @@ class Command extends Controller
         }
         unset($_SESSION['error_msg']);
         unset($_SESSION['exec_msg']);
-        $this->view('home/command',['error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_commands',['error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     public function reload($data=''){
         $_SESSION["error_msg"]=$data;
-        $new_url="../command";
+        $new_url="../chapter_commands";
         header('Location: '.$new_url);
         die;
     }
     public function process(){
-        if(empty($command=$_POST["command_field"])==true){
+        if(empty($command=$_POST["input_field"])==true){
             $this->reload("You did not enter a command!");
+        }
+        if($_POST["action"]=="Execute"){
+            $_SESSION["input_field"]=$_POST["input_field"];
+        }else{
+            if(isset($_SESSION["input_field"])){
+                unset($_SESSION["input_field"]);
+            }
         }
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
@@ -46,6 +53,6 @@ class Command extends Controller
         }
         $_SESSION["exec_msg"]=$ssh_connection->execute($command,$ssh_timeout_seconds);
         $ssh_connection->close();
-        header('Location: ../command');
+        header('Location: ../chapter_commands');
     }
 }
