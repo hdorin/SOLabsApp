@@ -27,7 +27,7 @@ class SSHConnection
         //unset($this->connection);
     }
     public function execute($command,$timeout_seconds){
-        ssh2_exec($this->connection, 'echo ' .  $command . ' > command.sh');
+        ssh2_exec($this->connection, 'echo "' .  $command . '" > command.sh'); /*preventing command injection (using ';') with "" */
         ssh2_exec($this->connection, 'chmod +x command.sh');
         $stream = ssh2_exec($this->connection, 'timeout ' . $timeout_seconds .  ' ./command.sh');/*hardcoded + adaugat comentariu*/ 
         stream_set_blocking($stream, true);
