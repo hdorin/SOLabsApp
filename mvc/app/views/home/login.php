@@ -5,15 +5,16 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="resources/stylesheets/login.css" type="text/css" />
 </head>
-<body id="bodyMain">
-    <form id="lgnPanel" action="login/process" method="POST">
+<body>
+    <form class="lgnPanel" action="login/process" method="POST">
         <h1>Login</h1>
-        <p id="errorMsg"><?=$data['error_msg']?></p>
+        <p class="errorMsg"><?=$data['error_msg']?></p>
         <h2>Username</h2>
-        <input id="userField" name="user_field" type="text" required/>
+        <input class="userField" name="user_field" type="text" required/>
         <h2>Password</h2>
-        <input id="passField" name="pass_field" type="password" required/>
-        <input id="lgnButton" type="submit" value="Login" />
+        <input class="passField" name="pass_field" type="password" required/>
+        <input class="lgnButton" type="submit" value="Login" />
     </form> 
-
+</body>
+</html>
 

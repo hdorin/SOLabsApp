@@ -1,0 +1,96 @@
+﻿body {
+margin: 0%;
+}
+
+    header {
+        background-color: #fff3da;
+        width: 100%;
+        height: 80px;
+        
+       
+    }
+        header .btnLogout {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            text-align: center;
+            color: black;
+            background-color: #F3781E;
+            border-radius: 6px;
+            margin-top: 15px;
+            margin-right: 30px;
+            width: 130px;
+            text-decoration: none;
+            padding: 8px;
+            float: right;
+        }
+
+        header .btnLogout:hover {
+            background-color: red;
+        }
+        header .btnLogout:focus {
+            background-color: rgb(211, 0, 0);
+        }
+        header .btnHome {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            text-align: center;
+            text-decoration: none;
+            padding-top: 24px;
+            width: 300px;
+            height: 56px;
+            color: #3D4597;
+            margin-left: 280px;
+            border-right-color: #3D4597;
+            border-right-width: 6px;
+            border-right-style: solid;
+            border-left-color: #3D4597;
+            border-left-width: 6px;
+            border-left-style: solid;
+            float: left;
+        }
+        header .btnChooseChapter {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            text-align: center;
+            text-decoration: none;
+            padding-top: 24px;
+            width: 300px;
+            height: 56px;
+            color: #3D4597;
+            border-right-color: #3D4597;
+            border-right-width: 6px;
+            border-right-style: solid;
+            float: left;
+        }
+        header .btnMyQuestions {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            text-align: center;
+            text-decoration: none;
+            padding-top: 24px;
+            width: 300px;
+            height: 56px;
+            color: #3D4597;
+            border-right-color: #3D4597;
+            border-right-width: 6px;
+            border-right-style: solid;
+            float: left;
+        }
+        header .btnSubmitQuestion {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            text-align: center;
+            text-decoration: none;
+            padding-top: 24px;
+            width: 300px;
+            height: 56px;
+            color: #3D4597;
+            border-right-color: #3D4597;
+            border-right-width: 6px;
+            border-right-style: solid;
+            float: left;
+        }
+        header .btnHome:hover, .btnChooseChapter:hover, .btnMyQuestions:hover, .btnSubmitQuestion:hover  {
+            background: #fff3da; /* Old browsers */
+            background: -moz-linear-gradient(top, #fff3da 20%, #ffe7b6 100%); /* FF3.6-15 */
+        }

@@ -1,60 +1,52 @@
-﻿#bodyMain {
+﻿.lgnPanel {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff3da;
+    padding: 8px;
+    width: 280px;
+    margin-top: 10%;
+    box-sizing: border-box;
+    border-radius: 6px;
+    box-shadow: 0 0px 8px 0 #1d67f0, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
 }
-
-    #bodyMain #lgnPanel {
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-        background-color: #fff3da;
-        padding: 8px;
-        width: 280px;
-        margin-top: 10%;
+    .lgnPanel .errorMsg{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        color:red;
+        background-color: #FFE6B5;
         box-sizing: border-box;
-        border-radius: 6px;
-        box-shadow: 0 0px 8px 0 #1d67f0, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+        border-radius: 6px;        
     }
-        #bodyMain #lgnPanel #errorMsg{
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 18px;
-            color:red;
-            background-color: #FFE6B5;
-            box-sizing: border-box;
-            border-radius: 6px;
-        }
+    .lgnPanel h1 {         
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-family: Cambria;
+        font-size: 35px;
+        color: #3D4597;
+    }
 
-        #bodyMain #lgnPanel h1 {
-         
-            margin-top: 10px;
-            margin-bottom: 10px;
-            font-family: Cambria;
-            font-size: 35px;
-            color: #3D4597;
-        }
-
-        #bodyMain #lgnPanel #userField, #passField {
-            background-color: #d2dfff;
-            width: 240px;
-            box-sizing: border-box;
-            border-radius: 5px;
-            padding: 3px;
-            
-        }
-
-        #bodyMain #lgnPanel h2 {
-            color: black;
-            text-align: left;
-            font-size: 15px;
-            margin-left: 14px;
-            margin-bottom: 2px;
-        }
-
-        
-        #bodyMain #lgnPanel #lgnButton {
-            background-color: #F3781E;
-            top: 100px;
-            margin-top: 15px;
-            font-size: 20px;
-            width: 50%;
-            border-radius: 5px;
-            padding: 2px;
-        }
+    .lgnPanel .userField, .passField {
+        background-color: #d2dfff;
+        width: 240px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        padding: 3px;            
+    }
+    .lgnPanel h2 {
+        color: black;
+        text-align: left;
+        font-size: 15px;
+        margin-left: 14px;
+        margin-bottom: 2px;
+    }        
+    .lgnPanel .lgnButton {
+        background-color: #F3781E;
+        top: 100px;
+        margin-top: 15px;
+        font-size: 20px;
+        width: 50%;
+        border-radius: 5px;
+        padding: 2px;
+        color:black;
+    }
