@@ -1,5 +1,6 @@
 {
     "external_ssh": {
+        "check": "false", 
         "host":"students.info.uaic.ro",
         "port":"22"
     },
@@ -9,6 +10,7 @@
         "sudo_user":"dorin",
         "sudo_pass":"halogenuri",
         "newuser_script_path":"/var/www/html/AplicatieSO",
+        "quota_limit":"100M",
         "timeout_seconds":"1s"
     },
     "db": {

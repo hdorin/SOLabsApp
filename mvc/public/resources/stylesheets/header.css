@@ -29,9 +29,6 @@ margin: 0%;
         header .btnLogout:hover {
             background-color: red;
         }
-        header .btnLogout:focus {
-            background-color: rgb(211, 0, 0);
-        }
         header .user {
             font-family: Arial, Helvetica, sans-serif;
             font-weight: bold;

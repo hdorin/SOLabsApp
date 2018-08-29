@@ -43,19 +43,22 @@ class Login extends Controller
         $sql->bind_result($id_aux);
         if(!$sql->fetch()){/*If not, create one*/
             $config=$this->model('JSONConfig');
-            $external_ssh_host=$config->get('external_ssh','host');
-            $external_ssh_port=$config->get('external_ssh','port');
-            $external_ssh_connection=$this->model('SSHConnection');
-            $external_ssh_connection->configure($external_ssh_host,$external_ssh_port);/*Check external Linux machine, e.g. fenrir*/
-            try{
-                if(!$external_ssh_connection->connect($user,$pass)){
-                    $external_ssh_connection->close();
-                    $this->reload("Invalid username/password!");
+            $external_ssh_check=$config->get('external_ssh','check');
+            if($$external_ssh_check=="false"){/*it doesn't ckeck the external ssh connection*/
+                $external_ssh_host=$config->get('external_ssh','host');
+                $external_ssh_port=$config->get('external_ssh','port');
+                $external_ssh_connection=$this->model('SSHConnection');
+                $external_ssh_connection->configure($external_ssh_host,$external_ssh_port);/*Check external Linux machine, e.g. fenrir*/
+                try{    
+                    if(!$external_ssh_connection->connect($user,$pass)){
+                        $external_ssh_connection->close();
+                        $this->reload("Invalid username/password!");
+                    }   
+                }catch(Exception $e){
+                    $this->reload($e->getMessage());
                 }
-            }catch(Exception $e){
-                $this->reload($e->getMessage());
-            }
-            $external_ssh_connection->close();
+                $external_ssh_connection->close();
+            }   
             /*The account was found on the external Linux machine, creating one on our Linux machine*/
             $config=$this->model('JSONConfig');
             $ssh_host=$config->get('ssh','host');
@@ -63,6 +66,7 @@ class Login extends Controller
             $ssh_sudo_user=$config->get('ssh','sudo_user');
             $ssh_sudo_pass=$config->get('ssh','sudo_pass');
             $ssh_newuser_script_path=$config->get('ssh','newuser_script_path');
+            $ssh_quota_limit=$config->get('ssh','quota_limit');
             $ssh_connection=$this->model('SSHConnection');
             $ssh_connection->configure($ssh_host,$ssh_port);
             try{
@@ -73,7 +77,7 @@ class Login extends Controller
             }catch(Exception $e){
                 $this->reload($e->getMessage());
             }
-            $ssh_connection->create_user($user,$pass,$ssh_newuser_script_path);
+            $ssh_connection->create_user($user,$pass,$ssh_newuser_script_path,$ssh_quota_limit);
             $ssh_connection->close();
             $sql=$link->prepare('INSERT INTO users (user_name,date_created) VALUES (?,now())');
             $sql->bind_param('s', $user);
