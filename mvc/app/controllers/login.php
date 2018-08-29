@@ -21,6 +21,15 @@ class Login extends Controller
         header('Location: '.$new_url);
         die;
     }
+    private function generate_random_str() {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < 15; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
     public function process(){
         if(empty($user=$_POST["user_field"])==1){
             $this->reload("You did not enter a username!");
@@ -28,8 +37,8 @@ class Login extends Controller
         if(empty($pass=$_POST["pass_field"])==1){
             $this->reload("You did not enter a password!");
         }
-        
-        /*Check if user has an account on our Linux machine*/
+        $hashed_pass=password_hash($pass, PASSWORD_DEFAULT);
+        /*Check if user has an account on  our Linux machine*/
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -37,14 +46,14 @@ class Login extends Controller
         $db_name=$config->get('db','name');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT id FROM users WHERE `user_name`=?');
+        $sql=$link->prepare('SELECT id,hashed_pass,ssh_pass FROM users WHERE `user_name`=?');
         $sql->bind_param('s', $user);
         $sql->execute();
-        $sql->bind_result($id_aux);
+        $sql->bind_result($id_aux,$hashed_pass_aux,$pass_aux);
         if(!$sql->fetch()){/*If not, create one*/
             $config=$this->model('JSONConfig');
             $external_ssh_check=$config->get('external_ssh','check');
-            if($$external_ssh_check=="false"){/*it doesn't ckeck the external ssh connection*/
+            if($external_ssh_check=="true"){/*false = does not ckeck the external ssh connection*/
                 $external_ssh_host=$config->get('external_ssh','host');
                 $external_ssh_port=$config->get('external_ssh','port');
                 $external_ssh_connection=$this->model('SSHConnection');
@@ -79,10 +88,18 @@ class Login extends Controller
             }
             $ssh_connection->create_user($user,$pass,$ssh_newuser_script_path,$ssh_quota_limit);
             $ssh_connection->close();
-            $sql=$link->prepare('INSERT INTO users (user_name,date_created) VALUES (?,now())');
-            $sql->bind_param('s', $user);
+            
+            $pass=$this->generate_random_str();
+            $sql=$link->prepare('INSERT INTO users (user_name,date_created,hashed_pass,ssh_pass) VALUES (?,now(),?,?)');
+            $sql->bind_param('sss', $user,$hashed_pass,$pass);
             $sql->execute();
             
+        }else{
+            die($user . ' ' . $pass);
+            if(strcmp($hashed_pass,$hashed_pass_aux)!=0){
+                $this->reload("Invalid username/password!");
+            }
+            $pass=$pass_aux;
         }
         $db_connection->close();
         /*Authenticate user on our Linux machine*/
@@ -92,6 +109,7 @@ class Login extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
+            
             if(!$ssh_connection->connect($user,$pass)){
                 $ssh_connection->close();
                 $this->reload("Invalid username/password!");
