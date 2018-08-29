@@ -1,10 +1,10 @@
 <?php
-class Choose_Chapter extends Controller
+class Submit_Question extends Controller
 {
     public function index()
     {
         $this->check_login();
-        $this->view('home/chapters',['error_msg' => $error_msg]);
+        $this->view('home/chapters_submit',['error_msg' => $error_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;

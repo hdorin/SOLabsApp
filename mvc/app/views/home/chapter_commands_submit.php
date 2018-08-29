@@ -4,18 +4,24 @@
     <meta charset="utf-8" />
     <title>Chapter: Commands</title>
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
-    <link rel="stylesheet" href="resources/stylesheets/chapter_commands.css" type="text/css" />
+    <link rel="stylesheet" href="resources/stylesheets/chapter_commands_submit.css" type="text/css" />
 </head>
 <body>
     <?php
         include "header.php"
     ?>
     <div class="questionBox">
-        <div class="questionText">
-            <p>Bla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla bla</p>
+        <div class="questionTextTitle">
+            <h1>Enter question text</h1>
         </div>
-        <form class="questionInput" action="chapter_commands/process" method="POST">
-        <div class="textarea">
+        <form class="submitQuestion" action="chapter_commands_submit/process" method="POST">
+        <div class="questionText">
+            <textarea name="text_field" type="text" rows="4" cols="50" required maxlength="500"><?php echo $_SESSION['text_field']; ?></textarea>
+        </div>
+        <div class="questionInputitle">
+            <h1>Enter question input</h1>
+        </div>
+        <div class="questionInput">
             <textarea class="inputField" name="input_field" type="text" rows="4" cols="50" required maxlength="150"><?php echo $_SESSION['input_field']; ?></textarea>
         </div>
             

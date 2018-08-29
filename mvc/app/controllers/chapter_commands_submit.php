@@ -1,5 +1,5 @@
 <?php
-class Chapter_Commands extends Controller
+class Chapter_Commands_Submit extends Controller
 {
     public function index()
     {
@@ -22,28 +22,15 @@ class Chapter_Commands extends Controller
         }
         unset($_SESSION['error_msg']);
         unset($_SESSION['exec_msg']);
-        $this->view('home/chapter_commands',['error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_commands_submit',['error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
-        $new_url="../chapter_commands";
+        $new_url="../chapter_commands_submit";
         header('Location: '.$new_url);
         die;
     }
-    public function process(){
-        if(strlen($_POST["input_field"])>150 ){
-            $this->reload("Characters limit exceeded!");
-        }
-        if(empty($command=$_POST["input_field"])==true){
-            $this->reload("You did not enter a command!");
-        }
-        if($_POST["action"]=="Execute"){
-            $_SESSION["input_field"]=$_POST["input_field"];
-        }else{
-            if(isset($_SESSION["input_field"])){
-                unset($_SESSION["input_field"]);
-            }
-        }
+    private function execute($command){
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
@@ -67,6 +54,35 @@ class Chapter_Commands extends Controller
         }
         
         $ssh_connection->close();
-        header('Location: ../chapter_commands');
+    }
+    private function submit($text,$command){
+        $this->execute($command);
+        die("BUN");
+    }
+    public function process(){
+        if(strlen($_POST["text_field"])>500 || strlen($_POST["input_field"])>150){
+            $this->reload("Characters limit exceeded!");
+        }
+        if(empty($text=$_POST["text_field"])==true){
+            $this->reload("You did not enter the question text!");
+        }
+        if(empty($command=$_POST["input_field"])==true){
+            $this->reload("You did not enter a command!");
+        }
+        $_SESSION["input_field"]=$_POST["input_field"];
+        $_SESSION["text_field"]=$_POST["text_field"];
+        if($_POST["action"]=="Execute"){
+            $this->execute($command);
+        }else{
+            $this->submit($text,$command);
+            if(isset($_SESSION["input_field"])){
+                unset($_SESSION["input_field"]);
+            }
+            if(isset($_SESSION["text_field"])){
+                unset($_SESSION["text_field"]);
+            }
+        }
+       
+        header('Location: ../chapter_commands_submit');
     }
 }

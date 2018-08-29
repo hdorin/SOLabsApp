@@ -36,7 +36,7 @@ class SSHConnection
         if(empty($out_msg)==true){
             $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
             $err_msg=stream_get_contents($stream_err);    
-            return $err_msg;
+            throw new Exception($err_msg);
         }
         return $out_msg;
     }

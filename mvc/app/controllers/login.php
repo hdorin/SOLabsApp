@@ -15,7 +15,7 @@ class Login extends Controller
         }
         $this->view('home/login',['error_msg' => $error_msg]);
     }
-    public function reload($data=''){
+    private function reload($data=''){
         $_SESSION["error_msg"]=$data;
         $new_url="../login";
         header('Location: '.$new_url);
