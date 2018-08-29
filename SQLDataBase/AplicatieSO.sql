@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2018 at 04:48 PM
--- Server version: 5.7.22-0ubuntu18.04.1
+-- Generation Time: Aug 29, 2018 at 06:49 PM
+-- Server version: 5.7.23-0ubuntu0.18.04.1
 -- PHP Version: 7.2.7-0ubuntu0.18.04.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -25,25 +25,49 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `questions`
+--
+
+CREATE TABLE `questions` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `chapter` varchar(50) NOT NULL,
+  `date_created` date NOT NULL,
+  `wrong_answers` int(11) NOT NULL DEFAULT '0',
+  `right_answerrs` int(11) NOT NULL DEFAULT '0',
+  `reports` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
   `id` int(5) NOT NULL,
   `user_name` varchar(30) NOT NULL,
-  `date_created` date NOT NULL
+  `date_created` date NOT NULL,
+  `hash_pass` varchar(256) NOT NULL,
+  `ssh_pass` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `user_name`, `date_created`) VALUES
-(3, 'dorin.haloca', '2018-07-30');
+INSERT INTO `users` (`id`, `user_name`, `date_created`, `hash_pass`, `ssh_pass`) VALUES
+(14, 'aaa', '2018-08-29', '$2y$10$3QCzG09yEBzfejL/t1SLq.hgR0H4cZaK0t3vL0VBZWE0tcH5h4auG', 'Y4IiKpyLRH4sr6H');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `questions`
+--
+ALTER TABLE `questions`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `users`
@@ -57,10 +81,16 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `questions`
+--
+ALTER TABLE `questions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

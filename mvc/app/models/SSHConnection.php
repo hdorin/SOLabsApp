@@ -11,7 +11,7 @@ class SSHConnection
     }
     public function create_user($user,$pass,$newuser_script_path,$quota_limit){
 
-        $stream=ssh2_exec($this->connection, 'cd ' . $newuser_script_path  . ';' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit);
+        $stream=ssh2_exec($this->connection, 'cd ' . $newuser_script_path  . '; ' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit . '');
     }
     public function connect($user,$pass){
         if (!($this->connection = ssh2_connect($this->host, $this->port))) {
@@ -24,8 +24,8 @@ class SSHConnection
         return true;
     }
     public function close(){
-        ssh2_disconnect($this->connection);
-        //unset($this->connection);
+        //ssh2_disconnect($this->connection);
+        unset($this->connection);
     }
     public function execute($command,$timeout_seconds){
         ssh2_exec($this->connection, 'echo "' .  $command . '" > command.sh'); /*preventing command injection (using ';') with "" */

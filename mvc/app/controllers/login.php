@@ -37,7 +37,6 @@ class Login extends Controller
         if(empty($pass=$_POST["pass_field"])==1){
             $this->reload("You did not enter a password!");
         }
-        $hashed_pass=password_hash($pass, PASSWORD_DEFAULT);
         /*Check if user has an account on  our Linux machine*/
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
@@ -46,11 +45,15 @@ class Login extends Controller
         $db_name=$config->get('db','name');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT id,hashed_pass,ssh_pass FROM users WHERE `user_name`=?');
+        $sql=$link->prepare('SELECT id,hash_pass,ssh_pass FROM users WHERE `user_name`=?');
+        
         $sql->bind_param('s', $user);
+
         $sql->execute();
-        $sql->bind_result($id_aux,$hashed_pass_aux,$pass_aux);
+        
+        $sql->bind_result($id,$hash_pass,$ssh_pass);
         if(!$sql->fetch()){/*If not, create one*/
+            
             $config=$this->model('JSONConfig');
             $external_ssh_check=$config->get('external_ssh','check');
             if($external_ssh_check=="true"){/*false = does not ckeck the external ssh connection*/
@@ -86,20 +89,18 @@ class Login extends Controller
             }catch(Exception $e){
                 $this->reload($e->getMessage());
             }
-            $ssh_connection->create_user($user,$pass,$ssh_newuser_script_path,$ssh_quota_limit);
+            $ssh_pass=$this->generate_random_str();
+            $ssh_connection->create_user($user,$ssh_pass,$ssh_newuser_script_path,$ssh_quota_limit);
             $ssh_connection->close();
-            
-            $pass=$this->generate_random_str();
-            $sql=$link->prepare('INSERT INTO users (user_name,date_created,hashed_pass,ssh_pass) VALUES (?,now(),?,?)');
-            $sql->bind_param('sss', $user,$hashed_pass,$pass);
+            $hash_pass=password_hash($pass, PASSWORD_DEFAULT);
+            $sql=$link->prepare('INSERT INTO users (user_name,date_created,hash_pass,ssh_pass) VALUES (?,now(),?,?)');
+            $sql->bind_param('sss', $user,$hash_pass,$ssh_pass);
             $sql->execute();
             
         }else{
-            die($user . ' ' . $pass);
-            if(strcmp($hashed_pass,$hashed_pass_aux)!=0){
+            if(password_verify($pass,$hash_pass)==false){
                 $this->reload("Invalid username/password!");
             }
-            $pass=$pass_aux;
         }
         $db_connection->close();
         /*Authenticate user on our Linux machine*/
@@ -110,16 +111,16 @@ class Login extends Controller
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
             
-            if(!$ssh_connection->connect($user,$pass)){
+            if(!$ssh_connection->connect($user,$ssh_pass)){
                 $ssh_connection->close();
-                $this->reload("Invalid username/password!");
+                $this->reload("Invalid username/passworddd! |" . $user . "|".$ssh_pass);
             }
         }catch(Exception $e){
             $this->reload($e->getMessage());
         }
         $ssh_connection->close();
         $_SESSION['user']=$user;
-        $_SESSION['pass']=$pass;
+        $_SESSION['pass']=$ssh_pass;
         header('Location: ../');/*redict to home controller after login*/
     }
 }
