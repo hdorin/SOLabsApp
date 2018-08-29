@@ -16,4 +16,13 @@ class Controller
             die('You are not logged in!');
         }
     }
+    public function session_extract($session_variable_name){
+        if(isset($_SESSION[$session_variable_name])==true){
+            $variable=$_SESSION[$session_variable_name];
+            unset($_SESSION[$session_variable_name]);
+        }else{
+            $variable="";
+        }
+        return $variable;
+    }
 }

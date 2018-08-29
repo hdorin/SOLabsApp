@@ -4,25 +4,11 @@ class Chapter_Commands_Submit extends Controller
     public function index()
     {
         $this->check_login();
-        if(isset($_SESSION["input_field"])){
-            unset($_SESSION["input_field"]);
-        }
-        if(isset($_SESSION["text_field"])){
-            unset($_SESSION["text_field"]);
-        }
-        if(isset($_SESSION["error_msg"])==false){
-            $error_msg="";
-        }else{
-            $error_msg=$_SESSION["error_msg"];
-        }
-        if(isset($_SESSION["exec_msg"])==false){
-            $exec_msg="";
-        }else{
-            $exec_msg=$_SESSION["exec_msg"];
-        }
-        unset($_SESSION['error_msg']);
-        unset($_SESSION['exec_msg']);
-        $this->view('home/chapter_commands_submit',['error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $error_msg=$this->session_extract("error_msg");
+        $exec_msg=$this->session_extract("exec_msg");
+        $input_field=$this->session_extract("input_field");
+        $text_field=$this->session_extract("text_field");
+        $this->view('home/chapter_commands_submit',['input_field' => $input_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -50,6 +36,9 @@ class Chapter_Commands_Submit extends Controller
         try{    
             $_SESSION["exec_msg"]=$ssh_connection->execute($command,$ssh_timeout_seconds);
         }catch(Exception $e){
+            if(empty($e->getMessage())==true){
+                $this->reload("Output cannot be empty!");
+            }
             $this->reload($e->getMessage());
         }
         
@@ -57,7 +46,7 @@ class Chapter_Commands_Submit extends Controller
     }
     private function submit($text,$command){
         $this->execute($command);
-        die("BUN");
+        
     }
     public function process(){
         if(strlen($_POST["text_field"])>500 || strlen($_POST["input_field"])>150){
@@ -81,6 +70,7 @@ class Chapter_Commands_Submit extends Controller
             if(isset($_SESSION["text_field"])){
                 unset($_SESSION["text_field"]);
             }
+            die("BUN");
         }
        
         header('Location: ../chapter_commands_submit');
