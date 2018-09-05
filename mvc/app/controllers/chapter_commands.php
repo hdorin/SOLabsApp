@@ -30,7 +30,7 @@ class Chapter_Commands extends Controller
         header('Location: '.$new_url);
         die;
     }
-    public function correct_answer(){ /*add question_id*/
+    private function correct_answer(){ /*add question_id*/
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
