@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 29, 2018 at 06:49 PM
+-- Generation Time: Sep 05, 2018 at 11:14 AM
 -- Server version: 5.7.23-0ubuntu0.18.04.1
 -- PHP Version: 7.2.7-0ubuntu0.18.04.2
 
@@ -32,6 +32,7 @@ CREATE TABLE `questions` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `chapter` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
   `date_created` date NOT NULL,
   `wrong_answers` int(11) NOT NULL DEFAULT '0',
   `right_answerrs` int(11) NOT NULL DEFAULT '0',
@@ -47,6 +48,7 @@ CREATE TABLE `questions` (
 CREATE TABLE `users` (
   `id` int(5) NOT NULL,
   `user_name` varchar(30) NOT NULL,
+  `admin` tinyint(1) NOT NULL DEFAULT '0',
   `date_created` date NOT NULL,
   `hash_pass` varchar(256) NOT NULL,
   `ssh_pass` varchar(100) NOT NULL
@@ -56,8 +58,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `user_name`, `date_created`, `hash_pass`, `ssh_pass`) VALUES
-(14, 'aaa', '2018-08-29', '$2y$10$3QCzG09yEBzfejL/t1SLq.hgR0H4cZaK0t3vL0VBZWE0tcH5h4auG', 'Y4IiKpyLRH4sr6H');
+INSERT INTO `users` (`id`, `user_name`, `admin`, `date_created`, `hash_pass`, `ssh_pass`) VALUES
+(14, 'aaa', 0, '2018-08-29', '$2y$10$3QCzG09yEBzfejL/t1SLq.hgR0H4cZaK0t3vL0VBZWE0tcH5h4auG', 'Y4IiKpyLRH4sr6H'),
+(15, 'dorin.haloca', 0, '2018-08-29', '$2y$10$Y1madv.LAOfpoy0Drg4QqeAOtL.jQa3hGpx4Oq1AocHd.ahyk.Ceq', 'WZaKAfhWUDCx6ur');
 
 --
 -- Indexes for dumped tables
@@ -90,7 +93,7 @@ ALTER TABLE `questions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

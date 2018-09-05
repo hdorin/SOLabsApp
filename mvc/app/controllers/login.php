@@ -46,12 +46,9 @@ class Login extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('SELECT id,hash_pass,ssh_pass FROM users WHERE `user_name`=?');
-        
         $sql->bind_param('s', $user);
-
         $sql->execute();
-        
-        $sql->bind_result($id,$hash_pass,$ssh_pass);
+        $sql->bind_result($user_id,$hash_pass,$ssh_pass);
         if(!$sql->fetch()){/*If not, create one*/
             
             $config=$this->model('JSONConfig');
@@ -96,6 +93,12 @@ class Login extends Controller
             $sql=$link->prepare('INSERT INTO users (user_name,date_created,hash_pass,ssh_pass) VALUES (?,now(),?,?)');
             $sql->bind_param('sss', $user,$hash_pass,$ssh_pass);
             $sql->execute();
+
+            $sql=$link->prepare('SELECT id FROM users WHERE `user_name`=?');
+            $sql->bind_param('s', $user);
+            $sql->execute();
+            $sql->bind_result($user_id);
+            $sql->fetch();
             
         }else{
             if(password_verify($pass,$hash_pass)==false){
@@ -119,6 +122,7 @@ class Login extends Controller
             $this->reload($e->getMessage());
         }
         $ssh_connection->close();
+        $_SESSION['user_id']=$user_id;
         $_SESSION['user']=$user;
         $_SESSION['pass']=$ssh_pass;
         header('Location: ../');/*redict to home controller after login*/

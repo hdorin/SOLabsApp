@@ -18,11 +18,11 @@
         <div class="questionText">
             <textarea name="text_field" type="text" rows="4" cols="50" required maxlength="500"><?php echo $data['text_field']; ?></textarea>
         </div>
-        <div class="questionInputitle">
-            <h1>Enter question input</h1>
+        <div class="questionCodeTitle">
+            <h1>Enter question code</h1>
         </div>
-        <div class="questionInput">
-            <textarea class="inputField" name="input_field" type="text" rows="4" cols="50" required maxlength="150"><?php echo $data['input_field']; ?></textarea>
+        <div class="questionCode">
+            <textarea class="codeField" name="code_field" type="text" rows="4" cols="50" required maxlength="150"><?php echo $data['code_field']; ?></textarea>
         </div>
             
             

@@ -6,9 +6,9 @@ class Chapter_Commands_Submit extends Controller
         $this->check_login();
         $error_msg=$this->session_extract("error_msg");
         $exec_msg=$this->session_extract("exec_msg");
-        $input_field=$this->session_extract("input_field");
+        $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $this->view('home/chapter_commands_submit',['input_field' => $input_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_commands_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -46,33 +46,61 @@ class Chapter_Commands_Submit extends Controller
     }
     private function submit($text,$command){
         $this->execute($command);
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare('INSERT INTO questions (`user_id`,chapter,`status`,date_created) VALUES (?,?,?,now())');
+        $chapter="commands";
+        $status="pending";
+        $sql->bind_param('iss', $_SESSION['user_id'],$chapter,$status);
+        $sql->execute();
+
+        $sql=$link->prepare('SELECT id FROM questions WHERE `user_id`=? AND chapter=? AND `status`=?');
+        $sql->bind_param('iss', $_SESSION['user_id'],$chapter,$status);
+        $sql->execute();
+        $sql->bind_result($question_id);
+        $sql->fetch();
+        $db_connection->close();
         
+        /*for some reason, the third prepare statement doesn't work*/
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare('UPDATE questions SET `status`=? WHERE id=?');        
+        $status="posted";
+        $sql->bind_param('si', $status,$question_id);
+        $sql->execute();
+        $db_connection->close();
+
     }
     public function process(){
-        if(strlen($_POST["text_field"])>500 || strlen($_POST["input_field"])>150){
+        if(strlen($_POST["text_field"])>500 || strlen($_POST["code_field"])>150){
             $this->reload("Characters limit exceeded!");
         }
         if(empty($text=$_POST["text_field"])==true){
             $this->reload("You did not enter the question text!");
         }
-        if(empty($command=$_POST["input_field"])==true){
+        if(empty($command=$_POST["code_field"])==true){
             $this->reload("You did not enter a command!");
         }
-        $_SESSION["input_field"]=$_POST["input_field"];
+        $_SESSION["code_field"]=$_POST["code_field"];
         $_SESSION["text_field"]=$_POST["text_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($command);
         }else{
             $this->submit($text,$command);
-            if(isset($_SESSION["input_field"])){
-                unset($_SESSION["input_field"]);
+            if(isset($_SESSION["code_field"])){
+                unset($_SESSION["code_field"]);
             }
             if(isset($_SESSION["text_field"])){
                 unset($_SESSION["text_field"]);
             }
-            die("BUN");
+            
         }
        
-        header('Location: ../chapter_commands_submit');
+        header('Location: ../submit_question');
     }
 }
