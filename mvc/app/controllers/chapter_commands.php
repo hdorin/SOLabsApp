@@ -30,6 +30,37 @@ class Chapter_Commands extends Controller
         header('Location: '.$new_url);
         die;
     }
+    public function correct_answer(){ /*add question_id*/
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        /*check if user is in the chapter_1 users list*/
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare('SELECT right_answers FROM chapter_1 WHERE `user_id`=?');
+        $sql->bind_param('i', $_SESSION['user_id']);
+        $sql->execute();
+        $sql->bind_result($right_answers);
+        $status=$sql->fetch();
+        $db_connection->close();
+
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        if(!$status){/*insert user into chapter_1 table*/
+            $sql=$link->prepare('INSERT INTO chapter_1 (`user_id`,right_answers) VALUES (?,?)');
+            $right_answers=1;
+            $sql->bind_param('si', $_SESSION['user_id'],$right_answers);
+            $sql->execute();
+        }else{/*increment right_answers for user*/
+            $sql=$link->prepare('UPDATE chapter_1 SET right_answers=? WHERE `user_id`=?');        
+            $right_answers=$right_answers+1;
+            $sql->bind_param('ii',$right_answers,$_SESSION['user_id']);
+            $sql->execute();
+        }
+        $db_connection->close();
+    }
     public function process(){
         if(strlen($_POST["input_field"])>150 ){
             $this->reload("Characters limit exceeded!");

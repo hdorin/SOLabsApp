@@ -53,14 +53,14 @@ class Chapter_Commands_Submit extends Controller
         $db_name=$config->get('db','name');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('INSERT INTO questions (`user_id`,chapter,`status`,date_created) VALUES (?,?,?,now())');
-        $chapter="commands";
+        $sql=$link->prepare('INSERT INTO questions (`user_id`,chapter_id,`status`,date_created) VALUES (?,?,?,now())');
+        $chapter_id=1;
         $status="pending";
-        $sql->bind_param('iss', $_SESSION['user_id'],$chapter,$status);
+        $sql->bind_param('iis', $_SESSION['user_id'],$chapter_id,$status);
         $sql->execute();
 
-        $sql=$link->prepare('SELECT id FROM questions WHERE `user_id`=? AND chapter=? AND `status`=?');
-        $sql->bind_param('iss', $_SESSION['user_id'],$chapter,$status);
+        $sql=$link->prepare('SELECT id FROM questions WHERE `user_id`=? AND chapter_id=? AND `status`=?');
+        $sql->bind_param('iis', $_SESSION['user_id'],$chapter_id,$status);
         $sql->execute();
         $sql->bind_result($question_id);
         $sql->fetch();
