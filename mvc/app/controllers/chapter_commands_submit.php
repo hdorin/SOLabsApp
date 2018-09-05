@@ -74,7 +74,9 @@ class Chapter_Commands_Submit extends Controller
         $sql->bind_param('si', $status,$question_id);
         $sql->execute();
         $db_connection->close();
-
+        exec("echo  " . $command ." > /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$question_id . ".command");
+        exec("echo  " . $text ." > /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$question_id . ".text");
+        
     }
     public function process(){
         if(strlen($_POST["text_field"])>500 || strlen($_POST["code_field"])>150){
