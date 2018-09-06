@@ -47,6 +47,14 @@ class Chapter_1_Submit extends Controller
     }
     private function submit($text,$command){
         $this->execute($command);
+        $aux_output=$_SESSION["exec_msg"];
+        $this->execute($command);
+        if(strcmp($aux_output,$_SESSION["exec_msg"])!=0){
+            $exec_msg=$this->session_extract("exec_msg",true);
+            $this->reload("Code is not deterministic!");
+        }
+
+
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -72,8 +80,8 @@ class Chapter_1_Submit extends Controller
         $sql->execute();
         $sql->close();
         $db_connection->close();
-        exec("echo  " . $command ." > /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$question_id . ".command");
-        exec("echo  " . $text ." > /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$question_id . ".text");
+        exec('echo  "' . $command . '" > /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.code');
+        exec('echo  "' . $text . '" > /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text');
         
     }
     public function process(){

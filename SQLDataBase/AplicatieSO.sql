@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 06, 2018 at 05:53 PM
+-- Generation Time: Sep 06, 2018 at 07:00 PM
 -- Server version: 5.7.23-0ubuntu0.18.04.1
 -- PHP Version: 7.2.7-0ubuntu0.18.04.2
 
@@ -49,7 +49,7 @@ INSERT INTO `chapters` (`id`, `name`, `status`) VALUES
 
 CREATE TABLE `chapter_1` (
   `user_id` int(11) NOT NULL,
-  `right_answers` int(11) NOT NULL,
+  `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -58,8 +58,8 @@ CREATE TABLE `chapter_1` (
 --
 
 INSERT INTO `chapter_1` (`user_id`, `right_answers`, `last_question_id`) VALUES
-(4, 6, 4),
-(5, 1, 4),
+(4, 3, 9),
+(5, 0, 4),
 (6, 0, 2);
 
 -- --------------------------------------------------------
@@ -87,9 +87,8 @@ CREATE TABLE `questions` (
   `chapter_id` int(11) NOT NULL,
   `status` varchar(50) NOT NULL,
   `date_created` date NOT NULL,
-  `wrong_answers` int(11) NOT NULL DEFAULT '0',
-  `right_answerrs` int(11) NOT NULL DEFAULT '0',
-  `reports` int(11) NOT NULL DEFAULT '0',
+  `all_answers` int(11) NOT NULL DEFAULT '0',
+  `right_answers` int(11) NOT NULL DEFAULT '0',
   `validation` varchar(20) NOT NULL DEFAULT 'none'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -97,13 +96,13 @@ CREATE TABLE `questions` (
 -- Dumping data for table `questions`
 --
 
-INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `wrong_answers`, `right_answerrs`, `reports`, `validation`) VALUES
-(2, 4, 1, 'posted', '2018-09-06', 0, 0, 0, 'none'),
-(3, 4, 1, 'deleted', '2018-09-06', 0, 0, 0, 'none'),
-(4, 4, 1, 'posted', '2018-09-06', 0, 0, 0, 'none'),
-(5, 4, 2, 'posted', '2018-09-06', 0, 0, 0, 'valid'),
-(6, 6, 1, 'posted', '2018-09-06', 0, 0, 0, 'none'),
-(7, 4, 1, 'posted', '2018-09-06', 0, 0, 0, 'none');
+INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`) VALUES
+(8, 4, 1, 'posted', '2018-09-06', 3, 0, 'none'),
+(9, 4, 1, 'posted', '2018-09-06', 0, 0, 'none'),
+(10, 4, 1, 'posted', '2018-09-06', 2, 0, 'none'),
+(11, 4, 1, 'posted', '2018-09-06', 0, 0, 'none'),
+(12, 4, 1, 'posted', '2018-09-06', 0, 0, 'none'),
+(13, 4, 1, 'posted', '2018-09-06', 3, 3, 'none');
 
 -- --------------------------------------------------------
 
@@ -115,6 +114,7 @@ CREATE TABLE `reports` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
+  `text` varchar(500) NOT NULL,
   `date_created` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -168,7 +168,8 @@ ALTER TABLE `news`
 -- Indexes for table `questions`
 --
 ALTER TABLE `questions`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `reports`
@@ -203,7 +204,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `reports`

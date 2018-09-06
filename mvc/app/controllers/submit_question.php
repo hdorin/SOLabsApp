@@ -17,6 +17,6 @@ class Submit_Question extends Controller
         die;
     }
     public function process(){
-       echo "CE MAI FAICIIDSAD";
+
     }
 }
