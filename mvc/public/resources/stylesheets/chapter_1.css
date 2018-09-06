@@ -15,10 +15,10 @@
         font-size: 20px;
         text-decoration: none;
     }
-    .questionBox .questionInput{
+    .questionBox .questionCode{
         margin: 20px;
     }
-    .questionBox .questionInput .inputField{
+    .questionBox .questionCode .codeField{
         font-size: 15px;
         font-family: 'Courier New', Courier, monospace;
         width: 50%;
@@ -28,7 +28,7 @@
         margin-bottom: 0.3%;
         word-break: break-word;
     }
-    .questionBox .questionInput .textarea{
+    .questionBox .questionCode .textarea{
         width: 100%;
     }
     .resultBox{

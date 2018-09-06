@@ -15,7 +15,7 @@
 ?>
     <div class="chaptersBox">
         <div class="chapter">
-            <a href="chapter_commands">Commands</p>
+            <a href="chapter_1">Commands</p>
         </div>
     </div>
 </body>

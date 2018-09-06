@@ -1,5 +1,6 @@
 <?php
-class Chapter_Commands extends Controller
+//Chapter Commands
+class Chapter_1 extends Controller
 {
     private $question_text;
     private $get_question_input;
@@ -11,15 +12,51 @@ class Chapter_Commands extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
-        $this->view('home/chapter_commands',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_1',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
-        $new_url="../chapter_commands";
+        $new_url="../chapter_1";
         header('Location: '.$new_url);
         die;
     }
-    public function get_question(){
+    private function next_question(){
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        /*check if user is in the chapter_1 users list*/
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
+        $sql->bind_param('i', $_SESSION['user_id']);
+        $sql->execute();
+        $sql->bind_result($last_question_id);
+        $status=$sql->fetch();
+        $sql->close();
+        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=1');
+        $sql->execute();
+        $sql->bind_result($questions_nr);
+        $sql->fetch();
+        $sql->close();
+        do{/*The user won't get the same question twice in a row*/
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1');
+            $sql->execute();
+            $sql->bind_result($question_id);
+            
+            for($i=1;$i<=rand(1,$questions_nr);$i++){
+                $sql->fetch();
+            }
+            $sql->close();
+        }while($last_question_id==$question_id);
+        $sql=$link->prepare('UPDATE chapter_1 SET last_question_id=? WHERE `user_id`=?');        
+        $sql->bind_param('ii',$question_id,$_SESSION['user_id']);
+        $sql->execute();
+        $sql->close();
+        $db_connection->close();
+    }
+    private function get_question(){
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -102,21 +139,29 @@ class Chapter_Commands extends Controller
         }
         $ssh_connection->close();
     }
+    public function submit(){
+        $this->correct_answer();
+        $this->next_question();
+    }
     public function process(){
         if(strlen($_POST["code_field"])>150){
             $this->reload("Characters limit exceeded!");
         }
-        if(empty($command=$_POST["code_field"])==true){
+        if($_POST["action"]!="Skip" && empty($command=$_POST["code_field"])==true){
             $this->reload("You did not enter a command!");
         }
         $_SESSION["code_field"]=$_POST["code_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($command);
-        }else{
+        }else if($_POST["action"]=="Submit"){
             $this->submit($text,$command);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);       
+        }else{
+            $this->next_question();
+            $this->session_extract("code_field",true);
+            $this->session_extract("text_field",true);  
         }
-        header('Location: ../chapter_commands');
+        header('Location: ../chapter_1');
     }
 }

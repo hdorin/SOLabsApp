@@ -1,5 +1,6 @@
 <?php
-class Chapter_Commands_Submit extends Controller
+//Chapter Commands
+class Chapter_1_Submit extends Controller
 {
     public function index()
     {
@@ -8,11 +9,11 @@ class Chapter_Commands_Submit extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $this->view('home/chapter_commands_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_1_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
-        $new_url="../chapter_commands_submit";
+        $new_url="../chapter_1_submit";
         header('Location: '.$new_url);
         die;
     }
@@ -89,7 +90,7 @@ class Chapter_Commands_Submit extends Controller
         $_SESSION["text_field"]=$_POST["text_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($command);
-            header('Location: ../chapter_commands_submit');
+            header('Location: ../chapter_1_submit');
         }else{
             $this->submit($text,$command);
             $this->session_extract("code_field",true);
