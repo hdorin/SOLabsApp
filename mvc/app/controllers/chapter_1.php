@@ -35,13 +35,13 @@ class Chapter_1 extends Controller
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
         $sql->close();
-        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=1');
+        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=1 AND status="posted"');
         $sql->execute();
         $sql->bind_result($questions_nr);
         $sql->fetch();
         $sql->close();
         do{/*The user won't get the same question twice in a row*/
-            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1');
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1 AND status="posted"');
             $sql->execute();
             $sql->bind_result($question_id);
             
@@ -73,7 +73,7 @@ class Chapter_1 extends Controller
         $sql->close();
         
         if(!$status){/*insert user into chapter_1 table*/
-            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1');
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1 AND status="posted"');
             $sql->execute();
             $sql->bind_result($last_question_id);
             $sql->fetch();
@@ -84,6 +84,21 @@ class Chapter_1 extends Controller
             $sql->execute();
             $sql->close();
         }/*increment right_answers for user*/
+        
+        /*check if question is still posted*/
+        $sql=$link->prepare('SELECT user_id FROM questions WHERE chapter_id=1 AND status="posted" AND id=?');
+        $sql->bind_param('i', $last_question_id);
+        $sql->execute();
+        $sql->bind_result($aux_res);
+        if(!$sql->fetch()){/*in case the question is not available*/
+            $this->next_question();
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1 AND status="posted"');
+            $sql->execute();
+            $sql->bind_result($last_question_id);
+            $sql->fetch();
+            $sql->close();
+        }
+        $sql->close();
         $db_connection->close();
         exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
         $this->question_text=$question_text_aux[0];
@@ -139,7 +154,8 @@ class Chapter_1 extends Controller
         }
         $ssh_connection->close();
     }
-    public function submit(){
+    public function submit($command){
+        $this->execute($command);
         $this->correct_answer();
         $this->next_question();
     }
@@ -154,7 +170,7 @@ class Chapter_1 extends Controller
         if($_POST["action"]=="Execute"){
             $this->execute($command);
         }else if($_POST["action"]=="Submit"){
-            $this->submit($text,$command);
+            $this->submit($command);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);       
         }else{
