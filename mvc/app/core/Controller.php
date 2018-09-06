@@ -16,10 +16,12 @@ class Controller
             die('You are not logged in!');
         }
     }
-    public function session_extract($session_variable_name){
+    public function session_extract($session_variable_name,$unset=false){
         if(isset($_SESSION[$session_variable_name])==true){
             $variable=$_SESSION[$session_variable_name];
-            unset($_SESSION[$session_variable_name]);
+            if($unset==true){
+                unset($_SESSION[$session_variable_name]);
+            }
         }else{
             $variable="";
         }

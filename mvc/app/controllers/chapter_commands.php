@@ -1,28 +1,17 @@
 <?php
 class Chapter_Commands extends Controller
 {
+    private $question_text;
+    private $get_question_input;
     public function index()
     {
         $this->check_login();
-        if(isset($_SESSION["input_field"])){
-            unset($_SESSION["input_field"]);
-        }
-        if(isset($_SESSION["text_field"])){
-            unset($_SESSION["text_field"]);
-        }
-        if(isset($_SESSION["error_msg"])==false){
-            $error_msg="";
-        }else{
-            $error_msg=$_SESSION["error_msg"];
-        }
-        if(isset($_SESSION["exec_msg"])==false){
-            $exec_msg="";
-        }else{
-            $exec_msg=$_SESSION["exec_msg"];
-        }
-        unset($_SESSION['error_msg']);
-        unset($_SESSION['exec_msg']);
-        $this->view('home/chapter_commands',['error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->get_question();
+        
+        $error_msg=$this->session_extract("error_msg",true);
+        $exec_msg=$this->session_extract("exec_msg",true);
+        $code_field=$this->session_extract("code_field");
+        $this->view('home/chapter_commands',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -30,7 +19,7 @@ class Chapter_Commands extends Controller
         header('Location: '.$new_url);
         die;
     }
-    private function correct_answer(){ /*add question_id*/
+    public function get_question(){
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -39,42 +28,54 @@ class Chapter_Commands extends Controller
         /*check if user is in the chapter_1 users list*/
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
+        $sql->bind_param('i', $_SESSION['user_id']);
+        $sql->execute();
+        $sql->bind_result($last_question_id);
+        $status=$sql->fetch();
+        $sql->close();
+        
+        if(!$status){/*insert user into chapter_1 table*/
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1');
+            $sql->execute();
+            $sql->bind_result($last_question_id);
+            $sql->fetch();
+            $sql->close();
+            $sql=$link->prepare('INSERT INTO chapter_1 (`user_id`,right_answers,last_question_id) VALUES (?,?,?)');
+            $right_answers=0;
+            $sql->bind_param('sii', $_SESSION['user_id'],$right_answers,$last_question_id);
+            $sql->execute();
+            $sql->close();
+        }/*increment right_answers for user*/
+        $db_connection->close();
+        exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
+        $this->question_text=$question_text_aux[0];
+        
+    }
+    private function correct_answer(){ /*add question_id*/
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('SELECT right_answers FROM chapter_1 WHERE `user_id`=?');
         $sql->bind_param('i', $_SESSION['user_id']);
         $sql->execute();
         $sql->bind_result($right_answers);
-        $status=$sql->fetch();
-        $db_connection->close();
-
-        $db_connection=$this->model('DBConnection');
-        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        if(!$status){/*insert user into chapter_1 table*/
-            $sql=$link->prepare('INSERT INTO chapter_1 (`user_id`,right_answers) VALUES (?,?)');
-            $right_answers=1;
-            $sql->bind_param('si', $_SESSION['user_id'],$right_answers);
-            $sql->execute();
-        }else{/*increment right_answers for user*/
-            $sql=$link->prepare('UPDATE chapter_1 SET right_answers=? WHERE `user_id`=?');        
-            $right_answers=$right_answers+1;
-            $sql->bind_param('ii',$right_answers,$_SESSION['user_id']);
-            $sql->execute();
-        }
+        $sql->fetch();
+        $sql->close();
+        /*increment right_answers for user*/
+        $sql=$link->prepare('UPDATE chapter_1 SET right_answers=? WHERE `user_id`=?');        
+        $right_answers=$right_answers+1;
+        $sql->bind_param('ii',$right_answers,$_SESSION['user_id']);
+        $sql->execute();
+        $sql->close();
         $db_connection->close();
     }
-    public function process(){
-        if(strlen($_POST["input_field"])>150 ){
-            $this->reload("Characters limit exceeded!");
-        }
-        if(empty($command=$_POST["input_field"])==true){
-            $this->reload("You did not enter a command!");
-        }
-        if($_POST["action"]=="Execute"){
-            $_SESSION["input_field"]=$_POST["input_field"];
-        }else{
-            if(isset($_SESSION["input_field"])){
-                unset($_SESSION["input_field"]);
-            }
-        }
+    private function execute($command){
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
@@ -94,10 +95,28 @@ class Chapter_Commands extends Controller
         try{    
             $_SESSION["exec_msg"]=$ssh_connection->execute($command,$ssh_timeout_seconds);
         }catch(Exception $e){
+            if(empty($e->getMessage())==true){
+                $this->reload("Output cannot be empty!");
+            }
             $this->reload($e->getMessage());
         }
-        
         $ssh_connection->close();
+    }
+    public function process(){
+        if(strlen($_POST["code_field"])>150){
+            $this->reload("Characters limit exceeded!");
+        }
+        if(empty($command=$_POST["code_field"])==true){
+            $this->reload("You did not enter a command!");
+        }
+        $_SESSION["code_field"]=$_POST["code_field"];
+        if($_POST["action"]=="Execute"){
+            $this->execute($command);
+        }else{
+            $this->submit($text,$command);
+            $this->session_extract("code_field",true);
+            $this->session_extract("text_field",true);       
+        }
         header('Location: ../chapter_commands');
     }
 }

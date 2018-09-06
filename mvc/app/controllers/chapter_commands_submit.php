@@ -4,8 +4,8 @@ class Chapter_Commands_Submit extends Controller
     public function index()
     {
         $this->check_login();
-        $error_msg=$this->session_extract("error_msg");
-        $exec_msg=$this->session_extract("exec_msg");
+        $error_msg=$this->session_extract("error_msg",true);
+        $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
         $this->view('home/chapter_commands_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
@@ -58,21 +58,18 @@ class Chapter_Commands_Submit extends Controller
         $status="pending";
         $sql->bind_param('iis', $_SESSION['user_id'],$chapter_id,$status);
         $sql->execute();
-
+        $sql->close();
         $sql=$link->prepare('SELECT id FROM questions WHERE `user_id`=? AND chapter_id=? AND `status`=?');
         $sql->bind_param('iis', $_SESSION['user_id'],$chapter_id,$status);
         $sql->execute();
         $sql->bind_result($question_id);
         $sql->fetch();
-        $db_connection->close();
-        
-        /*for some reason, the third prepare statement doesn't work*/
-        $db_connection=$this->model('DBConnection');
-        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql->close();
         $sql=$link->prepare('UPDATE questions SET `status`=? WHERE id=?');        
         $status="posted";
         $sql->bind_param('si', $status,$question_id);
         $sql->execute();
+        $sql->close();
         $db_connection->close();
         exec("echo  " . $command ." > /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$question_id . ".command");
         exec("echo  " . $text ." > /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$question_id . ".text");
@@ -92,17 +89,12 @@ class Chapter_Commands_Submit extends Controller
         $_SESSION["text_field"]=$_POST["text_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($command);
+            header('Location: ../chapter_commands_submit');
         }else{
             $this->submit($text,$command);
-            if(isset($_SESSION["code_field"])){
-                unset($_SESSION["code_field"]);
-            }
-            if(isset($_SESSION["text_field"])){
-                unset($_SESSION["text_field"]);
-            }
-            
+            $this->session_extract("code_field",true);
+            $this->session_extract("text_field",true);
+            header('Location: ../submit_question');
         }
-       
-        header('Location: ../submit_question');
     }
 }

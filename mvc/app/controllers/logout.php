@@ -3,8 +3,8 @@ class Logout extends Controller
 {
     public function index()
     {
-        unset($_SESSION["user"]);
-        unset($_SESSION["pass"]);
+        $this->session_extract("user",true);
+        $this->session_extract("pass",true);
         header('Location: ../public');/*redict to home controller after login*/
     }
     

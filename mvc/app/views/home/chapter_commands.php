@@ -12,11 +12,11 @@
     ?>
     <div class="questionBox">
         <div class="questionText">
-            <p>Bla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla blaBla bla</p>
+            <p><?php echo $data['question_text']?></p>
         </div>
         <form class="questionInput" action="chapter_commands/process" method="POST">
         <div class="textarea">
-            <textarea class="inputField" name="input_field" type="text" rows="4" cols="50" required maxlength="150"><?php echo $_SESSION['input_field']; ?></textarea>
+            <textarea class="inputField" name="code_field" type="text" rows="4" cols="50" required maxlength="150"><?php echo $data['code_field']; ?></textarea>
         </div>
             
             
