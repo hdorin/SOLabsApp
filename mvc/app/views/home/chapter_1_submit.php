@@ -24,9 +24,7 @@
         <div class="questionCode">
             <textarea class="codeField" name="code_field" type="text" rows="4" cols="50" required maxlength="150"><?php echo $data['code_field']; ?></textarea>
         </div>
-            
-            
-            <input class="btnSubmit" name="action" type="submit" value="Execute" />
+            <input class="btnExecute" name="action" type="submit" value="Execute" />
             <input class="btnSubmit" name="action" type="submit" value="Submit" />
         </form> 
     </div>

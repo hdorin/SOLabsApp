@@ -44,6 +44,15 @@
         word-break: break-word;
         
     }
+    .questionBox .submitQuestion .btnSubmit{
+        color: #3D4597;
+        font-weight: 500;
+    }
+    .questionBox .submitQuestion .btnExecute{
+        color: green;
+        font-weight: 500;
+        
+    }
     .questionBox .submitQuestion .textarea{
         width: 100%;
         

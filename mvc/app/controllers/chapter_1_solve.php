@@ -1,6 +1,6 @@
 <?php
 //Chapter Commands
-class Chapter_1 extends Controller
+class Chapter_1_Solve extends Controller
 {
     private $question_text;
     private $get_question_input;
@@ -12,11 +12,11 @@ class Chapter_1 extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
-        $this->view('home/chapter_1',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_1_solve',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
-        $new_url="../chapter_1";
+        $new_url="../chapter_1_solve";
         header('Location: '.$new_url);
         die;
     }
@@ -98,7 +98,7 @@ class Chapter_1 extends Controller
             $sql_1->fetch();
             $sql_1->close();
         }
-        $sql->close();
+        //$sql->close();
         $db_connection->close();
         exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
         $this->question_text=$question_text_aux[0];
@@ -153,8 +153,10 @@ class Chapter_1 extends Controller
         }
         $ssh_connection->close();
     }
-    public function submit($command){
-        $this->execute($command);
+    public function submit($command,$skip=false){
+        if($skip==false){
+            $this->execute($command);
+        }
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -169,31 +171,44 @@ class Chapter_1 extends Controller
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
         $sql->close();
-        
-        exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
-        $question_code=$question_code_aux[0];
-        $this->execute($question_code);
-        $aux_output=$_SESSION["exec_msg"];
-        $this->execute($command);
-        /*increment answers for question*/
         $sql=$link->prepare('SELECT all_answers,right_answers FROM questions WHERE `id`=?');
         $sql->bind_param('i', $last_question_id);
         $sql->execute();
         $sql->bind_result($all_answers,$right_answers);
         $sql->fetch();
         $sql->close();
-        if(strcmp($aux_output,$_SESSION["exec_msg"])==0){
-            $this->correct_answer();
-            $right_answers=$right_answers+1;
+        if($skip==false){
+            exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
+            $question_code=$question_code_aux[0];
+            $this->execute($question_code);
+            $aux_output=$_SESSION["exec_msg"];
+            $this->execute($command);
+            if( strcmp($aux_output,$_SESSION["exec_msg"])==0){
+                $this->correct_answer();
+                $right_answers=$right_answers+1;
+                $_SESSION['result_correct']="You answerd correctly!";
+            }else{
+                $_SESSION['result_incorrect']="You answerd incorrectly!";
+            }
         }
+        /*increment answers for question*/
         $sql=$link->prepare('UPDATE questions SET all_answers=?,right_answers=? WHERE `id`=?');        
         $all_answers=$all_answers+1;
         $sql->bind_param('iii',$all_answers,$right_answers,$last_question_id);
         $sql->execute();
         $sql->close();
         $db_connection->close();
-        $this->next_question();
-        $db_connection->close();
+        
+        /*prepare info for result*/
+        $this->get_question();
+        $_SESSION['question_id']=$last_question_id;
+        $_SESSION['question_text']=$this->question_text;
+        $_SESSION['user_command']=$command;
+        $_SESSION['user_output']=$_SESSION["exec_msg"];
+        $_SESSION['author_command']=$question_code;
+        $_SESSION['author_output']=$aux_output;
+        
+        $this->next_question();  
     }
     public function process(){
         if(strlen($_POST["code_field"])>150){
@@ -205,19 +220,22 @@ class Chapter_1 extends Controller
         $_SESSION["code_field"]=$_POST["code_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($command);
+            header('Location: ../chapter_1_solve'); 
         }else if($_POST["action"]=="Submit"){
             $this->submit($command);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
-            $this->session_extract("exec_msg",true);       
+            $this->session_extract("exec_msg",true);
+            header('Location: ../chapter_1_result');       
         }else{
-            $this->next_question();
+            $this->submit("",true);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
-            $this->session_extract("exec_msg",true);    
+            $this->session_extract("exec_msg",true);  
+            header('Location: ../chapter_1_solve');  
         }
-        header('Location: ../chapter_1');
+        
     }
 }

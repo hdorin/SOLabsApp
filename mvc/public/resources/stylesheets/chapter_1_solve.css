@@ -28,6 +28,19 @@
         margin-bottom: 0.3%;
         word-break: break-word;
     }
+    .questionBox .questionCode .btnSubmit{
+        color: #3D4597;
+        font-weight: 500;
+    }
+    .questionBox .questionCode .btnExecute{
+        color: green;
+        font-weight: 500;
+    }
+    .questionBox .questionCode .btnSkip{
+        color: red;
+        font-weight: 500;
+    }
+
     .questionBox .questionCode .textarea{
         width: 100%;
     }
