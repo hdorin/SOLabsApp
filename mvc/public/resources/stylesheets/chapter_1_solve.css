@@ -16,7 +16,7 @@
         text-decoration: none;
     }
     .questionBox .questionCode{
-        margin: 20px;
+        margin: 0.5%;
     }
     .questionBox .questionCode .codeField{
         font-size: 15px;
@@ -25,20 +25,26 @@
         padding: 0.3%;
         margin-left: auto;
         margin-right: auto;
-        margin-bottom: 0.3%;
+        margin-bottom: 1%;
         word-break: break-word;
     }
     .questionBox .questionCode .btnSubmit{
+        margin: 0.2%;
         color: #3D4597;
         font-weight: 500;
+        box-shadow: 0 0px 2px 0 #3D4597, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
     }
     .questionBox .questionCode .btnExecute{
+        margin: 0.2%;
         color: green;
         font-weight: 500;
+        box-shadow: 0 0px 2px 0 green, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
     }
     .questionBox .questionCode .btnSkip{
+        margin: 0.2%;
         color: red;
         font-weight: 500;
+        box-shadow: 0 0px 2px 0 red, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
     }
 
     .questionBox .questionCode .textarea{

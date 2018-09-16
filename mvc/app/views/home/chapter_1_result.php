@@ -21,42 +21,45 @@
         <div class="questionText">
             <p><?php echo $data['question_text']; ?></p>
         </div>
-        <div class="userbox">
-            <div class="questionCodeTitle">
-                <h1>Your command</h1>
+        <div class="outputs">
+            <div class="userbox">
+                <div class="questionCodeTitle">
+                    <h1>Your command</h1>
+                </div>
+                <div class="questionCode">
+                    <p><?php echo $data['user_command']; ?></p>
+                </div>
+                <div class="questionOutputTitle">
+                    <h1>Output</h1>
+                </div>
+                <div class="questionCode">
+                    <p><?php echo $data['user_output']; ?></p>
+                </div>
             </div>
-            <div class="questionCode">
-                <p><?php echo $data['user_command']; ?></p>
+            <div class="authorBox">
+                <div class="questionCodeTitle">
+                    <h1>Author's command</h1>
+                </div>
+                <div class="questionCode">
+                    <p><?php if(empty($data['result_correct'])) {
+                                echo "Hidden";
+                            }else{
+                                echo $data['author_command'];
+                            }
+                    ?></p>
+                </div>
+                <div class="questionOutputTitle">
+                    <h1>Output</h1>
+                </div>
+                    <div class="questionOutput">
+                    <p><?php echo $data['author_output']; ?></p>
+                </div>
             </div>
-            <div class="questionOutputTitle">
-                <h1>Output</h1>
-            </div>
-            <div class="questionCode">
-                <p><?php echo $data['user_output']; ?></p>
-            </div>
-        </div>
-        <div class="authorBox">
-            <div class="questionCodeTitle">
-                <h1>Author's command</h1>
-            </div>
-            <div class="questionCode">
-                <p><?php if(empty($data['result_correct'])) {
-                            echo "Hidden";
-                        }else{
-                            echo $data['author_command'];
-                        }
-                ?></p>
-            </div>
-            <div class="questionOutputTitle">
-                <h1>Output</h1>
-            </div>
-                <div class="questionOutput">
-                <p><?php echo $data['author_output']; ?></p>
-            </div>
-        </div>
+        </div >
         <form class="resultActions" action="chapter_1_result/process" method="POST">
-            <input class="btnContinue" name="action" type="submit" value="Continue" />
+            <input class="reportText" name="action" type="text" maxlength="40" onfocus="this.value=''"  value="Enter report message"/>    
             <input class="btnReport" name="action" type="submit" value="Report" />
+            <input class="btnContinue" name="action" type="submit" value="Continue" formnovalidate/>
         </form> 
     </div>
 </body>

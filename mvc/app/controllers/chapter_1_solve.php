@@ -183,7 +183,7 @@ class Chapter_1_Solve extends Controller
             $this->execute($question_code);
             $aux_output=$_SESSION["exec_msg"];
             $this->execute($command);
-            if( strcmp($aux_output,$_SESSION["exec_msg"])==0){
+            if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($question_code,$command)==0){
                 $this->correct_answer();
                 $right_answers=$right_answers+1;
                 $_SESSION['result_correct']="You answerd correctly!";
@@ -199,14 +199,15 @@ class Chapter_1_Solve extends Controller
         $sql->close();
         $db_connection->close();
         
-        /*prepare info for result*/
-        $this->get_question();
-        $_SESSION['question_id']=$last_question_id;
-        $_SESSION['question_text']=$this->question_text;
-        $_SESSION['user_command']=$command;
-        $_SESSION['user_output']=$_SESSION["exec_msg"];
-        $_SESSION['author_command']=$question_code;
-        $_SESSION['author_output']=$aux_output;
+        if($skip==false){/*prepare info for result*/
+            $this->get_question();
+            $_SESSION['question_id']=$last_question_id;
+            $_SESSION['question_text']=$this->question_text;
+            $_SESSION['user_command']=$command;
+            $_SESSION['user_output']=$_SESSION["exec_msg"];
+            $_SESSION['author_command']=$question_code;
+            $_SESSION['author_output']=$aux_output;
+        }
         
         $this->next_question();  
     }
