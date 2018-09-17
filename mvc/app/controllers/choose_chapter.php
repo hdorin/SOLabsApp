@@ -47,7 +47,7 @@ class Choose_Chapter extends Controller
         
         while($sql->fetch()){
                 $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
-                                                            <a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
+                                                            <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
                                                             <p>Something here</p>
                                                         </div>";
             $this->chapters_nr=$this->chapters_nr+1;
