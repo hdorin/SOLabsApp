@@ -46,10 +46,10 @@ class Login extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT id,hash_pass,ssh_pass FROM users WHERE `user_name`=?');
+        $sql=$link->prepare('SELECT id,is_admin,hash_pass,ssh_pass FROM users WHERE `user_name`=?');
         $sql->bind_param('s', $user);
         $sql->execute();
-        $sql->bind_result($user_id,$hash_pass,$ssh_pass);
+        $sql->bind_result($user_id,$is_admin,$hash_pass,$ssh_pass);
         if(!$sql->fetch()){/*If not, create one*/
             $external_ssh_check=$config->get('external_ssh','check');
             if($external_ssh_check=="true"){/*false = does not ckeck the external ssh connection*/
@@ -92,10 +92,10 @@ class Login extends Controller
             $sql->execute();
             $sql->close();
 
-            $sql=$link->prepare('SELECT id FROM users WHERE `user_name`=?');
+            $sql=$link->prepare('SELECT id,is_admin FROM users WHERE `user_name`=?');
             $sql->bind_param('s', $user);
             $sql->execute();
-            $sql->bind_result($user_id);
+            $sql->bind_result($user_id,$is_admin);
             $sql->fetch();
             $sql->close();
             
@@ -113,7 +113,7 @@ class Login extends Controller
             
             if(!$ssh_connection->connect($user,$ssh_pass)){
                 $ssh_connection->close();
-                $this->reload("Invalid username/passworddd! |" . $user . "|".$ssh_pass);
+                $this->reload("Invalid SSH username/password!");
             }
         }catch(Exception $e){
             $this->reload($e->getMessage());
@@ -122,6 +122,7 @@ class Login extends Controller
         $_SESSION['user_id']=$user_id;
         $_SESSION['user']=$user;
         $_SESSION['pass']=$ssh_pass;
+        $_SESSION['is_admin']=$is_admin;
         header('Location: ../');/*redict to home controller after login*/
     }
 }

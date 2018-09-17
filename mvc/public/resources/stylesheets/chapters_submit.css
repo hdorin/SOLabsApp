@@ -16,7 +16,9 @@ margin: 0%;
             box-sizing: border-box;
             border-radius: 6px;
             box-shadow: 0 0px 2px 0 #1d67f0, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
-        
+            float: left;
+            margin-top: 10%;
+            margin-right: 5%;
         }
         .chaptersBox .chapter a{
             font-size: 20px;

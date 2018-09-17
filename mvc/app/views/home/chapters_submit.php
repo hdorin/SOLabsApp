@@ -14,9 +14,11 @@
     include "header.php"
 ?>
     <div class="chaptersBox">
-        <div class="chapter">
-            <a href="chapter_1_submit">Commands</a>
-        </div>
+        <?php 
+            for($i=0;$i<$data['chapters_nr'];$i++){
+                echo $data['chapters'][$i];
+            }
+        ?>
     </div>
 </body>
 </html>
