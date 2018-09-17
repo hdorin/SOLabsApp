@@ -10,7 +10,7 @@ class SSHConnection
         $this->port=$port;
     }
     public function create_user($user,$pass,$newuser_script_path,$quota_limit){
-
+        //die('cd ' . $newuser_script_path  . '; ' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit . '');
         $stream=ssh2_exec($this->connection, 'cd ' . $newuser_script_path  . '; ' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit . '');
     }
     public function connect($user,$pass){
