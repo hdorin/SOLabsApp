@@ -3,6 +3,7 @@ class Submit_Question extends Controller
 {
     private $chapters;
     private $chapters_nr;
+    private $answers_left;
     public function index()
     {
         $this->check_login();
@@ -12,7 +13,7 @@ class Submit_Question extends Controller
         $this->session_extract("code_field",true);
 
         $this->get_chapters();
-        $this->view('home/chapters_submit',['error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
+        $this->view('home/chapters',['error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
     }
     private function can_submit_quesion($chapter_id){
         if($_SESSION['is_admin']==true){
@@ -54,9 +55,12 @@ class Submit_Question extends Controller
             $right_answers=$right_answers-$diff;
             $all_questions=$all_questions-1;
         }
-        if($right_answers>0){
+        
+        if($right_answers>=0){
+            $this->answers_left=$right_answers;
             return true;
         }else{
+            $this->answers_left=(-1)*$right_answers;
             return false;
         }
     }
@@ -77,16 +81,16 @@ class Submit_Question extends Controller
         while($sql->fetch()){
             if($this->can_submit_quesion($chapter_id)){  
                 $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
-                                            <a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
-                                        </div>";
+                                                            <a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
+                                                            <p>Answers extra: " . $this->answers_left . "</p>
+                                                        </div>";
             }else{
                 $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
-                                            <a>" . $chapter_name . "</a>
-                                        </div>";
+                                                            <a>" . $chapter_name . "</a>
+                                                            <p>Answers left: " . $this->answers_left . "</p>
+                                                        </div>";
             }
             $this->chapters_nr=$this->chapters_nr+1;
-            
-
         }
         $sql->close();
     }

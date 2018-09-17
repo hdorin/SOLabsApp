@@ -60,7 +60,7 @@ class Chapter_1_Submit extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $chapter_name_aux="chapter_1";
+        $chapter_name_aux="chapter_".(string)$chapter_id;
         $sql=$link->prepare("SELECT right_answers FROM " . $chapter_name_aux . " WHERE `user_id`=?");
         $sql->bind_param('s',$_SESSION['user_id']);
         $sql->execute();
