@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Chapters</title>
+    <title>Questions</title>
 
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
     <link rel="stylesheet" href="resources/stylesheets/questions.css" type="text/css" />

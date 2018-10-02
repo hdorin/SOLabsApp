@@ -27,21 +27,25 @@ class View_Questions extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare("SELECT id,`chapter_id`,all_answers,right_answers,`validation` FROM questions WHERE `user_id`=? AND `status`='posted'");
-        $sql->bind_param('i',$_SESSION['user_id']);
+        $ceva="SELECT id,`chapter_id`,all_answers,right_answers,`validation`,date_created FROM questions";
+        $sql=$link->prepare($ceva);
         $sql->execute();
-        $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation);
+        $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation,$date_created);
         $this->questions_nr=0;
         
         while($sql->fetch()){
             exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
             $question_text=$question_text_aux[$this->questions_nr];
             $this->questions[$this->questions_nr]=   "<a class='question' href='chapter_" . (string)$chapter_id . "_view_question/" . $question_id . "'>
-                                                                <p >" . $question_text . "</p>
+                                                                <p class='text'>" . $question_text . "</p>
+                                                                <p class='details'> Times Answered: " . $right_answers . " / " .  $all_answers . "</p>
+                                                                <p class='details'> Validation: " . $validation . "</p>
+                                                                <p class='details'> Date submitted: " . $date_created . "</p>
                                                         </a>";
             $this->questions_nr=$this->questions_nr+1;
         }
         $sql->close();
+    
     }
     private function get_questions_admin(){
         $config=$this->model('JSONConfig');
@@ -52,10 +56,10 @@ class View_Questions extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $ceva="SELECT id,`chapter_id`,all_answers,right_answers,`validation` FROM questions";
+        $ceva="SELECT id,`chapter_id`,all_answers,right_answers,`validation`,date_created FROM questions";
         $sql=$link->prepare($ceva);
         $sql->execute();
-        $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation);
+        $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation,$date_created);
         $this->questions_nr=0;
         
         while($sql->fetch()){
@@ -63,10 +67,13 @@ class View_Questions extends Controller
             $question_text=$question_text_aux[$this->questions_nr];
             $this->questions[$this->questions_nr]=   "<a class='question' href='chapter_" . (string)$chapter_id . "_view_question/" . $question_id . "'>
                                                                 <p class='text'>" . $question_text . "</p>
-                                                                <p class='details'> Validation:" . $validation . "</p>
+                                                                <p class='details'> Times Answered: " . $right_answers . " / " .  $all_answers . "</p>
+                                                                <p class='details'> Validation: " . $validation . "</p>
+                                                                <p class='details'> Date submitted: " . $date_created . "</p>
                                                         </a>";
             $this->questions_nr=$this->questions_nr+1;
         }
         $sql->close();
+    
     }
 }
