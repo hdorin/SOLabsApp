@@ -29,7 +29,7 @@ class Submit_Question extends Controller
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)$chapter_id;
         $sql=$link->prepare("SELECT right_answers FROM " . $chapter_name_aux . " WHERE `user_id`=?");
-        $sql->bind_param('s',$_SESSION['user_id']);
+        $sql->bind_param('i',$_SESSION['user_id']);
         $sql->execute();
         
         $sql->bind_result($right_answers);
@@ -37,7 +37,7 @@ class Submit_Question extends Controller
         $sql->close();
 
         $sql=$link->prepare("SELECT COUNT(id) FROM questions WHERE `user_id`=? AND chapter_id=?");
-        $sql->bind_param('ss',$_SESSION['user_id'],$chapter_id);
+        $sql->bind_param('ii',$_SESSION['user_id'],$chapter_id);
         $sql->execute();
         $sql->bind_result($all_questions);
         $sql->fetch();
@@ -79,7 +79,12 @@ class Submit_Question extends Controller
         $this->chapters_nr=0;
         
         while($sql->fetch()){
-            if($this->can_submit_quesion($chapter_id)){  
+            if($_SESSION['is_admin']==true){
+                $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
+                                                        <a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
+                                                        <p>No need to answer questions</p>
+                                                        </div>";
+            }else if($this->can_submit_quesion($chapter_id)){  
                 $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
                                                             <a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
                                                             <p>Answers extra: " . $this->answers_left . "</p>

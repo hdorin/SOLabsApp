@@ -1,9 +1,10 @@
 <?php
 //Chapter Commands
-class Chapter_1_Submit extends Controller
+class Chapter_1_View_Question extends Controller
 {
-    public function index()
-    {
+    public function index($data='')
+    {   
+        die ($data);
         $this->check_login();
         if($this->can_submit_quesion(1)==false){
             die("You cannot access this!");
