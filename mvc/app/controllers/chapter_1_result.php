@@ -34,11 +34,12 @@ class Chapter_1_Result extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('INSERT INTO reports (`user_id`,question_id,`text`,date_created) VALUES (?,?,?,now())');
-        $sql->bind_param('iis', $_SESSION['user_id'],$question_id,$message);
+        $sql->bind_param('iis', $this->session_user_id,$question_id,$message);
         $sql->execute();
         $sql->close();
     }
     public function process(){
+        $this->check_login();
         if(strlen($_POST["text_field"])>50){
             $this->reload("Characters limit exceeded!");
         }

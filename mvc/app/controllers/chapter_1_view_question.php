@@ -46,12 +46,12 @@ class Chapter_1_View_Question extends Controller
         if($chapter_id!=self::CHAPTER_ID){
             return false;
         }
-        if($_SESSION['is_admin']==false && $_SESSION["user_id"]!=$user_id){
+        if($this->session_is_admin==false && $this->session_user_id!=$user_id){
             return false;
         }
         return true;
     }
-    public function get_question($question_id){
+    private function get_question($question_id){
         
     }
 }

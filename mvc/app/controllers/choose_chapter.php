@@ -23,6 +23,7 @@ class Choose_Chapter extends Controller
         $this->session_extract('result_incorrect',true);
 
         $this->get_chapters();
+        
         $this->view('home/chapters',['error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
     }
     private function reload($data=''){
@@ -53,8 +54,5 @@ class Choose_Chapter extends Controller
             $this->chapters_nr=$this->chapters_nr+1;
         }
         $sql->close();
-    }
-    public function process(){
-       
     }
 }

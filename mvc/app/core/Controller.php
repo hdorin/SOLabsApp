@@ -2,21 +2,32 @@
 
 class Controller
 {
-    public function model($model)
+    protected $session_user_id;
+    protected $session_user;
+    protected $session_pass;
+    protected $session_is_admin;
+    protected function model($model)
     {
         require_once '../app/models/' . $model . '.php';
         return new $model();
     }
-    public function view($view, $data = false)
+    protected function view($view, $data = false)
     {
         require_once '../app/views/' . $view . '.php';
     }
-    public function check_login(){
+    protected function check_login(){
+        if(isset($_SESSION['user'])==false){
+            die('You are not logged in!');
+        }
+        $this->session_user_id=$_SESSION['user_id'];
+        $this->session_user=$_SESSION['user'];
+        $this->session_pass=$_SESSION['pass'];
+        $this->session_is_admin=$_SESSION['is_admin'];
         if(isset($_SESSION['user'])==false){
             die('You are not logged in!');
         }
     }
-    public function session_extract($session_variable_name,$unset=false){
+    protected function session_extract($session_variable_name,$unset=false){
         if(isset($_SESSION[$session_variable_name])==true){
             $variable=$_SESSION[$session_variable_name];
             if($unset==true){

@@ -5,10 +5,9 @@ class Chapter_1_Solve extends Controller
     private $question_text;
     private $get_question_input;
     public function index()
-    {
+    {   
         $this->check_login();
         $this->get_question();
-        
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
@@ -30,7 +29,7 @@ class Chapter_1_Solve extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
-        $sql->bind_param('i', $_SESSION['user_id']);
+        $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
@@ -51,7 +50,7 @@ class Chapter_1_Solve extends Controller
             $sql->close();
         }while($last_question_id==$question_id);
         $sql=$link->prepare('UPDATE chapter_1 SET last_question_id=? WHERE `user_id`=?');        
-        $sql->bind_param('ii',$question_id,$_SESSION['user_id']);
+        $sql->bind_param('ii',$question_id,$this->session_user_id);
         $sql->execute();
         $sql->close();
         $db_connection->close();
@@ -66,7 +65,7 @@ class Chapter_1_Solve extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
-        $sql->bind_param('i', $_SESSION['user_id']);
+        $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
@@ -80,7 +79,7 @@ class Chapter_1_Solve extends Controller
             $sql->close();
             $sql=$link->prepare('INSERT INTO chapter_1 (`user_id`,right_answers,last_question_id) VALUES (?,?,?)');
             $right_answers=0;
-            $sql->bind_param('sii', $_SESSION['user_id'],$right_answers,$last_question_id);
+            $sql->bind_param('sii', $this->session_user_id,$right_answers,$last_question_id);
             $sql->execute();
             $sql->close();
         }/*increment right_answers for user*/
@@ -113,7 +112,7 @@ class Chapter_1_Solve extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('SELECT right_answers FROM chapter_1 WHERE `user_id`=?');
-        $sql->bind_param('i', $_SESSION['user_id']);
+        $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($right_answers);
         $sql->fetch();
@@ -121,7 +120,7 @@ class Chapter_1_Solve extends Controller
         /*increment right_answers for user*/
         $sql=$link->prepare('UPDATE chapter_1 SET right_answers=? WHERE `user_id`=?');        
         $right_answers=$right_answers+1;
-        $sql->bind_param('ii',$right_answers,$_SESSION['user_id']);
+        $sql->bind_param('ii',$right_answers,$this->session_user_id);
         $sql->execute();
         $sql->close();
         $db_connection->close();
@@ -131,8 +130,8 @@ class Chapter_1_Solve extends Controller
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
         $ssh_timeout_seconds=$config->get('ssh','timeout_seconds');
-        $ssh_user=$_SESSION['user'];
-        $ssh_pass=$_SESSION['pass'];
+        $ssh_user=$this->session_user;
+        $ssh_pass=$this->session_pass;
         $ssh_connection=$this->model('SSHConnection');
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
@@ -166,7 +165,7 @@ class Chapter_1_Solve extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
-        $sql->bind_param('i', $_SESSION['user_id']);
+        $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
@@ -212,6 +211,7 @@ class Chapter_1_Solve extends Controller
         $this->next_question();  
     }
     public function process(){
+        $this->check_login();
         if(strlen($_POST["code_field"])>150){
             $this->reload("Characters limit exceeded!");
         }

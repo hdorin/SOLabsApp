@@ -25,8 +25,8 @@ class Chapter_1_Submit extends Controller
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
         $ssh_timeout_seconds=$config->get('ssh','timeout_seconds');
-        $ssh_user=$_SESSION['user'];
-        $ssh_pass=$_SESSION['pass'];
+        $ssh_user=$this->session_user;
+        $ssh_pass=$this->session_pass;
         $ssh_connection=$this->model('SSHConnection');
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
@@ -49,7 +49,7 @@ class Chapter_1_Submit extends Controller
         $ssh_connection->close();
     }
     private function can_submit_quesion($chapter_id){
-        if($_SESSION['is_admin']==true){
+        if($this->session_is_admin==true){
             return true;
         }
         $config=$this->model('JSONConfig');
@@ -62,7 +62,7 @@ class Chapter_1_Submit extends Controller
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)$chapter_id;
         $sql=$link->prepare("SELECT right_answers FROM " . $chapter_name_aux . " WHERE `user_id`=?");
-        $sql->bind_param('i',$_SESSION['user_id']);
+        $sql->bind_param('i',$this->session_user_id);
         $sql->execute();
         
         $sql->bind_result($right_answers);
@@ -70,7 +70,7 @@ class Chapter_1_Submit extends Controller
         $sql->close();
 
         $sql=$link->prepare("SELECT COUNT(id) FROM questions WHERE `user_id`=? AND chapter_id=?");
-        $sql->bind_param('ii',$_SESSION['user_id'],$chapter_id);
+        $sql->bind_param('ii',$this->session_user_id,$chapter_id);
         $sql->execute();
         $sql->bind_result($all_questions);
         $sql->fetch();
@@ -114,11 +114,11 @@ class Chapter_1_Submit extends Controller
         $sql=$link->prepare('INSERT INTO questions (`user_id`,chapter_id,`status`,date_created) VALUES (?,?,?,now())');
         $chapter_id=1;
         $status="pending";
-        $sql->bind_param('iis', $_SESSION['user_id'],$chapter_id,$status);
+        $sql->bind_param('iis', $this->session_user_id,$chapter_id,$status);
         $sql->execute();
         $sql->close();
         $sql=$link->prepare('SELECT id FROM questions WHERE `user_id`=? AND chapter_id=? AND `status`=?');
-        $sql->bind_param('iis', $_SESSION['user_id'],$chapter_id,$status);
+        $sql->bind_param('iis', $this->session_user_id,$chapter_id,$status);
         $sql->execute();
         $sql->bind_result($question_id);
         $sql->fetch();
@@ -134,6 +134,7 @@ class Chapter_1_Submit extends Controller
         
     }
     public function process(){
+        $this->check_login();
         if(strlen($_POST["text_field"])>500 || strlen($_POST["code_field"])>150){
             $this->reload("Characters limit exceeded!");
         }
