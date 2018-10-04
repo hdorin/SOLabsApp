@@ -57,7 +57,7 @@
             </div>
         </div >
         <form class="resultActions" action="chapter_1_result/process" method="POST">
-            <input class="reportText" name="text_field" type="text" maxlength="50" onfocus="this.value=''"  value="Enter report message"/>    
+            <input class="reportText" name="text_field" type="text" maxlength="100" onfocus="this.value=''"  value="Enter report message"/>    
             <input class="btnReport" name="action" type="submit" value="Report" />
             <input class="btnContinue" name="action" type="submit" value="Continue" formnovalidate/>
         </form> 

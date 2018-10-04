@@ -3,7 +3,8 @@
 class Chapter_1_Solve extends Controller
 {
     private $question_text;
-    private $get_question_input;
+    private $get_question_i0nput;
+    const CHAPTER_ID=1;
     public function index()
     {   
         $this->check_login();
@@ -11,15 +12,16 @@ class Chapter_1_Solve extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
-        $this->view('home/chapter_1_solve',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
-        $new_url="../chapter_1_solve";
+        $new_url="../chapter_" . (string)self::CHAPTER_ID . "_solve";
         header('Location: '.$new_url);
         die;
     }
     private function next_question(){
+        $chapter_id=self::CHAPTER_ID;
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -28,19 +30,21 @@ class Chapter_1_Solve extends Controller
         /*check if user is in the chapter_1 users list*/
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
+        $sql=$link->prepare('SELECT last_question_id FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
         $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
         $sql->close();
-        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=1 AND status="posted"');
+        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND status="posted"');
+        $sql->bind_param('i',$chapter_id);
         $sql->execute();
         $sql->bind_result($questions_nr);
         $sql->fetch();
         $sql->close();
         do{/*The user won't get the same question twice in a row*/
-            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1 AND status="posted"');
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND status="posted"');
+            $sql->bind_param('i',$chapter_id);
             $sql->execute();
             $sql->bind_result($question_id);
             
@@ -49,13 +53,14 @@ class Chapter_1_Solve extends Controller
             }
             $sql->close();
         }while($last_question_id==$question_id);
-        $sql=$link->prepare('UPDATE chapter_1 SET last_question_id=? WHERE `user_id`=?');        
+        $sql=$link->prepare('UPDATE chapter_' . (string)$chapter_id . ' SET last_question_id=? WHERE `user_id`=?');        
         $sql->bind_param('ii',$question_id,$this->session_user_id);
         $sql->execute();
         $sql->close();
         $db_connection->close();
     }
     private function get_question(){
+        $chapter_id=self::CHAPTER_ID;
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -64,7 +69,7 @@ class Chapter_1_Solve extends Controller
         /*check if user is in the chapter_1 users list*/
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
+        $sql=$link->prepare('SELECT last_question_id FROM chapter_'. (string)$chapter_id .' WHERE `user_id`=?');
         $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($last_question_id);
@@ -72,12 +77,13 @@ class Chapter_1_Solve extends Controller
         $sql->close();
         
         if(!$status){/*insert user into chapter_1 table*/
-            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=1 AND status="posted"');
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND status="posted"');
+            $sql->bind_param('i',$chapter_id);
             $sql->execute();
             $sql->bind_result($last_question_id);
             $sql->fetch();
             $sql->close();
-            $sql=$link->prepare('INSERT INTO chapter_1 (`user_id`,right_answers,last_question_id) VALUES (?,?,?)');
+            $sql=$link->prepare('INSERT INTO chapter_' . (string)$chapter_id . ' (`user_id`,right_answers,last_question_id) VALUES (?,?,?)');
             $right_answers=0;
             $sql->bind_param('sii', $this->session_user_id,$right_answers,$last_question_id);
             $sql->execute();
@@ -85,13 +91,14 @@ class Chapter_1_Solve extends Controller
         }/*increment right_answers for user*/
         
         /*check if question is still posted*/
-        $sql=$link->prepare('SELECT user_id FROM questions WHERE chapter_id=1 AND status="posted" AND id=?');
-        $sql->bind_param('i', $last_question_id);
+        $sql=$link->prepare('SELECT user_id FROM questions WHERE chapter_id=? AND status="posted" AND id=?');
+        $sql->bind_param('ii',$chapter_id, $last_question_id);
         $sql->execute();
         $sql->bind_result($aux_res);
         if(!$sql->fetch()){/*in case the question is not available*/
             $this->next_question();
-            $sql_1=$link->prepare('SELECT id FROM questions WHERE chapter_id=1 AND status="posted"');
+            $sql_1=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND status="posted"');
+            $sql->bind_param('i',$chapter_id);
             $sql_1->execute();
             $sql_1->bind_result($last_question_id);
             $sql_1->fetch();
@@ -103,6 +110,7 @@ class Chapter_1_Solve extends Controller
         $this->question_text=$question_text_aux[0];
     }
     private function correct_answer(){ /*add question_id*/
+        $chapter_id=self::CHAPTER_ID;
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -111,14 +119,14 @@ class Chapter_1_Solve extends Controller
         
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT right_answers FROM chapter_1 WHERE `user_id`=?');
+        $sql=$link->prepare('SELECT right_answers FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
         $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($right_answers);
         $sql->fetch();
         $sql->close();
         /*increment right_answers for user*/
-        $sql=$link->prepare('UPDATE chapter_1 SET right_answers=? WHERE `user_id`=?');        
+        $sql=$link->prepare('UPDATE chapter_' . (string)$chapter_id . ' SET right_answers=? WHERE `user_id`=?');        
         $right_answers=$right_answers+1;
         $sql->bind_param('ii',$right_answers,$this->session_user_id);
         $sql->execute();
@@ -153,6 +161,7 @@ class Chapter_1_Solve extends Controller
         $ssh_connection->close();
     }
     public function submit($command,$skip=false){
+        $chapter_id=self::CHAPTER_ID;
         if($skip==false){
             $this->execute($command);
         }
@@ -164,7 +173,7 @@ class Chapter_1_Solve extends Controller
         /*check if user is in the chapter_1 users list*/
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT last_question_id FROM chapter_1 WHERE `user_id`=?');
+        $sql=$link->prepare('SELECT last_question_id FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
         $sql->bind_param('i', $this->session_user_id);
         $sql->execute();
         $sql->bind_result($last_question_id);
@@ -211,6 +220,7 @@ class Chapter_1_Solve extends Controller
         $this->next_question();  
     }
     public function process(){
+        $chapter_id=self::CHAPTER_ID;
         $this->check_login();
         if(strlen($_POST["code_field"])>150){
             $this->reload("Characters limit exceeded!");
@@ -221,21 +231,21 @@ class Chapter_1_Solve extends Controller
         $_SESSION["code_field"]=$_POST["code_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($command);
-            header('Location: ../chapter_1_solve'); 
+            header('Location: ../chapter_' . (string)$chapter_id . '_solve'); 
         }else if($_POST["action"]=="Submit"){
             $this->submit($command);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
             $this->session_extract("exec_msg",true);
-            header('Location: ../chapter_1_result');       
+            header('Location: ../chapter_' . (string)$chapter_id . '_result');       
         }else{
             $this->submit("",true);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
             $this->session_extract("exec_msg",true);  
-            header('Location: ../chapter_1_solve');  
+            header('Location: ../chapter_' . (string)$chapter_id . '_solve');  
         }
         
     }

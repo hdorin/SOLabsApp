@@ -2,8 +2,10 @@
 //Chapter Commands
 class Chapter_1_Submit extends Controller
 {
+    const CHAPTER_ID=1;
     public function index()
     {
+        $chapter_id=self::CHAPTER_ID;
         $this->check_login();
         if($this->can_submit_quesion(1)==false){
             die("You cannot access this!");
@@ -12,11 +14,11 @@ class Chapter_1_Submit extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $this->view('home/chapter_1_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
-        $new_url="../chapter_1_submit";
+        $new_url="../chapter_" . (string)self::CHAPTER_ID. "_submit";
         header('Location: '.$new_url);
         die;
     }
@@ -112,7 +114,7 @@ class Chapter_1_Submit extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare('INSERT INTO questions (`user_id`,chapter_id,`status`,date_created) VALUES (?,?,?,now())');
-        $chapter_id=1;
+        $chapter_id=self::CHAPTER_ID;
         $status="pending";
         $sql->bind_param('iis', $this->session_user_id,$chapter_id,$status);
         $sql->execute();
@@ -148,7 +150,7 @@ class Chapter_1_Submit extends Controller
         $_SESSION["text_field"]=$_POST["text_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($command);
-            header('Location: ../chapter_1_submit');
+            header('Location: ../chapter_' . (string)self::CHAPTER_ID . '_submit');
         }else{
 
             $this->submit($text,$command);

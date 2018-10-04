@@ -19,10 +19,10 @@ class Chapter_1_View_Question extends Controller
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
         $this->get_question($question_id);
-        $this->view('home/chapter_1_view_question',[]);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',[]);
     }
     private function reload(){
-        $new_url="../chapter_1_view_question";
+        $new_url="../chapter_" . (string)self::CHAPTER_ID . "_view_question";
         header('Location: '.$new_url);
         die;
     }
