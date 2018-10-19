@@ -6,6 +6,7 @@ class Controller
     protected $session_user;
     protected $session_pass;
     protected $session_is_admin;
+    protected $semaphore;
     protected function model($model)
     {
         require_once '../app/models/' . $model . '.php';
@@ -37,5 +38,24 @@ class Controller
             $variable="";
         }
         return $variable;
+    }
+    protected function my_sem_acquire($user_id){
+        // exclusive control
+	    $semaphore_key = 2112;		// unique integer key for this semaphore (Rush fan!)
+	    $semaphore_max = $user_id;		// The number of processes that can acquire this semaphore
+	    $semaphore_permissions = 0666;	// Unix style permissions for this semaphore
+	    $semaphore_autorelease = 1;	// Auto release the semaphore if the request shuts down
+ 
+        // open a new or get an existing semaphore
+	    $this->semaphore = sem_get($semaphore_key, $semaphore_max, $semaphore_permissions, $semaphore_autorelease);
+	    if(!$this->semaphore) 
+	    {
+    		die( "Failed to get semaphore!");
+	    }
+        // acquire exclusive control	
+        sem_acquire($this->semaphore);
+    }
+    protected function my_sem_release(){
+        sem_release($this->semaphore);
     }
 }

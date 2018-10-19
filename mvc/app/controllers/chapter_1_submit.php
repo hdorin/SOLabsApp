@@ -20,6 +20,7 @@ class Chapter_1_Submit extends Controller
         $_SESSION["error_msg"]=$data;
         $new_url="../chapter_" . (string)self::CHAPTER_ID. "_submit";
         header('Location: '.$new_url);
+        $this->my_sem_release();
         die;
     }
     private function execute($command){
@@ -137,6 +138,7 @@ class Chapter_1_Submit extends Controller
     }
     public function process(){
         $this->check_login();
+        $this->my_sem_acquire($this->session_user_id);
         if(strlen($_POST["text_field"])>500 || strlen($_POST["code_field"])>150){
             $this->reload("Characters limit exceeded!");
         }
@@ -158,5 +160,6 @@ class Chapter_1_Submit extends Controller
             $this->session_extract("text_field",true);
             header('Location: ../submit_question');
         }
+        $this->my_sem_release();
     }
 }

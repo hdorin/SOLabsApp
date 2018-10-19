@@ -19,6 +19,7 @@ class Login extends Controller
         $_SESSION["error_msg"]=$data;
         $new_url="../login";
         header('Location: '.$new_url);
+        $this->my_sem_release();
         die;
     }
     private function generate_random_str() {
@@ -31,6 +32,7 @@ class Login extends Controller
         return $randomString;
     }
     public function process(){
+        $this->my_sem_acquire(1);
         if(empty($user=$_POST["user_field"])==1){
             $this->reload("You did not enter a username!");
         }
@@ -124,5 +126,6 @@ class Login extends Controller
         $_SESSION['pass']=$ssh_pass;
         $_SESSION['is_admin']=$is_admin;
         header('Location: ../');/*redict to home controller after login*/
+        $this->my_sem_release();
     }
 }

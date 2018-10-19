@@ -18,6 +18,7 @@ class Chapter_1_Solve extends Controller
         $_SESSION["error_msg"]=$data;
         $new_url="../chapter_" . (string)self::CHAPTER_ID . "_solve";
         header('Location: '.$new_url);
+        $this->my_sem_release();
         die;
     }
     private function next_question(){
@@ -222,6 +223,11 @@ class Chapter_1_Solve extends Controller
     public function process(){
         $chapter_id=self::CHAPTER_ID;
         $this->check_login();
+        $this->my_sem_acquire($this->session_user_id);
+        //sleep(5);
+        //$this->reload("THIS IS A TEST FOR SEM!");
+        //die("THIS IS A TEST FOR SEM!");
+        
         if(strlen($_POST["code_field"])>150){
             $this->reload("Characters limit exceeded!");
         }
@@ -247,6 +253,7 @@ class Chapter_1_Solve extends Controller
             $this->session_extract("exec_msg",true);  
             header('Location: ../chapter_' . (string)$chapter_id . '_solve');  
         }
+        $this->my_sem_release();
         
     }
 }

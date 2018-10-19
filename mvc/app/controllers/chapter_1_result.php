@@ -3,11 +3,12 @@
 class Chapter_1_Result extends Controller
 {
     const CHAPTER_ID=1;
+    private $question_id;
     public function index()
     {
         $this->check_login();
-        $question_id=$this->session_extract('question_id');
-        if(empty($question_id)){
+        $this->question_id=$this->session_extract('question_id');
+        if(empty($this->question_id)){
             die("You can't access this!");
         }
         $question_text=$this->session_extract('question_text');
@@ -24,9 +25,10 @@ class Chapter_1_Result extends Controller
         $_SESSION["error_msg"]=$data;
         $new_url="../chapter_" . (string)self::CHAPTER_ID . "_result";
         header('Location: '.$new_url);
+        $this->my_sem_release();
         die;
     }
-    private function report($message,$question_id){
+    private function report($message){
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -34,17 +36,44 @@ class Chapter_1_Result extends Controller
         $db_name=$config->get('db','name');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        /*Only one report per question is allowed*/
+        $sql=$link->prepare('SELECT id FROM reports WHERE `user_id`=? AND question_id=?');
+        $sql->bind_param('ii', $this->session_user_id,$this->question_id);
+        $sql->execute();
+        $sql->bind_result($aux);
+        if($sql->fetch()){
+            $sql->close();
+            $db_connection->close(); 
+            $this->reload("You already reported this question!");
+        }
+        $sql->close();
         $sql=$link->prepare('INSERT INTO reports (`user_id`,question_id,`text`,date_created) VALUES (?,?,?,now())');
-        $sql->bind_param('iis', $this->session_user_id,$question_id,$message);
+        $sql->bind_param('iis', $this->session_user_id,$this->question_id,$message);
         $sql->execute();
         $sql->close();
+        $db_connection->close();
     }
     public function process(){
         $this->check_login();
+        $this->my_sem_acquire($this->session_user_id);
         if(strlen($_POST["text_field"])>100){
             $this->reload("Characters limit exceeded!");
         }
-        $question_id=$this->session_extract('question_id',true);
+        if($_POST["action"]=="Report"){
+            if(strcmp($_POST["text_field"],"")==0){
+                $message="";
+            }else{
+                $message=$_POST["text_field"];
+            }
+            $this->question_id=$this->session_extract('question_id');
+            if(empty($this->question_id)){
+                $this->my_sem_release();
+                die("You can't submit report!");
+            }
+            $this->report($message);
+        }
+        /*Clear output message*/
+        $this->session_extract('question_id',true);
         $this->session_extract('question_text',true);
         $this->session_extract('user_command',true);
         $this->session_extract('user_output',true);
@@ -52,14 +81,7 @@ class Chapter_1_Result extends Controller
         $this->session_extract('author_output',true);
         $this->session_extract('result_correct',true);
         $this->session_extract('result_incorrect',true);
-        if($_POST["action"]=="Report"){
-            if(strcmp($_POST["text_field"],"")==0){
-                $message="";
-            }else{
-                $message=$_POST["text_field"];
-            }
-            $this->report($message,$question_id);
-        }
         header('Location: ../chapter_' . (string)self::CHAPTER_ID . '_solve');
+        $this->my_sem_release();
     }
 }
