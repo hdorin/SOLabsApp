@@ -16,7 +16,7 @@
         </div>
         <form class="questionCode" action="chapter_1_solve/process" method="POST">
         <div class="textarea">
-            <textarea class="codeField" name="code_field" type="text" rows="4" cols="50" required maxlength="150"><?php echo $data['code_field']; ?></textarea>
+            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="150"><?php echo $data['code_field']; ?></textarea>
         </div>
             <input class="btnExecute" name="action" type="submit" value="Execute" />
             <input class="btnSubmit" name="action" type="submit" value="Submit" />
