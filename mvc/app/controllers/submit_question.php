@@ -43,24 +43,15 @@ class Submit_Question extends Controller
         $sql->fetch();
         $sql->close();
         
-        /*formula to calculate questions to answer left until can submit question for a chapter*/
-        $diff=10;
-        $right_answers=$right_answers-$diff;
-        if($all_questions>0){
-            $right_answers=$right_answers-$diff;
-            $all_questions=$all_questions-1;
-        }
-        while($all_questions>0){
-            $diff=$diff*2;
-            $right_answers=$right_answers-$diff;
-            $all_questions=$all_questions-1;
-        }
-        
-        if($right_answers>=0){
-            $this->answers_left=$right_answers;
+        $formulas=$this->model('Formulas');
+        $auxx=$formulas->can_submit_question_formula($all_questions,$right_answers);
+        $answers_left=$formulas->get_answers_left();        
+        $answers_left=5;
+        if($answers_left>=0){
+            $this->answers_left=$answers_left;
             return true;
         }else{
-            $this->answers_left=(-1)*$right_answers;
+            $this->answers_left=(-1)*$answers_left;
             return false;
         }
     }
