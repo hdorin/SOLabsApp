@@ -46,7 +46,7 @@ class Submit_Question extends Controller
         $formulas=$this->model('Formulas');
         $auxx=$formulas->can_submit_question_formula($all_questions,$right_answers);
         $answers_left=$formulas->get_answers_left();        
-        $answers_left=5;
+
         if($answers_left>=0){
             $this->answers_left=$answers_left;
             return true;
