@@ -7,7 +7,7 @@ class Chapter_1_Submit extends Controller
     {
         $chapter_id=self::CHAPTER_ID;
         $this->check_login();
-        if($this->can_submit_quesion(1)==false){
+        if($this->can_submit_quesion($chapter_id)==false){
             die("You cannot access this!");
         }
         $error_msg=$this->session_extract("error_msg",true);
@@ -78,24 +78,16 @@ class Chapter_1_Submit extends Controller
         $sql->bind_result($all_questions);
         $sql->fetch();
         $sql->close();
-        /*formula to calculate questions to answer left until can submit question for a chapter*/
-        $diff=10;
-        if($all_questions>0){
-            $right_answers=$right_answers-$diff;
-            $all_questions=$all_questions-1;
-        }
-        if($all_questions>0){
-            $right_answers=$right_answers-$diff;
-            $all_questions=$all_questions-1;
-        }
-        while($all_questions>0){
-            $diff=$diff*2;
-            $right_answers=$right_answers-$diff;
-            $all_questions=$all_questions-1;
-        }
-        if($right_answers>0){
+        
+        $formulas=$this->model('Formulas');
+        $auxx=$formulas->can_submit_question_formula($all_questions,$right_answers);
+        $answers_left=$formulas->get_answers_left();        
+
+        if($answers_left>=0){
+            $this->answers_left=$answers_left;
             return true;
         }else{
+            $this->answers_left=(-1)*$answers_left;
             return false;
         }
     }

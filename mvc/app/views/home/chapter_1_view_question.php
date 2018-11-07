@@ -18,8 +18,15 @@
             <p class='questionDetails'><?php echo "Date submitted: " . $data["date_submitted"]; ?> </p>
         </div>
     
-        <form class='deleteQuestion'>
-            <input class="deleteBtn" type="submit" value="Delete" />
+        <form class='deleteQuestion' action="chapter_1_view_question/delete_question">
+            <?php 
+                if($data['can_delete']==false){
+                    echo "<input class='btnDeleteGray' type='submit' value='Delete' disabled/><br><p class='cannotDeleteMessage'>Answer " . $data['answers_left'] . " more questions!<p>";        
+                }else{
+                    echo "<input class='btnDelete' type='submit' value='Delete'/>";        
+                }
+            ?>
+            
         </form>
         <h2>Reports</h2>
         <div class='reportsBox'>

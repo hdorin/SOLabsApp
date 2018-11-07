@@ -25,5 +25,15 @@ class Formulas
             return false;
         }
     }
+    public function can_delete_question($right_answers){
+        $diff=10;
+        $right_answers=$right_answers-$diff;
+        $this->answers_left=$right_answers;
+        if($right_answers>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
 

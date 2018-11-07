@@ -24,7 +24,6 @@ class Submit_Question extends Controller
         $db_user=$config->get('db','user');
         $db_pass=$config->get('db','pass');
         $db_name=$config->get('db','name');
-        $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)$chapter_id;
