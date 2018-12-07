@@ -163,12 +163,46 @@ class Chapter_1_View_Question extends Controller
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
         $this->my_sem_acquire($this->session_user_id);
-        if($this->can_view_quesion($question_id)==false){
+        if($this->can_view_quesion($question_id)==false || $this->check_can_delete_question($question_id)==false){
             die("You cannot do that!");
         }
-        //check if can delete
-        die("AJUNS" . (string)$question_id);
-        //scazut din nr total de intrebari rezolvate
+
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $db_connection=$this->model('DBConnection');
+        /*mark question as deleted*/
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        /*$sql=$link->prepare('SELECT `status` FROM questions WHERE `id`=?');
+        $sql->bind_param('i', $question_id);
+        $sql->execute();
+        $sql->bind_result($question_status);
+        $sql->fetch();
+        $sql->close();
+        if(strcmp($question_status,'deleted')==0){
+            die("Question has already been deleted!");
+        }
+        $sql=$link->prepare("UPDATE questions SET `status`='deleted' WHERE `id`=?");        
+        $sql->bind_param('i',$question_id);
+        $sql->execute();
+        $sql->close();*/
+        /*increment deleted_questions*/
+        $chapter_id=self::CHAPTER_ID;
+        $sql=$link->prepare('SELECT deleted_questions FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
+        $sql->bind_param('i', $this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($deleted_questions);
+        $sql->fetch();
+        $sql->close();
+        $deleted_questions=$deleted_questions+1;
+        $sql=$link->prepare("UPDATE chapter_" . (string)$chapter_id . " SET deleted_questions=? WHERE `user_id`=?");        
+        $sql->bind_param('ii',$deleted_questions,$this->session_user_id);
+        $sql->execute();
+        $sql->close();
+        die("AICI!" . $deleted_questions . $chapter_id);
+        $db_connection->close();
         $this->my_sem_release();
     } 
 }
