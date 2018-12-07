@@ -9,6 +9,7 @@ class Chapter_1_Submit extends Controller
     {
         $chapter_id=self::CHAPTER_ID;
         $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
         if($this->can_submit_quesion(1)==false){
             die("You cannot access this!");
         }
@@ -134,6 +135,7 @@ class Chapter_1_Submit extends Controller
     }
     public function process(){
         $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
         $this->my_sem_acquire($this->session_user_id);
         if(strlen($_POST["text_field"])>self::TEXT_MAX_LEN || strlen($_POST["code_field"])>self::CODE_MAX_LEN){
             $this->reload("Characters limit exceeded!");

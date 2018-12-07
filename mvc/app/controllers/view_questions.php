@@ -28,7 +28,7 @@ class View_Questions extends Controller
         if($this->session_is_admin==true){
             $qurery="SELECT id,`chapter_id`,all_answers,right_answers,`validation`,date_created FROM questions";    
         }else{
-            $qurery="SELECT id,`chapter_id`,all_answers,right_answers,`validation`,date_created FROM questions WHERE `user_id`=?";    
+            $qurery="SELECT id,`chapter_id`,all_answers,right_answers,`validation`,date_created FROM questions WHERE `user_id`=? AND `status`='posted'";    
         }
         $sql=$link->prepare($qurery);
         if($this->session_is_admin==false){

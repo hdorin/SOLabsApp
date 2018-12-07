@@ -12,10 +12,12 @@
     ?>
     <div class='questionBox' >
         <p class='questionText'><?php echo  $data["question_text"] ;?> </p>
+        <p class='questionCode'><?php echo  $data["question_code"]; ?> </p>
         <div class='questionDetailsBox'>
-            <p class='questionDetails'><?php echo  "Times answered: " . $data["right_answers"] . " / " . $data["all_answers"] ;?> </p>
+            <p class='questionDetails'><?php echo "Times answered: " . $data["right_answers"] . " / " . $data["all_answers"] ;?> </p>
             <p class='questionDetails'><?php echo "Validation: " . $data["validation"]; ?> </p>
             <p class='questionDetails'><?php echo "Date submitted: " . $data["date_submitted"]; ?> </p>
+            
         </div>
     
         <form class='deleteQuestion' action="chapter_1_view_question/delete_question/<?php echo $data['question_id']?>">
@@ -30,8 +32,11 @@
         </form>
         <h2>Reports</h2>
         <div class='reportsBox'>
-            <p class='reportText'><?php echo  $data["question_text"] ;?> </p>
-            <p class='reportDetails'><?php echo  "Date submitted: " . $data["right_answers"] . " / " . $data["all_answers"] ;?> </p>
+            <?php 
+                for($i=0;$i<$data['reports_nr'];$i++){
+                    echo $data['reports'][$i];
+                }
+            ?>
         </div>
     </div>
 </body>

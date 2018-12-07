@@ -46,40 +46,23 @@ class Chapter_1_Solve extends Controller
         $sql->fetch();
         $sql->close();
         do{/*The user won't get the same question twice in a row*/
-            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND status="posted"');
+            $sql=$link->prepare('SELECT id,`user_id` FROM questions WHERE chapter_id=? AND status="posted"');
             $sql->bind_param('i',$chapter_id);
             $sql->execute();
-            $sql->bind_result($question_id);
+            $sql->bind_result($question_id,$user_id);
             
             for($i=1;$i<=rand(1,$questions_nr);$i++){
                 $sql->fetch();
             }
             $sql->close();
-        }while($last_question_id==$question_id);
+        }while($last_question_id==$question_id || $user_id==$this->session_user_id);
         $sql=$link->prepare('UPDATE chapter_' . (string)$chapter_id . ' SET last_question_id=? WHERE `user_id`=?');        
         $sql->bind_param('ii',$question_id,$this->session_user_id);
         $sql->execute();
         $sql->close();
         $db_connection->close();
     }
-    private function check_chapter_posted($chapter_id){
-        $config=$this->model('JSONConfig');
-        $db_host=$config->get('db','host');
-        $db_user=$config->get('db','user');
-        $db_pass=$config->get('db','pass');
-        $db_name=$config->get('db','name');
-        $db_connection=$this->model('DBConnection');
-        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare("SELECT `name` FROM chapters WHERE `status`='posted' AND id=?");
-        $sql->bind_param('i',$chapter_id);
-        $sql->execute();
-        $sql->bind_result($chapter_name);
-        if(!$sql->fetch()){
-            $sql->close();
-            die("You cannot access this!");
-        }
-        $sql->close();
-    }
+  
     private function get_question(){
         $chapter_id=self::CHAPTER_ID;
         $config=$this->model('JSONConfig');

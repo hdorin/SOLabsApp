@@ -8,6 +8,7 @@ class Chapter_1_Result extends Controller
     public function index()
     {
         $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
         $this->question_id=$this->session_extract('question_id');
         if(empty($this->question_id)){
             die("You can't access this!");
@@ -56,6 +57,7 @@ class Chapter_1_Result extends Controller
     }
     public function process(){
         $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
         $this->my_sem_acquire($this->session_user_id);
         if(strlen($_POST["text_field"])>self::REPORT_MAX_LEN){
             $this->reload("Characters limit exceeded!");
@@ -70,6 +72,9 @@ class Chapter_1_Result extends Controller
             if(empty($this->question_id)){
                 $this->my_sem_release();
                 die("You can't submit report!");
+            }
+            if(strcmp($message,'Enter report message')==0){
+                $message="";
             }
             $this->report($message);
         }
