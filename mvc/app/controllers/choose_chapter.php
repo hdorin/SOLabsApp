@@ -53,5 +53,6 @@ class Choose_Chapter extends Controller
             $this->chapters_nr=$this->chapters_nr+1;
         }
         $sql->close();
+        $db_connection->close();
     }
 }

@@ -50,6 +50,6 @@ class View_Questions extends Controller
             $this->questions_nr=$this->questions_nr+1;
         }
         $sql->close();
-    
+        $db_connection->close();
     }
 }

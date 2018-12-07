@@ -21,7 +21,7 @@ class Chapter_1_View_Question extends Controller
         $text_field=$this->session_extract("text_field");
         $this->get_question($question_id);
         $can_delete=$this->check_can_delete_question($question_id);
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['can_delete' =>$can_delete,'answers_left'=>$this->answers_left]);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['can_delete' =>$can_delete,'answers_left'=>$this->answers_left,'question_id'=>(string)$question_id]);
     }
     private function reload(){
         $new_url="../chapter_" . (string)self::CHAPTER_ID . "_view_question";
@@ -32,6 +32,7 @@ class Chapter_1_View_Question extends Controller
         if($this->session_is_admin==true){
             return true;
         }
+        $chapter_id=self::CHAPTER_ID;
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -41,25 +42,24 @@ class Chapter_1_View_Question extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)self::CHAPTER_ID;
-        $sql=$link->prepare("SELECT right_answers FROM " . $chapter_name_aux . " WHERE `user_id`=?");
+        $sql=$link->prepare("SELECT right_answers,deleted_questions FROM " . $chapter_name_aux . " WHERE `user_id`=?");
         $sql->bind_param('i',$this->session_user_id);
         $sql->execute();
-        
-        $sql->bind_result($right_answers);
+        $sql->bind_result($right_answers,$deleted_questions);
         $sql->fetch();
         $sql->close();
 
         $sql=$link->prepare("SELECT COUNT(id) FROM questions WHERE `user_id`=? AND chapter_id=?");
         $sql->bind_param('ii',$this->session_user_id,$chapter_id);
         $sql->execute();
-        $sql->bind_result($all_questions);
+        $sql->bind_result($posted_questions);
         $sql->fetch();
         $sql->close();
+        $db_connection->close();
+
         $formulas=$this->model('Formulas');
-        $formulas->can_submit_question_formula($all_questions,$right_answers);
+        $formulas->can_delete_question($posted_questions,$right_answers,$deleted_questions);
         $answers_left=$formulas->get_answers_left();        
-        $can_delete=$formulas->can_delete_question($answers_left);
-        $answers_left=$formulas->get_answers_left();   
         if($answers_left>=0){
             $this->answers_left=$answers_left;
             return true;
@@ -81,8 +81,13 @@ class Chapter_1_View_Question extends Controller
         $sql->bind_param('i',$question_id);
         $sql->execute();
         $sql->bind_result($user_id,$chapter_id);
-        $sql->fetch();
+        if(!$sql->fetch()){//The question doesn't belong to the curent user
+            $sql->close();
+            $db_connection->close();
+            return false;
+        }
         $sql->close();
+        $db_connection->close();
         
         if($chapter_id!=self::CHAPTER_ID){
             return false;
@@ -93,14 +98,18 @@ class Chapter_1_View_Question extends Controller
         return true;
     }
     private function get_question($question_id){
-        
+       
+
     }
     public function delete_question($question_id){
-        //use semaphore
-        //check login
+        $this->check_login();
+        $this->my_sem_acquire($this->session_user_id);
+        if($this->can_view_quesion($question_id)==false){
+            die("You cannot do that!");
+        }
         //check if can delete
-        die("AJUNS");
+        die("AJUNS" . (string)$question_id);
         //scazut din nr total de intrebari rezolvate
-        //sau facut o tabela in care tin minte de cate ori a sters (deletes)
+        $this->my_sem_release();
     } 
 }

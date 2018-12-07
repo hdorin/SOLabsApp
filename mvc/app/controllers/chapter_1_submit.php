@@ -9,7 +9,7 @@ class Chapter_1_Submit extends Controller
     {
         $chapter_id=self::CHAPTER_ID;
         $this->check_login();
-        if($this->can_submit_quesion($chapter_id)==false){
+        if($this->can_submit_quesion(1)==false){
             die("You cannot access this!");
         }
         $error_msg=$this->session_extract("error_msg",true);
@@ -66,23 +66,23 @@ class Chapter_1_Submit extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)$chapter_id;
-        $sql=$link->prepare("SELECT right_answers FROM " . $chapter_name_aux . " WHERE `user_id`=?");
+        $sql=$link->prepare("SELECT right_answers,deleted_questions FROM " . $chapter_name_aux . " WHERE `user_id`=?");
         $sql->bind_param('i',$this->session_user_id);
         $sql->execute();
-        
-        $sql->bind_result($right_answers);
+        $sql->bind_result($right_answers,$deleted_questions);
         $sql->fetch();
         $sql->close();
 
         $sql=$link->prepare("SELECT COUNT(id) FROM questions WHERE `user_id`=? AND chapter_id=?");
         $sql->bind_param('ii',$this->session_user_id,$chapter_id);
         $sql->execute();
-        $sql->bind_result($all_questions);
+        $sql->bind_result($posted_questions);
         $sql->fetch();
         $sql->close();
-        
+
+        /*formula to calculate questions to answer left until can submit question for a chapter*/
         $formulas=$this->model('Formulas');
-        $auxx=$formulas->can_submit_question_formula($all_questions,$right_answers);
+        $auxx=$formulas->can_submit_question($posted_questions,$right_answers,$deleted_questions);
         $answers_left=$formulas->get_answers_left();        
 
         if($answers_left>=0){
@@ -92,6 +92,8 @@ class Chapter_1_Submit extends Controller
             $this->answers_left=(-1)*$answers_left;
             return false;
         }
+        
+    
     }
     private function submit($text,$command){
         $this->execute($command);
