@@ -5,9 +5,11 @@ class Chapter_1_Solve extends Controller
     private $question_text;
     private $get_question_i0nput;
     const CHAPTER_ID=1;
+    const CODE_MAX_LEN=150;
     public function index()
     {   
         $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
         $this->get_question();
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
@@ -59,6 +61,24 @@ class Chapter_1_Solve extends Controller
         $sql->execute();
         $sql->close();
         $db_connection->close();
+    }
+    private function check_chapter_posted($chapter_id){
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare("SELECT `name` FROM chapters WHERE `status`='posted' AND id=?");
+        $sql->bind_param('i',$chapter_id);
+        $sql->execute();
+        $sql->bind_result($chapter_name);
+        if(!$sql->fetch()){
+            $sql->close();
+            die("You cannot access this!");
+        }
+        $sql->close();
     }
     private function get_question(){
         $chapter_id=self::CHAPTER_ID;
@@ -161,7 +181,7 @@ class Chapter_1_Solve extends Controller
         }
         $ssh_connection->close();
     }
-    public function submit($command,$skip=false){
+    private function submit($command,$skip=false){
         $chapter_id=self::CHAPTER_ID;
         if($skip==false){
             $this->execute($command);
@@ -223,12 +243,9 @@ class Chapter_1_Solve extends Controller
     public function process(){
         $chapter_id=self::CHAPTER_ID;
         $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
         $this->my_sem_acquire($this->session_user_id);
-        //sleep(5);
-        //$this->reload("THIS IS A TEST FOR SEM!");
-        //die("THIS IS A TEST FOR SEM!");
-        
-        if(strlen($_POST["code_field"])>150){
+        if(strlen($_POST["code_field"])>self::CODE_MAX_LEN){
             $this->reload("Characters limit exceeded!");
         }
         if($_POST["action"]!="Skip" && empty($command=$_POST["code_field"])==true){

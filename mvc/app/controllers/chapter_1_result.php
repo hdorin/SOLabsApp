@@ -3,6 +3,7 @@
 class Chapter_1_Result extends Controller
 {
     const CHAPTER_ID=1;
+    const REPORT_MAX_LEN=100;
     private $question_id;
     public function index()
     {
@@ -56,7 +57,7 @@ class Chapter_1_Result extends Controller
     public function process(){
         $this->check_login();
         $this->my_sem_acquire($this->session_user_id);
-        if(strlen($_POST["text_field"])>100){
+        if(strlen($_POST["text_field"])>self::REPORT_MAX_LEN){
             $this->reload("Characters limit exceeded!");
         }
         if($_POST["action"]=="Report"){

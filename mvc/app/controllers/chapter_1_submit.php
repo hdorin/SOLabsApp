@@ -3,6 +3,8 @@
 class Chapter_1_Submit extends Controller
 {
     const CHAPTER_ID=1;
+    const TEXT_MAX_LEN=500;
+    const CODE_MAX_LEN=150;
     public function index()
     {
         $chapter_id=self::CHAPTER_ID;
@@ -131,7 +133,7 @@ class Chapter_1_Submit extends Controller
     public function process(){
         $this->check_login();
         $this->my_sem_acquire($this->session_user_id);
-        if(strlen($_POST["text_field"])>500 || strlen($_POST["code_field"])>150){
+        if(strlen($_POST["text_field"])>self::TEXT_MAX_LEN || strlen($_POST["code_field"])>self::CODE_MAX_LEN){
             $this->reload("Characters limit exceeded!");
         }
         if(empty($text=$_POST["text_field"])==true){

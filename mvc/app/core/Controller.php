@@ -58,4 +58,5 @@ class Controller
     protected function my_sem_release(){
         sem_release($this->semaphore);
     }
+    
 }

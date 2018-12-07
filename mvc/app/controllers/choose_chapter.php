@@ -38,7 +38,6 @@ class Choose_Chapter extends Controller
         $db_user=$config->get('db','user');
         $db_pass=$config->get('db','pass');
         $db_name=$config->get('db','name');
-        $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $sql=$link->prepare("SELECT id,`name` FROM chapters WHERE `status`='posted'");
