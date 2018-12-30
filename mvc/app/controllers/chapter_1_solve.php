@@ -39,14 +39,14 @@ class Chapter_1_Solve extends Controller
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
         $sql->close();
-        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND status="posted"');
+        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
         $sql->bind_param('i',$chapter_id);
         $sql->execute();
         $sql->bind_result($questions_nr);
         $sql->fetch();
         $sql->close();
         do{/*The user won't get the same question twice in a row*/
-            $sql=$link->prepare('SELECT id,`user_id` FROM questions WHERE chapter_id=? AND status="posted"');
+            $sql=$link->prepare('SELECT id,`user_id` FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
             $sql->bind_param('i',$chapter_id);
             $sql->execute();
             $sql->bind_result($question_id,$user_id);
@@ -81,7 +81,7 @@ class Chapter_1_Solve extends Controller
         $sql->close();
         
         if(!$status){/*insert user into chapter_1 table*/
-            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND status="posted"');
+            $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
             $sql->bind_param('i',$chapter_id);
             $sql->execute();
             $sql->bind_result($last_question_id);
@@ -94,21 +94,21 @@ class Chapter_1_Solve extends Controller
             $sql->close();
         }/*increment right_answers for user*/
         
-        /*check if question is still posted*/
-        $sql=$link->prepare('SELECT user_id FROM questions WHERE chapter_id=? AND status="posted" AND id=?');
+        /*check if question is still available*/
+        $sql=$link->prepare('SELECT user_id FROM questions WHERE chapter_id=? AND `status`="posted" AND id=? AND `validation`!="invalid"');
         $sql->bind_param('ii',$chapter_id, $last_question_id);
         $sql->execute();
         $sql->bind_result($aux_res);
         if(!$sql->fetch()){/*in case the question is not available*/
             $this->next_question();
-            $sql_1=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND status="posted"');
+            $sql_1=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
             $sql->bind_param('i',$chapter_id);
             $sql_1->execute();
             $sql_1->bind_result($last_question_id);
             $sql_1->fetch();
             $sql_1->close();
         }
-        //$sql->close();
+        $sql->close();
         $db_connection->close();
         exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
         $this->question_text=$question_text_aux[0];

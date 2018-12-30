@@ -13,6 +13,16 @@
 <?php
     include "header.php"
 ?>
+    <!--Restrict this form only to admins-->
+    <form class="questionsCriteria" action="questions/get_questions" method="POST">
+        <h3>User</h3>
+        <input class="userField" name="user_field" type="text">
+        <select>
+            <option value="posted">Posted</option>
+            <option value="deleted">Deleted</option>
+        </select>
+        <input class="refreshButton" type="submit" value="Refresh" />
+    </form>
     <div class="questionsBox">
         <?php 
             for($i=0;$i<$data['questions_nr'];$i++){
