@@ -208,5 +208,41 @@ class Chapter_1_View_Question extends Controller
         $new_url="../../view_questions";
         header('Location: '.$new_url);
         die;
-    } 
+    }
+    public function validate_question($question_id){
+        $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
+        $this->my_sem_acquire($this->session_user_id);
+        if($this->session_is_admin==false){
+            die("You cannot do that!");
+        }
+
+        if(strcmp($_POST["validation_field"],"None")==0){
+            $validation="None";
+        }else if(strcmp($_POST["validation_field"],"Valid")==0){
+            $validation="Valid";
+        }else if(strcmp($_POST["validation_field"],"Invalid")==0){
+            $validation="Invalid";
+        }else{
+            die("Invalid validation specified!");
+        }
+
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare("UPDATE questions SET `validation`=? WHERE `id`=?");        
+        $sql->bind_param('si',$validation,$question_id);
+        $sql->execute();
+        $sql->close();
+        $db_connection->close();
+        $this->my_sem_release();
+        /*redirect user to view questions page*/
+        $new_url="../" . $question_id;
+        header('Location: '.$new_url);
+        die;
+    }
 }

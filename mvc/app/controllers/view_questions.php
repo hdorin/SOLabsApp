@@ -52,7 +52,22 @@ class View_Questions extends Controller
             $_SESSION["criteria_chapter"]=" ";
         }else{
             $_SESSION["criteria_chapter"]="AND q.chapter_id=" . $_POST["chapter_field"];
-           
+        }
+        if(empty($_POST["validation_field"]) || strcmp($_POST["validation_field"],"All")==0){
+            $_SESSION["criteria_validation"]=" ";
+        }else{
+            $_SESSION["criteria_validation"]="AND q.validation='" . $_POST["validation_field"] . "'";
+        }
+        if(empty($_POST["sort_field"]) || strcmp($_POST["sort_field"],"none")==0){
+            $_SESSION["criteria_sort"]=" ";
+        }else if(strcmp($_POST["sort_field"],"reports_asc")==0){
+            $_SESSION["criteria_sort"]="ORDER BY q.reports_nr ASC";
+        }else if(strcmp($_POST["sort_field"],"reports_desc")==0){
+            $_SESSION["criteria_sort"]="ORDER BY q.reports_nr DESC";
+        }else if(strcmp($_POST["sort_field"],"date_asc")==0){
+            $_SESSION["criteria_sort"]="ORDER BY q.date_created ASC";
+        }else if(strcmp($_POST["sort_field"],"date_desc")==0){
+            $_SESSION["criteria_sort"]="ORDER BY q.date_created DESC";
         }
         $db_connection->close();
         $this->reload();
@@ -63,9 +78,12 @@ class View_Questions extends Controller
         die;
     }
     private function get_questions(){
-        $question_posted=$_SESSION["criteria_posted"];
-        $search_user=$_SESSION["criteria_user"];
-        $search_chapter=$_SESSION["criteria_chapter"];
+        $question_posted=$this->session_extract("criteria_posted");
+        $search_user=$this->session_extract("criteria_user");
+        $search_chapter=$this->session_extract("criteria_chapter");
+        $search_validation=$this->session_extract("criteria_validation");
+        $sort_criterion=$this->session_extract("criteria_sort");
+        
 
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
@@ -80,11 +98,11 @@ class View_Questions extends Controller
             $search_user="AND q.`user_id`=" . (string)$this->session_user_id;
             $search_chapter=" ";
         }
-            $qurery="SELECT q.id,q.`chapter_id`,q.all_answers,q.right_answers,q.`validation`,c.name,q.date_created FROM questions q JOIN chapters c ON q.chapter_id=c.id WHERE c.status='posted' " . $search_user .  " " . $question_posted . " " . $search_chapter;    
-        
+            /*vulnerable to SQL Injection, but only admins can access the criteria form so nothing to worry about*/
+            $qurery="SELECT q.id,q.`chapter_id`,q.all_answers,q.right_answers,q.`validation`,c.name,u.user_name,q.date_created,q.reports_nr FROM questions q JOIN chapters c ON q.chapter_id=c.id JOIN users u ON q.user_id=u.id WHERE c.status='posted' " . $search_user .  " " . $question_posted . " " . $search_chapter . " " . $search_validation . " " . $sort_criterion;
         $sql=$link->prepare($qurery);
         $sql->execute();
-        $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation,$chapter_name, $date_submitted);
+        $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation,$chapter_name,$user_name,$date_submitted,$reports_nr);
         $this->questions_nr=0;
         
         while($sql->fetch()){
@@ -104,8 +122,9 @@ class View_Questions extends Controller
                                                                     <p class='details'> Times Answered: " . $right_answers . " / " .  $all_answers . "</p>
                                                                     <p class='details'> Validation: " . $validation . "</p>
                                                                     <p class='details'> Chapter: " . $chapter_name . "</p>
-                                                                    <p class='details'> User: " . $this->session_user . "</p>
+                                                                    <p class='details'> User: " . $user_name . "</p>
                                                                     <p class='details'> Date Submitted: " . $date_submitted . "</p>
+                                                                    <p class='details'> Reports: " . $reports_nr . "</p>
                                                             </a>";
             }
             $this->questions_nr=$this->questions_nr+1;

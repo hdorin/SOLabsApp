@@ -16,9 +16,22 @@
         <div class='questionDetailsBox'>
             <p class='questionDetails'><?php echo "Times answered: " . $data["right_answers"] . " / " . $data["all_answers"] ;?> </p>
             <p class='questionDetails'><?php echo "Validation: " . $data["validation"]; ?> </p>
+            <?php if($_SESSION['is_admin']==true){
+                    echo '
+                        <form class="validateQuestion" method="POST" action="chapter_1_view_question/validate_question/' . $data["question_id"] . '">
+                            <h3>Mark as</h3>    
+                            <select name="validation_field">
+                                    <option value="None">None</option>
+                                    <option value="Valid">Valid</option>
+                                    <option value="Invalid">Invalid</option>
+                            </select>
+                            <input class="markButton" type="submit" value="Mark" />
+                        </form>';
+                }
+            ?>
             <p class='questionDetails'><?php echo "Date submitted: " . $data["date_submitted"]; ?> </p>
         </div>
-        <form class='deleteQuestion' action="chapter_1_view_question/delete_question/<?php echo $data['question_id']?>">
+        <form class='deleteQuestion' method="POST" action="chapter_1_view_question/delete_question/<?php echo $data['question_id'] ?>">
             <?php 
                 if($data['can_delete']==false){
                     echo "<input class='btnDeleteGray' type='submit' value='Delete' disabled/><br><p class='cannotDeleteMessage'>Answer " . $data['answers_left'] . " more questions!<p>";        
@@ -26,15 +39,7 @@
                     echo "<input class='btnDelete' type='submit' value='Delete'/>";        
                 }
             ?>
-            <div class="validateQuestion">
-                <h3>Mark as</h3>    
-                <select name="validation_field">
-                        <option value="none">None</option>
-                        <option value="Valid">Valid</option>
-                        <option value="Invalid">Invalid</option>
-                    </select>
-                    <input class="markButton" type="submit" value="Mark" />
-            </div>
+           
         </form>
         <h2>Reports</h2>
         <div class='reportsBox'>

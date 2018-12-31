@@ -89,3 +89,9 @@
         box-sizing: border-box;
         border-radius: 6px;
     }
+    .report .text{
+        margin-bottom: 0.3%;
+    }
+    .report .details{
+        margin-top: 0%;
+    }

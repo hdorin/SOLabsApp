@@ -52,6 +52,17 @@ class Chapter_1_Result extends Controller
         $sql=$link->prepare('INSERT INTO reports (`user_id`,question_id,`text`,date_created) VALUES (?,?,?,now())');
         $sql->bind_param('iis', $this->session_user_id,$this->question_id,$message);
         $sql->execute();
+        /*Increment reports_nr for question*/
+        $sql=$link->prepare('SELECT reports_nr FROM questions WHERE id=?');
+        $sql->bind_param('i', $this->question_id);
+        $sql->execute();
+        $sql->bind_result($reports_nr);
+        $sql->fetch();
+        $sql->close();
+        $reports_nr=$reports_nr+1;
+        $sql=$link->prepare("UPDATE questions SET reports_nr=? WHERE id=?");        
+        $sql->bind_param('ii',$reports_nr,$this->question_id);
+        $sql->execute();
         $sql->close();
         $db_connection->close();
     }

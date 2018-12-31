@@ -40,6 +40,21 @@
         if($_SESSION['is_admin']==true){
             echo '
                     </select>
+                    <h3>Validation</h3>
+                    <select name="validation_field">
+                        <option value="All">All</option>
+                        <option value="None">None</option>
+                        <option value="Valid">Valid</option>
+                        <option value="Invalid">Invalid</option>
+                    </select>
+                    <h3>Sort by</h3>
+                    <select name="sort_field">
+                        <option value="none">None</option>
+                        <option value="reports_asc">Reports Ascendent</option>
+                        <option value="reports_desc">Reports Descendent</option>
+                        <option value="date_asc">Date Ascendent</option>
+                        <option value="date_desc">Date Descendent</option>
+                    </select>
                     <input class="refreshButton" type="submit" value="Refresh" />
                 </form>';
         }

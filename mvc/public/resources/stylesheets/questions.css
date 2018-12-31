@@ -42,7 +42,7 @@
     text-align: center;
     background-color: #fff3da;
     padding: 0.2%;
-    width: 60%;
+    width: 85%;
     height: 60px;
     margin-left: auto;
     margin-right: auto;
@@ -57,7 +57,15 @@
         font-size: 100%;
         text-decoration: none;
         float: left;
-        width: 15%;
+        width: 10%;
+        margin-top: 1%;
+    }
+    .questionsCriteria select:nth-of-type(4){
+        color: black;
+        font-size: 100%;
+        text-decoration: none;
+        float: left;
+        width: 12%;
         margin-top: 1%;
     }
     .questionsCriteria h3{
@@ -65,16 +73,18 @@
         font-size: 100%;
         text-decoration: none;
         float: left;
-        width: 10%;
-        margin-top: 1.5%;
+        width: auto;
+        margin-left: 1.5%;
+        margin-right: 0.5%;
+        margin-top: 1.4%;
     }
     .questionsCriteria .refreshButton{
-        color: green;
+        color: #3D4597;
         font-weight: 500;
-        box-shadow: 0 0px 2px 0 green, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+        box-shadow: 0 0px 2px 0 #3D4597, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
         font-size: 100%;
         text-decoration: none;
         float: left;
-        width: 14%;
-        margin-left: 5%;
+        width: 11%;
+        margin-left: 3%;
     }
