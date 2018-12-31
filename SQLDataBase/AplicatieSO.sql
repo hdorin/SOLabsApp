@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2018 at 07:34 PM
+-- Generation Time: Dec 31, 2018 at 08:04 PM
 -- Server version: 5.7.24-0ubuntu0.18.04.1
 -- PHP Version: 7.2.10-0ubuntu0.18.04.1
 
@@ -65,7 +65,9 @@ INSERT INTO `chapter_1` (`user_id`, `right_answers`, `last_question_id`, `delete
 (6, 0, 2, 0),
 (10, 26, 11, 0),
 (11, 20, 8, 0),
-(12, 20, 2, 0);
+(12, 20, 2, 0),
+(13, 2, 1, 9),
+(14, 20, 4, 0);
 
 -- --------------------------------------------------------
 
@@ -117,16 +119,19 @@ CREATE TABLE `questions` (
   `date_created` date NOT NULL,
   `all_answers` int(11) NOT NULL DEFAULT '0',
   `right_answers` int(11) NOT NULL DEFAULT '0',
-  `validation` varchar(20) NOT NULL DEFAULT 'none'
+  `validation` varchar(20) NOT NULL DEFAULT 'None',
+  `reports_nr` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `questions`
 --
 
-INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`) VALUES
-(1, 4, 1, 'posted', '2018-11-23', 1, 1, 'none'),
-(2, 12, 1, 'posted', '2018-11-23', 0, 0, 'none');
+INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`, `reports_nr`) VALUES
+(1, 14, 1, 'deleted', '2018-11-23', 7, 3, 'None', 0),
+(2, 12, 1, 'posted', '2018-11-23', 13, 1, 'None', 0),
+(4, 13, 1, 'posted', '2018-12-07', 4, 0, 'None', 0),
+(5, 14, 1, 'posted', '2018-12-30', 1, 0, 'None', 0);
 
 -- --------------------------------------------------------
 
@@ -149,7 +154,8 @@ CREATE TABLE `reports` (
 INSERT INTO `reports` (`id`, `user_id`, `question_id`, `text`, `date_created`) VALUES
 (9, 10, 9, 'Enter report message', '2018-10-19'),
 (10, 10, 8, 'Enter report message', '2018-10-19'),
-(11, 10, 10, 'Enter report message', '2018-10-19');
+(11, 10, 10, 'Enter report message', '2018-10-19'),
+(12, 14, 4, 'Ce faci?', '2018-12-07');
 
 -- --------------------------------------------------------
 
@@ -171,9 +177,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `user_name`, `is_admin`, `date_created`, `hash_pass`, `ssh_pass`) VALUES
-(4, 'dorin.haloca', 1, '2018-09-05', '$2y$10$Co6c4EZAgxyCMQntOf6KBOEn9U/rq5zsYSPkjC12WywDSDhPuE2P6', 'tqIrdq7UK5sdKlN'),
 (11, 'test1', 0, '2018-10-20', '$2y$10$VhwKcjqrQTIxNoUlKLslLev9/JTEKyQMh62Mk0SLYE902JZZlhRFa', 'kkIAVhEWZVeRbSmSQxrL'),
-(12, 'test', 0, '2018-11-23', '$2y$10$eUqgr1nC5hUBvW1cdxuWMe2nsDMAsp8p/96nZ8zg1woBHBrj6R1N.', 'rgyxLTsr1cfq95ku0KhU');
+(13, 'dorin.haloca', 1, '2018-12-07', '$2y$10$.QEjyOmHuzL7GIck9HeyluyySCsQsk3bTw2isECXv5ADwin/D8OTW', 'QUzbhK6YSOPmhuVGKRIi'),
+(14, 'test', 0, '2018-12-07', '$2y$10$y4a21X3imCKGaLkZ5ZQqcuexV9KjxYg99TBFneG8vQoGNbOFPQJCC', 'fCBedDGWV8xNXwNzUqj5');
 
 --
 -- Indexes for dumped tables
@@ -243,19 +249,19 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
