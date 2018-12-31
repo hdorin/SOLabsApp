@@ -175,7 +175,7 @@ class Chapter_1_View_Question extends Controller
         $db_connection=$this->model('DBConnection');
         /*mark question as deleted*/
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        /*$sql=$link->prepare('SELECT `status` FROM questions WHERE `id`=?');
+        $sql=$link->prepare('SELECT `status` FROM questions WHERE `id`=?');
         $sql->bind_param('i', $question_id);
         $sql->execute();
         $sql->bind_result($question_status);
@@ -187,7 +187,7 @@ class Chapter_1_View_Question extends Controller
         $sql=$link->prepare("UPDATE questions SET `status`='deleted' WHERE `id`=?");        
         $sql->bind_param('i',$question_id);
         $sql->execute();
-        $sql->close();*/
+        $sql->close();
         /*increment deleted_questions*/
         $chapter_id=self::CHAPTER_ID;
         $sql=$link->prepare('SELECT deleted_questions FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
@@ -201,8 +201,12 @@ class Chapter_1_View_Question extends Controller
         $sql->bind_param('ii',$deleted_questions,$this->session_user_id);
         $sql->execute();
         $sql->close();
-        die("AICI!" . $deleted_questions . $chapter_id);
+        //die("AICI!" . $deleted_questions . $chapter_id);
         $db_connection->close();
         $this->my_sem_release();
+        /*redirect user to view questions page*/
+        $new_url="../../view_questions";
+        header('Location: '.$new_url);
+        die;
     } 
 }

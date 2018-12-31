@@ -17,9 +17,7 @@
             <p class='questionDetails'><?php echo "Times answered: " . $data["right_answers"] . " / " . $data["all_answers"] ;?> </p>
             <p class='questionDetails'><?php echo "Validation: " . $data["validation"]; ?> </p>
             <p class='questionDetails'><?php echo "Date submitted: " . $data["date_submitted"]; ?> </p>
-            
         </div>
-    
         <form class='deleteQuestion' action="chapter_1_view_question/delete_question/<?php echo $data['question_id']?>">
             <?php 
                 if($data['can_delete']==false){
@@ -28,7 +26,15 @@
                     echo "<input class='btnDelete' type='submit' value='Delete'/>";        
                 }
             ?>
-            
+            <div class="validateQuestion">
+                <h3>Mark as</h3>    
+                <select name="validation_field">
+                        <option value="none">None</option>
+                        <option value="Valid">Valid</option>
+                        <option value="Invalid">Invalid</option>
+                    </select>
+                    <input class="markButton" type="submit" value="Mark" />
+            </div>
         </form>
         <h2>Reports</h2>
         <div class='reportsBox'>

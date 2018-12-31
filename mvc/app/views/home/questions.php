@@ -25,6 +25,7 @@
                         <option value="posted">Posted</option>
                         <option value="deleted">Deleted</option>
                     </select>
+                    <h3>Chapter</h3>
                     <select name="chapter_field">';
         }
     ?>
