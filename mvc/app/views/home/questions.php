@@ -67,17 +67,7 @@
         ?>
         
     </div>
-    <div class="pageNumber">
-        <form class="pageNumberPrevious" action="view_questions/0" method="POST">
-            <input type="submit" value="Previous Page"/>
-        </form>
-        <form class="pageNumberValue" action="view_questions/1" method="POST">
-            <input type="number"/>
-            <input type="submit" value="Jump"/>
-        </form>
-        <form class="pageNumberNext" action="view_questions/2" method="POST">
-            <input type="submit" value="Next Page"/>
-        </form>
-    </div>
+    <?php echo $data['page_controls'];
+    ?>
 </body>
 </html>

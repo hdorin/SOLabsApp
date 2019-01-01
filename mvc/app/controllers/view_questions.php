@@ -3,10 +3,15 @@ class View_Questions extends Controller
 {
     private $questions,$questions_nr;
     private $chapters,$chapters_nr;
+    private $page_controls;
+    private const QUESTIONS_PER_PAGE=6;
     public function index($page='test')
     {        
         if(strcmp($page,'test')!=0){
             $_SESSION["questions_page"]=intval($page);
+            if($_SESSION["questions_page"]<1){
+                $_SESSION["questions_page"]=1;
+            }
             $this->reload();
         }
         //echo "Page number=". $_SESSION["questions_page"];
@@ -18,7 +23,8 @@ class View_Questions extends Controller
 
         $this->get_questions();
         $this->get_chapters();
-        $this->view('home/questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,'chapters_nr'=>$this->chapters_nr]);
+        $this->generate_page_controls();
+        $this->view('home/questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,'chapters_nr'=>$this->chapters_nr, 'page_controls' =>$this->page_controls]);
     }
     public function refresh_criteria(){
         $this->check_login();
@@ -123,13 +129,12 @@ class View_Questions extends Controller
         $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation,$chapter_name,$user_name,$date_submitted,$reports_nr);
         
         
-        for($i=0 ; $i < $_SESSION["questions_page"]*6 ; $i++){
+        for($i=0 ; $i < ($_SESSION["questions_page"]-1)*self::QUESTIONS_PER_PAGE ; $i++){
             $sql->fetch();
-            echo "AICI";
         }
 
         $this->questions_nr=0;
-        while($sql->fetch() && $this->questions_nr<6){
+        while($sql->fetch() && $this->questions_nr<self::QUESTIONS_PER_PAGE){
             exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
             $question_text=$question_text_aux[$this->questions_nr];
             if($this->session_is_admin==false){
@@ -182,5 +187,35 @@ class View_Questions extends Controller
         }
         $sql->close();
         $db_connection->close();
+    }
+    public function jump_to_page(){
+        if(empty($_POST["number_field"]) || $_POST["number_field"]<1){
+            $number=1;
+        }else{
+            $number=$_POST["number_field"];
+        }
+        $new_url="../view_questions/" . (string)$number;
+        header('Location: '.$new_url);
+        die;
+    }
+    private function generate_page_controls(){
+        $this->page_controls='<div class="pageNumber">
+            <div class="controls">
+                <form class="pageNumberPrevious" action="view_questions/' . (string)($_SESSION["questions_page"]-1) . '" method="POST">';
+        if($_SESSION["questions_page"]>1){
+            $this->page_controls=$this->page_controls . '<input type="submit" value="Previous Page"/>';
+        }else{
+            $this->page_controls=$this->page_controls . '<input type="submit" value="Previous Page" disabled/>';
+        }
+        $this->page_controls=$this->page_controls . '</form>
+                <form class="pageNumberValue" action="view_questions/jump_to_page" method="POST">
+                    <input type="number" min="1" name="number_field" value="' . (string)$_SESSION["questions_page"] . '" required/>
+                    <input type="submit" value="Jump"/>
+                </form>
+                <form class="pageNumberNext" action="view_questions/' . (string)($_SESSION["questions_page"]+1) . '" method="POST">
+                    <input type="submit" value="Next Page"/>
+                </form>
+            </div>
+        </div>';
     }
 }
