@@ -21,6 +21,7 @@ class View_Questions extends Controller
         if($this->session_is_admin==false){
             die("You cannot access this!");
         }
+        
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -29,11 +30,13 @@ class View_Questions extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        
         if(strcmp($_POST["status_field"],"posted")==0){
             $_SESSION["criteria_posted"]="AND q.`status`='posted'";
         }else{
             $_SESSION["criteria_posted"]="AND q.`status`='deleted'";
         }
+
         if(!empty($_POST["user_field"])){
            
             $sql=$link->prepare('SELECT id FROM users WHERE `user_name`=?');
@@ -48,16 +51,26 @@ class View_Questions extends Controller
         }else{
             $_SESSION["criteria_user"]=" ";
         }
-        if(empty($_POST["chapter_field"]) || strcmp($_POST["chapter_field"],"all")==0){
+
+        if(empty($_POST["chapter_field"]) || strcmp($_POST["chapter_field"],"all")==0 || strlen($_POST["chapter_field"])>2){/*last condition prevents SQL injection*/
             $_SESSION["criteria_chapter"]=" ";
         }else{
             $_SESSION["criteria_chapter"]="AND q.chapter_id=" . $_POST["chapter_field"];
         }
+
         if(empty($_POST["validation_field"]) || strcmp($_POST["validation_field"],"All")==0){
             $_SESSION["criteria_validation"]=" ";
+        }else if(strcmp($_POST["validation_field"],"None")==0){
+            $_SESSION["criteria_validation"]="AND q.validation='None'";
+        }else if(strcmp($_POST["validation_field"],"Valid")==0){
+            $_SESSION["criteria_validation"]="AND q.validation='Valid'";
+        }else if(strcmp($_POST["validation_field"],"Invalid")==0){
+            $_SESSION["criteria_validation"]="AND q.validation='Invalid'";
         }else{
-            $_SESSION["criteria_validation"]="AND q.validation='" . $_POST["validation_field"] . "'";
+            $_SESSION["criteria_validation"]=" ";
         }
+
+
         if(empty($_POST["sort_field"]) || strcmp($_POST["sort_field"],"none")==0){
             $_SESSION["criteria_sort"]=" ";
         }else if(strcmp($_POST["sort_field"],"reports_asc")==0){
@@ -98,8 +111,8 @@ class View_Questions extends Controller
             $search_user="AND q.`user_id`=" . (string)$this->session_user_id;
             $search_chapter=" ";
         }
-            /*vulnerable to SQL Injection, but only admins can access the criteria form so nothing to worry about*/
-            $qurery="SELECT q.id,q.`chapter_id`,q.all_answers,q.right_answers,q.`validation`,c.name,u.user_name,q.date_created,q.reports_nr FROM questions q JOIN chapters c ON q.chapter_id=c.id JOIN users u ON q.user_id=u.id WHERE c.status='posted' " . $search_user .  " " . $question_posted . " " . $search_chapter . " " . $search_validation . " " . $sort_criterion;
+            
+        $qurery="SELECT q.id,q.`chapter_id`,q.all_answers,q.right_answers,q.`validation`,c.name,u.user_name,q.date_created,q.reports_nr FROM questions q JOIN chapters c ON q.chapter_id=c.id JOIN users u ON q.user_id=u.id WHERE c.status='posted' " . $search_user .  " " . $question_posted . " " . $search_chapter . " " . $search_validation . " " . $sort_criterion;
         $sql=$link->prepare($qurery);
         $sql->execute();
         $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation,$chapter_name,$user_name,$date_submitted,$reports_nr);
