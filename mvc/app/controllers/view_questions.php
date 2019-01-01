@@ -3,15 +3,19 @@ class View_Questions extends Controller
 {
     private $questions,$questions_nr;
     private $chapters,$chapters_nr;
-    public function index()
-    {
+    public function index($page='test')
+    {        
+        if(strcmp($page,'test')!=0){
+            $_SESSION["questions_page"]=intval($page);
+            $this->reload();
+        }
+        //echo "Page number=". $_SESSION["questions_page"];
         $this->check_login();
         $this->session_extract("exec_msg",true);
         $this->session_extract("error_msg",true);
         $this->session_extract("text_field",true);
         $this->session_extract("code_field",true);
 
-        
         $this->get_questions();
         $this->get_chapters();
         $this->view('home/questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,'chapters_nr'=>$this->chapters_nr]);
@@ -52,10 +56,10 @@ class View_Questions extends Controller
             $_SESSION["criteria_user"]=" ";
         }
 
-        if(empty($_POST["chapter_field"]) || strcmp($_POST["chapter_field"],"all")==0 || strlen($_POST["chapter_field"])>2){/*last condition prevents SQL injection*/
+        if(empty($_POST["chapter_field"]) || strcmp($_POST["chapter_field"],"all")==0){
             $_SESSION["criteria_chapter"]=" ";
         }else{
-            $_SESSION["criteria_chapter"]="AND q.chapter_id=" . $_POST["chapter_field"];
+            $_SESSION["criteria_chapter"]="AND q.chapter_id=" . (string)intval($_POST["chapter_field"]);/*prevents SQL injection*/
         }
 
         if(empty($_POST["validation_field"]) || strcmp($_POST["validation_field"],"All")==0){
@@ -113,12 +117,19 @@ class View_Questions extends Controller
         }
             
         $qurery="SELECT q.id,q.`chapter_id`,q.all_answers,q.right_answers,q.`validation`,c.name,u.user_name,q.date_created,q.reports_nr FROM questions q JOIN chapters c ON q.chapter_id=c.id JOIN users u ON q.user_id=u.id WHERE c.status='posted' " . $search_user .  " " . $question_posted . " " . $search_chapter . " " . $search_validation . " " . $sort_criterion;
+        //echo $qurery;
         $sql=$link->prepare($qurery);
         $sql->execute();
         $sql->bind_result($question_id,$chapter_id,$all_answers,$right_answers,$validation,$chapter_name,$user_name,$date_submitted,$reports_nr);
-        $this->questions_nr=0;
         
-        while($sql->fetch()){
+        
+        for($i=0 ; $i < $_SESSION["questions_page"]*6 ; $i++){
+            $sql->fetch();
+            echo "AICI";
+        }
+
+        $this->questions_nr=0;
+        while($sql->fetch() && $this->questions_nr<6){
             exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
             $question_text=$question_text_aux[$this->questions_nr];
             if($this->session_is_admin==false){
@@ -135,9 +146,9 @@ class View_Questions extends Controller
                                                                     <p class='details'> Times Answered: " . $right_answers . " / " .  $all_answers . "</p>
                                                                     <p class='details'> Validation: " . $validation . "</p>
                                                                     <p class='details'> Chapter: " . $chapter_name . "</p>
-                                                                    <p class='details'> User: " . $user_name . "</p>
-                                                                    <p class='details'> Date Submitted: " . $date_submitted . "</p>
-                                                                    <p class='details'> Reports: " . $reports_nr . "</p>
+                                                                    <p class='details_admin'> User: " . $user_name . "</p>
+                                                                    <p class='details_admin'> Date Submitted: " . $date_submitted . "</p>
+                                                                    <p class='details_admin'> Reports: " . $reports_nr . "</p>
                                                             </a>";
             }
             $this->questions_nr=$this->questions_nr+1;

@@ -3,7 +3,9 @@
     }
         .questionsBox{
             width: 90%;
-            height: 600px;
+            
+            overflow: hidden;
+            box-sizing: border-box;
             margin-left: auto;
             margin-right: auto;
             margin-top:5%;
@@ -34,6 +36,16 @@
                 color: black;
                 font-size: 80%;
                 text-decoration: none;
+                margin-top:-1%;
+                margin-bottom:1%;
+                float: left;
+                width: 33.3%;
+            }
+            .questionsBox .question .details_admin{
+                color: black;
+                font-size: 80%;
+                text-decoration: none;
+                margin-top: 0%;
                 float: left;
                 width: 33.3%;
             }
@@ -87,4 +99,11 @@
         float: left;
         width: 11%;
         margin-left: 3%;
+    }
+
+    .pageNumber{
+        margin-top: 2%;
+    }
+    .pageNumber form{
+        float: left;
     }

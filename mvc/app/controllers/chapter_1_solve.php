@@ -45,7 +45,7 @@ class Chapter_1_Solve extends Controller
         $sql->bind_result($questions_nr);
         $sql->fetch();
         $sql->close();
-        do{/*The user won't get the same question twice in a row*/
+        do{/*The user won't get the same question twice in a row or his/her own questions*/
             $sql=$link->prepare('SELECT id,`user_id` FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
             $sql->bind_param('i',$chapter_id);
             $sql->execute();
