@@ -207,7 +207,6 @@ class Chapter_1_View_Question extends Controller
         /*redirect user to view questions page*/
         $new_url="../../view_questions";
         header('Location: '.$new_url);
-        die;
     }
     public function validate_question($question_id){
         $this->check_login();

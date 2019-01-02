@@ -48,7 +48,6 @@ class View_Questions extends Controller
         }
 
         if(!empty($_POST["user_field"])){
-           
             $sql=$link->prepare('SELECT id FROM users WHERE `user_name`=?');
             $sql->bind_param('s', $_POST["user_field"]);
             $sql->execute();
