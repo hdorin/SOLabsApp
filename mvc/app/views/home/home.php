@@ -13,8 +13,21 @@
 <?php
     include "header.php"
 ?>
+    <?php 
+        if($_SESSION["is_admin"]==true){ echo '
+            <form class="addNews" action="home/add_news" method="POST">
+                <h3>Add news</h3>
+                <textarea type="text" name="text_field" required ></textarea>
+                <input type="submit" value="Submit">
+            </form>';
+        }
+    ?>
     <div class="newsBox">
-        <p class="news">News go here!</p>
+        <?php 
+            for($i=$data['news_nr'] -1 ;$i>=0;$i--){
+                echo $data['news'][$i];
+            }
+        ?>
     </div>
 </body>
 </html>

@@ -11,11 +11,11 @@ class Chapter_1_View_Question extends Controller
     private $reports,$reports_nr=0;
     public function index($data='test')
     {   
+        $this->check_login();
         if(strcmp($data,'test')!=0){
             $_SESSION["question_id"]=intval($data);
             $this->reload();
         }
-        $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
         $question_id=$this->session_extract("question_id");
         if($this->can_view_quesion($question_id)==false){

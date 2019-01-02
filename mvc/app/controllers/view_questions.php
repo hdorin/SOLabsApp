@@ -7,6 +7,7 @@ class View_Questions extends Controller
     private const QUESTIONS_PER_PAGE=6;
     public function index($page='test')
     {        
+        $this->check_login();
         if(strcmp($page,'test')!=0){
             $_SESSION["questions_page"]=intval($page);
             if($_SESSION["questions_page"]<1){
@@ -15,7 +16,6 @@ class View_Questions extends Controller
             $this->reload();
         }
         //echo "Page number=". $_SESSION["questions_page"];
-        $this->check_login();
         $this->session_extract("exec_msg",true);
         $this->session_extract("error_msg",true);
         $this->session_extract("text_field",true);
@@ -189,6 +189,7 @@ class View_Questions extends Controller
         $db_connection->close();
     }
     public function jump_to_page(){
+        $this->check_login();
         if(empty($_POST["number_field"]) || $_POST["number_field"]<1){
             $number=1;
         }else{
