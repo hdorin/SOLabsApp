@@ -34,7 +34,7 @@
         <form class='deleteQuestion' method="POST" action="chapter_1_view_question/delete_question/<?php echo $data['question_id'] ?>">
             <?php 
                 if($data['can_delete']==false){
-                    echo "<input class='btnDeleteGray' type='submit' value='Delete' disabled/><br><p class='cannotDeleteMessage'>Answer " . $data['answers_left'] . " more questions!<p>";        
+                    echo "<input class='btnDeleteGray' type='submit' value='Delete' disabled/><br><p class='cannotDeleteMessage'>Answer " . $data['answers_left'] . " more questions to delete!<p>";        
                 }else{
                     echo "<input class='btnDelete' type='submit' value='Delete'/>";        
                 }

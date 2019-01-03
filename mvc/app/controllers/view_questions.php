@@ -21,9 +21,9 @@ class View_Questions extends Controller
         $this->session_extract("text_field",true);
         $this->session_extract("code_field",true);
 
+        $this->generate_page_controls();
         $this->get_questions();
         $this->get_chapters();
-        $this->generate_page_controls();
         $this->view('home/questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,'chapters_nr'=>$this->chapters_nr, 'page_controls' =>$this->page_controls]);
     }
     public function refresh_criteria(){
@@ -199,6 +199,36 @@ class View_Questions extends Controller
         die;
     }
     private function generate_page_controls(){
+        /*count all questions that can be displayed*/
+        $question_posted=$this->session_extract("criteria_posted");
+        $search_user=$this->session_extract("criteria_user");
+        $search_chapter=$this->session_extract("criteria_chapter");
+        $search_validation=$this->session_extract("criteria_validation");
+    
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $ssh_connection=$this->model('SSHConnection');
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        if($this->session_is_admin==false){
+            $is_posted="AND q.`status`='posted'";
+            $search_user="AND q.`user_id`=" . (string)$this->session_user_id;
+            $search_chapter=" ";
+        }
+        $qurery="SELECT COUNT(q.id) FROM questions q JOIN chapters c ON q.chapter_id=c.id JOIN users u ON q.user_id=u.id WHERE c.status='posted' " . $search_user .  " " . $question_posted . " " . $search_chapter . " " . $search_validation;
+        $sql=$link->prepare($qurery);
+        $sql->execute();
+        $sql->bind_result($questions_total);
+        $sql->fetch();
+        $sql->close();
+        $db_connection->close();
+        if(intval($questions_total/self::QUESTIONS_PER_PAGE)+1<$_SESSION["questions_page"]){
+            $_SESSION["questions_page"]=intval($questions_total/self::QUESTIONS_PER_PAGE)+1;
+        }
+        
         $this->page_controls='<div class="pageNumber">
             <div class="controls">
                 <form class="pageNumberPrevious" action="view_questions/' . (string)($_SESSION["questions_page"]-1) . '" method="POST">';
@@ -209,12 +239,16 @@ class View_Questions extends Controller
         }
         $this->page_controls=$this->page_controls . '</form>
                 <form class="pageNumberValue" action="view_questions/jump_to_page" method="POST">
-                    <input type="number" min="1" name="number_field" value="' . (string)$_SESSION["questions_page"] . '" required/>
+                    <input type="number" min="1" max="' . (string)intval($questions_total/self::QUESTIONS_PER_PAGE+1) . '"name="number_field" value="' . (string)$_SESSION["questions_page"] . '" required/>
                     <input type="submit" value="Jump"/>
                 </form>
-                <form class="pageNumberNext" action="view_questions/' . (string)($_SESSION["questions_page"]+1) . '" method="POST">
-                    <input type="submit" value="Next Page"/>
-                </form>
+                <form class="pageNumberNext" action="view_questions/' . (string)($_SESSION["questions_page"]+1) . '" method="POST">';
+        if(intval($questions_total/self::QUESTIONS_PER_PAGE) - $_SESSION["questions_page"]>=0){
+            $this->page_controls=$this->page_controls . '<input type="submit" value="Next Page"/>';
+        }else{
+            $this->page_controls=$this->page_controls . '<input type="submit" value="Next Page" disabled/>';
+        }
+        $this->page_controls=$this->page_controls .'</form>
             </div>
         </div>';
     }
