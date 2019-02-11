@@ -59,6 +59,9 @@ class Controller
         sem_release($this->semaphore);
     }
     protected function check_chapter_posted($chapter_id){
+        if($this->session_is_admin==true){
+            return true;
+        }
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');

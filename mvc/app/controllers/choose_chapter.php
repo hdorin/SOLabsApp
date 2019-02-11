@@ -40,7 +40,12 @@ class Choose_Chapter extends Controller
         $db_name=$config->get('db','name');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare("SELECT id,`name` FROM chapters WHERE `status`='posted'");
+        if($this->session_is_admin==true){/*admins can see unposted chapters*/
+            $query="SELECT id,`name` FROM chapters";
+        }else{
+            $query="SELECT id,`name` FROM chapters WHERE `status`='posted'";
+        }
+        $sql=$link->prepare($query);
         $sql->execute();
         $sql->bind_result($chapter_id,$chapter_name);
         $this->chapters_nr=0;
