@@ -4,6 +4,7 @@ class Submit_Question extends Controller
     private $chapters;
     private $chapters_nr;
     private $answers_left;
+    private const TITLE_MESSAGE="Choose a chapter to submit a question";
     public function index()
     {
         $this->check_login();
@@ -13,7 +14,7 @@ class Submit_Question extends Controller
         $this->session_extract("code_field",true);
 
         $this->get_chapters();
-        $this->view('home/choose_chapter',['error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
+        $this->view('home/choose_chapter',['title_message'=>self::TITLE_MESSAGE,'error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
     }
     private function can_submit_quesion($chapter_id){
         if($this->session_is_admin==true){

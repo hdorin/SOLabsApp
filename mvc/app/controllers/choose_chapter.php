@@ -3,8 +3,7 @@ class Choose_Chapter extends Controller
 {
     private $chapters;
     private $chapters_nr;
-    const TITLE_MESSAGE="Choose a chapter to begin solving questions:";
-    
+    private const TITLE_MESSAGE="Choose a chapter to begin solving questions:";
     public function index()
     {
         $this->check_login();
