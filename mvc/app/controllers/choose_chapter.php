@@ -3,6 +3,7 @@ class Choose_Chapter extends Controller
 {
     private $chapters;
     private $chapters_nr;
+    const TITLE_MESSAGE="Choose a chapter to begin solving questions:";
     
     public function index()
     {
@@ -24,7 +25,7 @@ class Choose_Chapter extends Controller
 
         $this->get_chapters();
         
-        $this->view('home/chapters',['error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
+        $this->view('home/choose_chapter',['title_message'=>self::TITLE_MESSAGE,'error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;

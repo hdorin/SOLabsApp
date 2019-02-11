@@ -13,6 +13,7 @@
 <?php
     include "header.php"
 ?>
+    
     <?php 
         if($_SESSION["is_admin"]==true){ echo '
             <form class="addNews" action="home/add_news" method="POST">
@@ -23,6 +24,7 @@
         }
     ?>
     <div class="newsBox">
+        <h1>Announcements:</h1>
         <?php 
             for($i=$data['news_nr'] -1 ;$i>=0;$i--){
                 echo $data['news'][$i];

@@ -24,7 +24,7 @@ class View_Questions extends Controller
         $this->generate_page_controls();
         $this->get_questions();
         $this->get_chapters();
-        $this->view('home/questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,'chapters_nr'=>$this->chapters_nr, 'page_controls' =>$this->page_controls]);
+        $this->view('home/view_questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,'chapters_nr'=>$this->chapters_nr, 'page_controls' =>$this->page_controls]);
     }
     public function refresh_criteria(){
         $this->check_login();

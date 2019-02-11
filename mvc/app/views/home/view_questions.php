@@ -6,7 +6,7 @@
     <title>Questions</title>
 
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
-    <link rel="stylesheet" href="resources/stylesheets/questions.css" type="text/css" />
+    <link rel="stylesheet" href="resources/stylesheets/view_questions.css" type="text/css" />
     </head>
 <body>
 
