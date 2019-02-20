@@ -7,7 +7,7 @@
     "ssh": {
         "host":"127.0.0.1",
         "port":"22",
-        "sudo_user":"dorin",
+        "sudo_user":"hdorin",
         "sudo_pass":"halogenuri",
         "newuser_script_path":"/var/www/html/AplicatieSO",
         "quota_limit":"10M",

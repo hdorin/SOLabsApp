@@ -28,9 +28,9 @@ class SSHConnection
         unset($this->connection);
     }
     public function execute($command,$timeout_seconds){
-        ssh2_exec($this->connection, 'echo "' .  $command . '" > command.sh'); /*preventing command injection (using ';') with "" */
-        ssh2_exec($this->connection, 'chmod +x command.sh');
-        $stream = ssh2_exec($this->connection, 'timeout ' . $timeout_seconds .  ' ./command.sh');/*hardcoded + adaugat comentariu*/ 
+        ssh2_exec($this->connection, 'echo "' .  $command . '" > .ssh_command.sh'); /*preventing command injection (using ';') with "" */
+        ssh2_exec($this->connection, 'chmod +x .ssh_command.sh');
+        $stream = ssh2_exec($this->connection, 'timeout -k 0 ' . $timeout_seconds .  ' ./.ssh_command.sh');/*hardcoded + adaugat comentariu*/ 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
         $out_msg=stream_get_contents($stream_out);
