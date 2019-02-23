@@ -5,7 +5,7 @@ class Chapter_2_Solve extends Controller
     private $question_text;
     private $get_question_i0nput;
     const CHAPTER_ID=2;
-    const CODE_MAX_LEN=150;
+    const CODE_MAX_LEN=1500;
     public function index()
     {   
         $this->check_login();

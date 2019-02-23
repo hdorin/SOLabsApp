@@ -3,7 +3,7 @@
 class Chapter_2_Submit extends Controller
 {
     const CHAPTER_ID=2;
-    const TEXT_MAX_LEN=500;
+    const TEXT_MAX_LEN=1500;
     const CODE_MAX_LEN=150;
     public function index()
     {

@@ -22,7 +22,7 @@
             <h1>Enter question code</h1>
         </div>
         <div class="questionCode">
-            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="150"><?php echo $data['code_field']; ?></textarea>
+            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="1500"><?php echo $data['code_field']; ?></textarea>
         </div>
             <input class="btnExecute" name="action" type="submit" value="Execute" />
             <input class="btnSubmit" name="action" type="submit" value="Submit" />
