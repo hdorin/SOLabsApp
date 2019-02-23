@@ -18,14 +18,16 @@ class Controller
     }
     protected function check_login(){
         if(isset($_SESSION['user'])==false){
-            die('You are not logged in!');
+            $this->view('home/login',['error_msg' => $error_msg]);
+            die;
         }
         $this->session_user_id=$_SESSION['user_id'];
         $this->session_user=$_SESSION['user'];
         $this->session_pass=$_SESSION['pass'];
         $this->session_is_admin=$_SESSION['is_admin'];
         if(isset($_SESSION['user'])==false){
-            die('You are not logged in!');
+            $this->view('home/login',['error_msg' => $error_msg]);
+            die;
         }
     }
     protected function session_extract($session_variable_name,$unset=false){
