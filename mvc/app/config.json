@@ -9,7 +9,6 @@
         "port":"22",
         "sudo_user":"hdorin",
         "sudo_pass":"halogenuri",
-        "newuser_script_path":"/var/www/html/AplicatieSO",
         "quota_limit":"10M",
         "timeout_seconds":"1s",
         "procs_limit":"25"

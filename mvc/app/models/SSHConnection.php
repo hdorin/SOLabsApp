@@ -10,9 +10,24 @@ class SSHConnection
         $this->host=$host;
         $this->port=$port;
     }
-    public function create_user($user,$pass,$newuser_script_path,$quota_limit,$procs_limit){
-        //die('cd ' . $newuser_script_path  . '; ' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit . '');
-        $stream=ssh2_exec($this->connection, 'cd ' . $newuser_script_path  . '; ' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit . ' ' . $procs_limit . '');
+    public function create_user($user,$pass,$quota_limit,$procs_limit){
+        $stream = ssh2_exec($this->connection, 'cat ./CreateUser.sh ');/*check for script to create new user*/ 
+        stream_set_blocking($stream, true);
+        $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+        $out_msg=stream_get_contents($stream_out);
+        if(empty($out_msg)==true){
+            $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
+            $err_msg=stream_get_contents($stream_err);    
+            throw new Exception($err_msg);
+        }else{
+            $stream=ssh2_exec($this->connection, 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit);
+            stream_set_blocking($stream, true);
+            $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+            $out_msg=stream_get_contents($stream_out);
+            if(empty($out_msg)==true){
+                throw new Exception("Could not execute CreateUser.sh!");
+            }
+        }
     }
     public function connect($user,$pass){
         $this->execution_user=$user;
@@ -30,7 +45,7 @@ class SSHConnection
         unset($this->connection);
     }
     public function execute($command,$timeout_seconds){
-        $stream = ssh2_exec($this->connection, "sleep " . $timeout_seconds . "; pkill -u " . $this->execution_user );/*kill all processes after timeout_seconds*/
+        $stream = ssh2_exec($this->connection, "sleep " . $timeout_seconds . "; pkill -u " . $this->execution_user);/*kill all processes after timeout_seconds*/
         $stream = ssh2_exec($this->connection, $command); 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);

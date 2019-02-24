@@ -74,7 +74,6 @@ class Login extends Controller
             $ssh_port=$config->get('ssh','port');
             $ssh_sudo_user=$config->get('ssh','sudo_user');
             $ssh_sudo_pass=$config->get('ssh','sudo_pass');
-            $ssh_newuser_script_path=$config->get('ssh','newuser_script_path');
             $ssh_quota_limit=$config->get('ssh','quota_limit');
             $ssh_procs_limit=$config->get('ssh','procs_limit');
             $ssh_connection->configure($ssh_host,$ssh_port);
@@ -87,7 +86,12 @@ class Login extends Controller
                 $this->reload($e->getMessage());
             }
             $ssh_pass=$this->generate_random_str();
-            $ssh_connection->create_user($user,$ssh_pass,$ssh_newuser_script_path,$ssh_quota_limit,$ssh_procs_limit);
+            try{
+                $ssh_connection->create_user($user,$ssh_pass,$ssh_quota_limit,$ssh_procs_limit);
+            }catch(Exception $e){
+                $this->reload($e->getMessage());
+            }
+            
             $ssh_connection->close();
             $hash_pass=password_hash($pass, PASSWORD_DEFAULT);
             $sql=$link->prepare('INSERT INTO users (user_name,date_created,hash_pass,ssh_pass) VALUES (?,now(),?,?)');

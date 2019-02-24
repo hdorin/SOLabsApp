@@ -8,3 +8,5 @@ sudo setquota $2 $3 $3 0 0 /
 echo "@"$2 "hard" "nrproc" $4 | sudo tee --append /etc/security/limits.conf > /dev/null
 
 chmod 0770 /home/$2
+
+echo "User created!"
