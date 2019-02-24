@@ -41,19 +41,19 @@ class Choose_Chapter extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         if($this->session_is_admin==true){/*admins can see unposted chapters*/
-            $query="SELECT id,`name` FROM chapters";
+            $query="SELECT id,`name`,`description` FROM chapters";
         }else{
-            $query="SELECT id,`name` FROM chapters WHERE `status`='posted'";
+            $query="SELECT id,`name`,`description` FROM chapters WHERE `status`='posted'";
         }
         $sql=$link->prepare($query);
         $sql->execute();
-        $sql->bind_result($chapter_id,$chapter_name);
+        $sql->bind_result($chapter_id,$chapter_name,$chapter_description);
         $this->chapters_nr=0;
         
         while($sql->fetch()){
                 $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
                                                             <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
-                                                            <p>Something here</p>
+                                                            <p>" . $chapter_description . "</p>
                                                         </div>";
             $this->chapters_nr=$this->chapters_nr+1;
         }
