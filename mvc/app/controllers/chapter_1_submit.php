@@ -129,8 +129,12 @@ class Chapter_1_Submit extends Controller
         $sql->execute();
         $sql->close();
         $db_connection->close();
-        exec('echo  "' . $command . '" > /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.code');
-        exec('echo  "' . $text . '" > /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text');
+        $code_file=fopen('/var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.code');
+        fwrite($code_file,$command);
+        fclose($code_file);
+        $text_file=fopen('/var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text');
+        fwrite($text_file,$text);
+        fclose($text_file);
         
     }
     public function process(){

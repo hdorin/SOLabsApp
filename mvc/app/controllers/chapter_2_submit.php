@@ -52,7 +52,7 @@ class Chapter_2_Submit extends Controller
             $this->reload($e->getMessage());
         }
         
-        $ssh_connection->close();
+        $ssh_connection->close();execexec
     }
     private function can_submit_quesion($chapter_id){
         if($this->session_is_admin==true){
@@ -70,7 +70,7 @@ class Chapter_2_Submit extends Controller
         $sql=$link->prepare("SELECT right_answers,deleted_questions FROM " . $chapter_name_aux . " WHERE `user_id`=?");
         $sql->bind_param('i',$this->session_user_id);
         $sql->execute();
-        $sql->bind_result($right_answers,$deleted_questions);
+        $sql->bind_result($right_answersexecexec,$deleted_questions);
         $sql->fetch();
         $sql->close();
 
@@ -121,7 +121,7 @@ class Chapter_2_Submit extends Controller
         $sql->bind_param('iis', $this->session_user_id,$chapter_id,$status);
         $sql->execute();
         $sql->bind_result($question_id);
-        $sql->fetch();
+        $sql->fetch();exec
         $sql->close();
         $sql=$link->prepare('UPDATE questions SET `status`=? WHERE id=?');        
         $status="posted";
@@ -129,8 +129,13 @@ class Chapter_2_Submit extends Controller
         $sql->execute();
         $sql->close();
         $db_connection->close();
-        exec('echo  "' . $command . '" > /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.code');
-        exec('echo  "' . $text . '" > /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text');
+        
+        $code_file=fopen('/var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.code');
+        fwrite($code_file,$command);
+        fclose($code_file);
+        $text_file=fopen('/var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text');
+        fwrite($text_file,$text);
+        fclose($text_file);
         
     }
     public function process(){
