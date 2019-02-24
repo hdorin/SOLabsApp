@@ -5,6 +5,7 @@ class SSHConnection
     private $host,$port;
     private $connection;
     private $sudo_user,$sudo_pass;
+    private $execution_user;
     public function configure($host,$port){
         $this->host=$host;
         $this->port=$port;
@@ -14,6 +15,7 @@ class SSHConnection
         $stream=ssh2_exec($this->connection, 'cd ' . $newuser_script_path  . '; ' . 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit . ' ' . $procs_limit . '');
     }
     public function connect($user,$pass){
+        $this->execution_user=$user;
         if (!($this->connection = ssh2_connect($this->host, $this->port))) {
             throw new Exception('Could not establish SSH connection!');
         }
@@ -28,7 +30,8 @@ class SSHConnection
         unset($this->connection);
     }
     public function execute($command,$timeout_seconds){
-        $stream = ssh2_exec($this->connection, 'timeout -k 0 ' . $timeout_seconds . ' ' . $command);/*hardcoded + adaugat comentariu*/ 
+        $stream = ssh2_exec($this->connection, "sleep " . $timeout_seconds . "; pkill -u " . $this->execution_user );/*kill all processes after timeout_seconds*/
+        $stream = ssh2_exec($this->connection, $command); 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
         $out_msg=stream_get_contents($stream_out);
