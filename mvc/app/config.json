@@ -1,4 +1,7 @@
 {
+    "app": {
+        "local_path": "/var/www/html/AplicatieSO"
+    },
     "external_ssh": {
         "check": "false", 
         "host":"students.info.uaic.ro",

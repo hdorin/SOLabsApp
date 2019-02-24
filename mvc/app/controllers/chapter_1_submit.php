@@ -129,10 +129,13 @@ class Chapter_1_Submit extends Controller
         $sql->execute();
         $sql->close();
         $db_connection->close();
-        $code_file=fopen('/var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.code');
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        
+        $code_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.code','w');
         fwrite($code_file,$command);
         fclose($code_file);
-        $text_file=fopen('/var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text');
+        $text_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text','w');
         fwrite($text_file,$text);
         fclose($text_file);
         

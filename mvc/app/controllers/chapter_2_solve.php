@@ -154,10 +154,18 @@ class Chapter_2_Solve extends Controller
         }catch(Exception $e){
             $this->reload($e->getMessage());
         }
-        try{    
-            $_SESSION["exec_msg"]=$ssh_connection->execute('echo "' .  $code . '" > .code.c',$ssh_timeout_seconds);
-            $_SESSION["exec_msg"]=$ssh_connection->execute('gcc .code.c -o .code.out',$ssh_timeout_seconds);
-            $_SESSION["exec_msg"]=$ssh_connection->execute('./.code.out',$ssh_timeout_seconds);
+        
+        
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
+        fwrite($code_file,$code);
+        fclose($code_file);
+        try{
+            //$_SESSION["exec_msg"]=$ssh_connection->execute('echo "' .  $code . '" > .code.c',$ssh_timeout_seconds);
+            //create SCP connection
+            //$_SESSION["exec_msg"]=$ssh_connection->execute('gcc .code.c -o .code.out',$ssh_timeout_seconds);
+            //$_SESSION["exec_msg"]=$ssh_connection->execute('./.code.out',$ssh_timeout_seconds);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");

@@ -45,7 +45,7 @@ class SSHConnection
         unset($this->connection);
     }
     public function execute($command,$timeout_seconds){
-        $stream = ssh2_exec($this->connection, "sleep " . $timeout_seconds . "; pkill -u " . $this->execution_user);/*kill all processes after timeout_seconds*/
+        $stream = ssh2_exec($this->connection, "sleep " . $timeout_seconds . "; pkill --signal SIGKILL -u " . $this->execution_user);/*kill all processes after timeout_seconds*/
         $stream = ssh2_exec($this->connection, $command); 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
