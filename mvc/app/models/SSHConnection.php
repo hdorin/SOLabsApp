@@ -57,4 +57,9 @@ class SSHConnection
         }
         return $out_msg;
     }
+    public function write_code_file($local_file){
+        if(!ssh2_scp_send($this->connection,$local_file,"code.c")){
+            throw new Exception("Could not send file for exection!");
+        }
+    }
 }

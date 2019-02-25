@@ -162,6 +162,7 @@ class Chapter_2_Solve extends Controller
         fwrite($code_file,$code);
         fclose($code_file);
         try{
+            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code');
             //$_SESSION["exec_msg"]=$ssh_connection->execute('echo "' .  $code . '" > .code.c',$ssh_timeout_seconds);
             //create SCP connection
             //$_SESSION["exec_msg"]=$ssh_connection->execute('gcc .code.c -o .code.out',$ssh_timeout_seconds);
