@@ -1,0 +1,9 @@
+Comenzi
+  - simple (1 comanda)
+      - flag cu & 
+  - compuse
+      - ce tipuri de compunere a folosit: |, &&, ||, ;
+
+C Linux
+  - lucrul cu procese
+  - lucrul cu fisiere
