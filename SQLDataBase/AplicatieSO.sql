@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 24, 2019 at 06:29 PM
+-- Generation Time: Feb 26, 2019 at 07:24 PM
 -- Server version: 5.7.25-0ubuntu0.18.04.2
 -- PHP Version: 7.2.15-0ubuntu0.18.04.1
 
@@ -74,7 +74,9 @@ INSERT INTO `chapter_1` (`user_id`, `right_answers`, `last_question_id`, `delete
 (19, 0, 6, 0),
 (21, 0, 6, 0),
 (22, 0, 6, 0),
+(23, 0, 6, 0),
 (25, 0, 6, 0),
+(26, 0, 6, 0),
 (31, 0, 6, 0);
 
 -- --------------------------------------------------------
@@ -147,11 +149,7 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`, `reports_nr`) VALUES
-(6, 16, 1, 'posted', '2019-02-11', 0, 0, 'None', 0),
-(7, 15, 1, 'posted', '2019-02-11', 1, 0, 'None', 0),
-(9, 15, 2, 'posted', '2019-02-20', 0, 0, 'None', 0),
-(10, 16, 1, 'posted', '2019-02-23', 0, 0, 'None', 0),
-(11, 15, 1, 'posted', '2019-02-24', 1, 1, 'None', 0);
+(32, 16, 1, 'posted', '2019-02-26', 0, 0, 'None', 0);
 
 -- --------------------------------------------------------
 
@@ -188,7 +186,7 @@ CREATE TABLE `users` (
   `user_name` varchar(30) NOT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   `date_created` date NOT NULL,
-  `hash_pass` varchar(256) NOT NULL,
+  `pass_hash` varchar(256) NOT NULL,
   `ssh_pass` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -196,12 +194,16 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `user_name`, `is_admin`, `date_created`, `hash_pass`, `ssh_pass`) VALUES
-(15, 'test', 0, '2019-02-10', '$2y$10$X09EVaRaAT6ruLPuMS2ZkucjSogloSUDIf6lXqqIp4hTb64Tysx3u', 'KRxOaeRE7mLsUwveMSKJ'),
-(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$YIwtBi8evvbHpRPnLSeYrOTHeiHHczpw2iRSJ7PKZjjsu7uAwdXuW', '2YGCf22KLo3aw6uws59T'),
+INSERT INTO `users` (`id`, `user_name`, `is_admin`, `date_created`, `pass_hash`, `ssh_pass`) VALUES
+(15, 'test', 0, '2019-02-10', '$2y$10$cVdU54xSntC5fk4O.d9luO0RkpmLTovany3beYqmRY/i.mz6fPrgO', 'KRxOaeRE7mLsUwveMSKJ'),
+(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$vrVcbR4Zt/YBejF/wPKql.SSawyng5kQFsFxiFwnjVSYn4hCF5zma', '2YGCf22KLo3aw6uws59T'),
 (17, 'dorin', 0, '2019-02-14', '$2y$10$5Ci38nuBJ1LKjlTXYE3Mm.XpdSwvH9MMI9hwNIYyiPYzhpjLWsLKK', 'Lh0iJX7yzMJHK8Sz3zP0'),
 (18, 'hdorin', 0, '2019-02-23', '$2y$10$iTFS1IpvlYWgCDBRpnggl.rLKv3PiBXx6ODOBc.v9LErE.KjqNknq', 'K6VB0q1D6PHFeZSvwimF'),
-(22, 'test1', 0, '2019-02-23', '$2y$10$eUluGdzXiMwbIFERQVloOuCCvNdLKd.hK78PIg91D7ENdI8Fhh6Oa', 'B6S3WtVEvRamtwdCyxkq');
+(22, 'test1', 0, '2019-02-23', '$2y$10$eUluGdzXiMwbIFERQVloOuCCvNdLKd.hK78PIg91D7ENdI8Fhh6Oa', 'B6S3WtVEvRamtwdCyxkq'),
+(23, 'test2', 0, '2019-02-26', '$2y$10$YdVPHHpBH2XGcYS3rJchAejuSFIgCJiNMZLdNIyRuSWHriVYx0A2u', 'XAwftlN1YQsLvWGeCWlm'),
+(24, 'test3', 0, '2019-02-26', '$2y$10$VFeB2IT7BG.TqSO8/KGPy.ihGW9FeJrE.ndReg29ALQm7HKC4BOgO', 'Q5EZo1RAr1yLOc851hS3'),
+(25, 'test4', 0, '2019-02-26', '$2y$10$pxYe/FMAcPE5Blap0EbW7eyr3i1vVTshOpPFYCAJkCiY0h0DnAM9K', 'gj7sB8h7mO1UipBK5SZF'),
+(26, 'test5', 0, '2019-02-26', '$2y$10$7HGsBgSRBV3KKP3UN1zUz.NaE5kikdniWO2STBGdFfQTkk9UKTzXS', 'M4p838kUEt434QvSfY5P');
 
 --
 -- Indexes for dumped tables
@@ -271,7 +273,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `reports`
@@ -283,7 +285,7 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
