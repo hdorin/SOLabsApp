@@ -3,8 +3,8 @@
 class Chapter_2_Submit extends Controller
 {
     const CHAPTER_ID=2;
-    const TEXT_MAX_LEN=1500;
-    const CODE_MAX_LEN=150;
+    const TEXT_MAX_LEN=500;
+    const CODE_MAX_LEN=1500;
     public function index()
     {
         $chapter_id=self::CHAPTER_ID;
@@ -17,7 +17,7 @@ class Chapter_2_Submit extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['code_field' => $code_field, 'code_field_max_len'=>self::CODE_MAX_LEN, 'text_field' => $text_field, 'text_field_max_len'=>self::TEXT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;

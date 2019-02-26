@@ -7,3 +7,6 @@ Comenzi
 C Linux
   - lucrul cu procese
   - lucrul cu fisiere
+
+Sugestii:
+C Linux cu input tastatura/fisiere?

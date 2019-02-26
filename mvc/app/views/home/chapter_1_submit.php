@@ -16,13 +16,13 @@
         </div>
         <form class="submitQuestion" action="chapter_1_submit/process" method="POST">
         <div class="questionText">
-            <textarea name="text_field" rows="4" cols="50" required maxlength="500"><?php echo $data['text_field']; ?></textarea>
+            <textarea name="text_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['text_field_max_len']; ?>"><?php echo $data['text_field']; ?></textarea>
         </div>
         <div class="questionCodeTitle">
             <h1>Enter question code</h1>
         </div>
         <div class="questionCode">
-            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="150"><?php echo $data['code_field']; ?></textarea>
+            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
         </div>
             <input class="btnExecute" name="action" type="submit" value="Execute" />
             <input class="btnSubmit" name="action" type="submit" value="Submit" />
