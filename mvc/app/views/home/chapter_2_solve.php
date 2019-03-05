@@ -14,7 +14,7 @@
         <div class="questionText">
             <p><?php echo $data['question_text']?></p>
         </div>
-        <form class="questionCode" action="chapter_1_solve/process" method="POST">
+        <form class="questionCode" action="chapter_2_solve/process" method="POST">
         <div class="textarea">
             <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
         </div>

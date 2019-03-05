@@ -155,16 +155,14 @@ class Chapter_2_Solve extends Controller
             $this->reload($e->getMessage());
         }
         
-        
         $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
         $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
         fwrite($code_file,$code);
         fclose($code_file);
         try{
-            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code',"c");
+            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');
             $_SESSION["exec_msg"]=$ssh_connection->execute('gcc code.c -o code.out ; ./code.out',$ssh_timeout_seconds);
-            
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
