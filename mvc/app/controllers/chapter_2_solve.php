@@ -39,30 +39,33 @@ class Chapter_2_Solve extends Controller
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
         $sql->close();
-        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
-        $sql->bind_param('i',$chapter_id);
+        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid" AND id != ? AND `user_id`!=?');
+        $sql->bind_param('iii',$chapter_id,$last_question_id,$this->session_user_id);
         $sql->execute();
         $sql->bind_result($questions_nr);
         $sql->fetch();
         $sql->close();
-        do{/*The user won't get the same question twice in a row or his/her own questions*/
-            $sql=$link->prepare('SELECT id,`user_id` FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
-            $sql->bind_param('i',$chapter_id);
-            $sql->execute();
-            $sql->bind_result($question_id,$user_id);
-            
-            for($i=1;$i<=rand(1,$questions_nr);$i++){
-                $sql->fetch();
-            }
-            $sql->close();
-        }while($last_question_id==$question_id || $user_id==$this->session_user_id);
+
+        if($questions_nr<1){
+            die("Could not find a suitable question!");
+        }
+        
+        $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid" AND id != ? AND `user_id`!=?');
+        $sql->bind_param('iii',$chapter_id,$last_question_id,$this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($question_id);    
+        for($i=1;$i<=rand(1,$questions_nr);$i++){
+            $sql->fetch();
+        }
+        $sql->close();
+        
         $sql=$link->prepare('UPDATE chapter_' . (string)$chapter_id . ' SET last_question_id=? WHERE `user_id`=?');        
         $sql->bind_param('ii',$question_id,$this->session_user_id);
         $sql->execute();
         $sql->close();
         $db_connection->close();
     }
-  
+    
     private function get_question(){
         $chapter_id=self::CHAPTER_ID;
         $config=$this->model('JSONConfig');
