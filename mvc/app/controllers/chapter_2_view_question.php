@@ -29,7 +29,7 @@ class Chapter_2_View_Question extends Controller
         $text_field=$this->session_extract("text_field");
         $can_delete=$this->check_can_delete_question($question_id);
         
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['question_id'=>$question_id, 'can_delete' =>$can_delete,'answers_left'=>$this->answers_left,
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['chapter_id' => (string)self::CHAPTER_ID,'question_id'=>$question_id, 'can_delete' =>$can_delete,'answers_left'=>$this->answers_left,
                                                                                   'all_answers' =>$this->all_answers, 'right_answers'=>$this->right_answers,
                                                                                   'validation' =>$this->validation, 'question_text' => $this->question_text,
                                                                                   'question_code' => $this->question_code,'date_submitted'=>$this->date_submitted,

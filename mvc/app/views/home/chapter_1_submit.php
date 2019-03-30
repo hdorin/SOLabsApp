@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Chapter: Commands</title>
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
-    <link rel="stylesheet" href="resources/stylesheets/chapter_1_submit.css" type="text/css" />
+    <link rel="stylesheet" href="resources/stylesheets/chapter_<?=$data['chapter_id']?>_submit.css" type="text/css" />
 </head>
 <body>
     <?php
@@ -14,7 +14,7 @@
         <div class="questionTextTitle">
             <h1>Enter question text</h1>
         </div>
-        <form class="submitQuestion" action="chapter_1_submit/process" method="POST">
+        <form class="submitQuestion" action="chapter_<?=$data['chapter_id']?>_submit/process" method="POST">
         <div class="questionText">
             <textarea name="text_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['text_field_max_len']; ?>"><?php echo $data['text_field']; ?></textarea>
         </div>

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Chapter: Commands</title>
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
-    <link rel="stylesheet" href="resources/stylesheets/chapter_1_view_question.css" type="text/css" />
+    <link rel="stylesheet" href="resources/stylesheets/chapter_<?=$data['chapter_id']?>_view_question.css" type="text/css" />
 </head>
 <body>
     <?php
@@ -18,7 +18,7 @@
             <p class='questionDetails'><?php echo "Validation: " . $data["validation"]; ?> </p>
             <?php if($_SESSION['is_admin']==true){
                     echo '
-                        <form class="validateQuestion" method="POST" action="chapter_1_view_question/validate_question/' . $data["question_id"] . '">
+                        <form class="validateQuestion" method="POST" action="chapter_' . $data['chapter_id'] . '_view_question/validate_question/' . $data["question_id"] . '">
                             <h3>Mark as</h3>    
                             <select name="validation_field">
                                     <option value="None">None</option>
@@ -31,7 +31,7 @@
             ?>
             <p class='questionDetails'><?php echo "Date submitted: " . $data["date_submitted"]; ?> </p>
         </div>
-        <form class='deleteQuestion' method="POST" action="chapter_1_view_question/delete_question/<?php echo $data['question_id'] ?>">
+        <form class='deleteQuestion' method="POST" action="chapter_<?=$data['chapter_id']?>_view_question/delete_question/<?php echo $data['question_id'] ?>">
             <?php 
                 if($data['can_delete']==false){
                     echo "<input class='btnDeleteGray' type='submit' value='Delete' disabled/><br><p class='cannotDeleteMessage'>Answer " . $data['answers_left'] . " more questions to delete!<p>";        

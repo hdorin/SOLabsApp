@@ -17,7 +17,7 @@ class Chapter_2_Submit extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['code_field' => $code_field, 'code_field_max_len'=>self::CODE_MAX_LEN, 'text_field' => $text_field, 'text_field_max_len'=>self::TEXT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['chapter_id' => (string)self::CHAPTER_ID,'code_field' => $code_field, 'code_field_max_len'=>self::CODE_MAX_LEN, 'text_field' => $text_field, 'text_field_max_len'=>self::TEXT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -52,7 +52,7 @@ class Chapter_2_Submit extends Controller
             $this->reload($e->getMessage());
         }
         
-        $ssh_connection->close();execexec
+        $ssh_connection->close();
     }
     private function can_submit_quesion($chapter_id){
         if($this->session_is_admin==true){
@@ -121,7 +121,7 @@ class Chapter_2_Submit extends Controller
         $sql->bind_param('iis', $this->session_user_id,$chapter_id,$status);
         $sql->execute();
         $sql->bind_result($question_id);
-        $sql->fetch();exec
+        $sql->fetch();
         $sql->close();
         $sql=$link->prepare('UPDATE questions SET `status`=? WHERE id=?');        
         $status="posted";
