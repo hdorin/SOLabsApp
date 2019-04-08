@@ -113,8 +113,18 @@ class Chapter_3_Solve extends Controller
         }
         $sql->close();
         $db_connection->close();
-        exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
-        $this->question_text=$question_text_aux[0];
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        exec("cat " . $app_local_path . "/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
+        
+        $line=0;
+        //Forming string with new lines
+        $this->question_text= $question_text_aux[$line];
+        $line+=1;
+        while(!empty($question_text_aux[$line])){
+            $this->question_text=$this->question_text . "\n" . $question_text_aux[$line];
+            $line+=1;
+        }
     }
     private function correct_answer(){ /*add question_id*/
         $chapter_id=self::CHAPTER_ID;
@@ -200,11 +210,23 @@ class Chapter_3_Solve extends Controller
         $sql->fetch();
         $sql->close();
         if($skip==false){
-            exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
-            $question_code=$question_code_aux[0];
+            $config=$this->model('JSONConfig');
+            $app_local_path=$config->get('app','local_path');
+            $question_code_aux=null;
+            exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
+            $line=0;
+            //Forming string with new lines
+            $question_code= $question_code_aux[$line];
+            $line+=1;
+            while(!empty($question_code_aux[$line])){
+                $question_code=$question_code . "\n" . $question_code_aux[$line];
+                $line+=1;
+            }
+            
             $this->execute($question_code);
             $aux_output=$_SESSION["exec_msg"];
             $this->execute($code);
+            
             if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($question_code,$code)==0){
                 $this->correct_answer();
                 $right_answers=$right_answers+1;

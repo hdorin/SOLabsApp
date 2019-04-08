@@ -13,6 +13,7 @@
 }
     .questionBox .questionText p{
         font-size: 20px;
+        white-space: pre-wrap;
         text-decoration: none;
     }
     .questionBox .questionCode{
@@ -64,6 +65,7 @@
         color: red;
         box-sizing: border-box;
         border-radius: 6px;
+        white-space: pre-wrap;
     }
     .execMsg{
         font-family: Arial, Helvetica, sans-serif;
@@ -71,4 +73,5 @@
         color: #3D4597;
         box-sizing: border-box;
         border-radius: 6px;
+        white-space: pre-wrap;
     }

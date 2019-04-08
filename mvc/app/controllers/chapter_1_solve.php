@@ -113,7 +113,9 @@ class Chapter_1_Solve extends Controller
         }
         $sql->close();
         $db_connection->close();
-        exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        exec("cat " . $app_local_path . "/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
         $this->question_text=$question_text_aux[0];
     }
     private function correct_answer(){ /*add question_id*/
@@ -193,7 +195,9 @@ class Chapter_1_Solve extends Controller
         $sql->fetch();
         $sql->close();
         if($skip==false){
-            exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
+            $config=$this->model('JSONConfig');
+            $app_local_path=$config->get('app','local_path');
+            exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
             $question_code=$question_code_aux[0];
             $this->execute($question_code);
             $aux_output=$_SESSION["exec_msg"];
