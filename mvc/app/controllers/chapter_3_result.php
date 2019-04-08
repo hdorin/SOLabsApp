@@ -21,7 +21,8 @@ class Chapter_3_Result extends Controller
         $result_correct=$this->session_extract('result_correct');
         $result_incorrect=$this->session_extract('result_incorrect');
         $error_msg=$this->session_extract("error_msg",true);
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_result',['chapter_id' => (string)self::CHAPTER_ID,'error_msg' => $error_msg,'result_correct' => $result_correct,'result_incorrect' => $result_incorrect,'question_text' => $question_text, 'user_code' => $user_code,'user_output' => $user_output, 'author_code' => $author_code, 'author_output' => $author_output]);
+        $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_result',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'error_msg' => $error_msg,'result_correct' => $result_correct,'result_incorrect' => $result_incorrect,'question_text' => $question_text, 'user_code' => $user_code,'user_output' => $user_output, 'author_code' => $author_code, 'author_output' => $author_output]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;

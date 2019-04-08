@@ -80,6 +80,23 @@ class Controller
             die("You cannot access this!");
         }
         $sql->close();
+        return $chapter_name;
+    }
+    protected function get_chapter_name($chapter_id){
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare("SELECT `name` FROM chapters WHERE `status`='posted' AND id=?");
+        $sql->bind_param('i',$chapter_id);
+        $sql->execute();
+        $sql->bind_result($chapter_name);
+        $sql->fetch();
+        $sql->close();
+        return $chapter_name;
     }
     
 }
