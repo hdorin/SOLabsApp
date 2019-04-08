@@ -1,8 +1,8 @@
 <?php
 //Chapter C Linux
-class Chapter_2_View_Question extends Controller
+class Chapter_3_View_Question extends Controller
 {
-    const CHAPTER_ID=2;
+    const CHAPTER_ID=3;
     private $answers_left=0;
     private $validation="";
     private $question_text="",$question_code="";

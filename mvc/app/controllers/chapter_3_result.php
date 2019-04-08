@@ -1,8 +1,8 @@
 <?php
 //Chapter Commands
-class Chapter_2_Result extends Controller
+class Chapter_3_Result extends Controller
 {
-    const CHAPTER_ID=2;
+    const CHAPTER_ID=3;
     const REPORT_MAX_LEN=100;
     private $question_id;
     public function index()

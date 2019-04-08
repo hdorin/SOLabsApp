@@ -1,8 +1,8 @@
 <?php
 //Chapter Commands
-class Chapter_2_Submit extends Controller
+class Chapter_3_Submit extends Controller
 {
-    const CHAPTER_ID=2;
+    const CHAPTER_ID=3;
     const TEXT_MAX_LEN=500;
     const CODE_MAX_LEN=1500;
     public function index()

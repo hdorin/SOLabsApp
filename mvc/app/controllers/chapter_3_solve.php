@@ -1,10 +1,10 @@
 <?php
 //Chapter Commands
-class Chapter_2_Solve extends Controller
+class Chapter_3_Solve extends Controller
 {
     private $question_text;
     private $get_question_i0nput;
-    const CHAPTER_ID=2;
+    const CHAPTER_ID=3;
     const CODE_MAX_LEN=1500;
     public function index()
     {   
