@@ -1,5 +1,5 @@
 <?php
-//Chapter Commands
+//Chapter C Linux
 class Chapter_3_Submit extends Controller
 {
     const CHAPTER_ID=3;
@@ -26,7 +26,7 @@ class Chapter_3_Submit extends Controller
         $this->my_sem_release();
         die;
     }
-    private function execute($command){
+    private function execute($code){
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
@@ -43,17 +43,25 @@ class Chapter_3_Submit extends Controller
         }catch(Exception $e){
             $this->reload($e->getMessage());
         }
-        try{    
-            $_SESSION["exec_msg"]=$ssh_connection->execute($command,$ssh_timeout_seconds);
+        
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
+        fwrite($code_file,$code);
+        fclose($code_file);
+        try{
+            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');
+            $_SESSION["exec_msg"]=$ssh_connection->execute('gcc code.c -o code.out && ./code.out',$ssh_timeout_seconds);
+            
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
             }
             $this->reload($e->getMessage());
         }
-        
         $ssh_connection->close();
     }
+    
     private function can_submit_quesion($chapter_id){
         if($this->session_is_admin==true){
             return true;
@@ -96,10 +104,10 @@ class Chapter_3_Submit extends Controller
         
     
     }
-    private function submit($text,$command){
-        $this->execute($command);
+    private function submit($text,$code){
+        $this->execute($code);
         $aux_output=$_SESSION["exec_msg"];
-        $this->execute($command);
+        $this->execute($code);
         if(strcmp($aux_output,$_SESSION["exec_msg"])!=0){
             $exec_msg=$this->session_extract("exec_msg",true);
             $this->reload("Code is not deterministic!");
@@ -133,7 +141,7 @@ class Chapter_3_Submit extends Controller
         $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
         $code_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.code','w');
-        fwrite($code_file,$command);
+        fwrite($code_file,$code);
         fclose($code_file);
         $text_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text','w');
         fwrite($text_file,$text);
@@ -142,7 +150,7 @@ class Chapter_3_Submit extends Controller
     public function process(){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
-        if($this->can_submit_quesion($chapter_id)==false){
+        if($this->can_submit_quesion(self::CHAPTER_ID)==false){
             die("You cannot access this!");
         }
         $this->my_sem_acquire($this->session_user_id);
@@ -152,17 +160,17 @@ class Chapter_3_Submit extends Controller
         if(empty($text=$_POST["text_field"])==true){
             $this->reload("You did not enter the question text!");
         }
-        if(empty($command=$_POST["code_field"])==true){
-            $this->reload("You did not enter a command!");
+        if(empty($code=$_POST["code_field"])==true){
+            $this->reload("You did not enter a code!");
         }
         $_SESSION["code_field"]=$_POST["code_field"];
         $_SESSION["text_field"]=$_POST["text_field"];
         if($_POST["action"]=="Execute"){
-            $this->execute($command);
+            $this->execute($code);
             header('Location: ../chapter_' . (string)self::CHAPTER_ID . '_submit');
         }else{
 
-            $this->submit($text,$command);
+            $this->submit($text,$code);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             header('Location: ../submit_question');

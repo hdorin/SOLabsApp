@@ -134,9 +134,22 @@ class View_Questions extends Controller
         }
 
         $this->questions_nr=0;
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        
         while($sql->fetch() && $this->questions_nr<self::QUESTIONS_PER_PAGE){
-            exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
-            $question_text=$question_text_aux[$this->questions_nr];
+            $question_text=$question_text_aux=null;
+            $line=0;
+            exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
+            //Forming string with new lines
+            $question_text= $question_text_aux[$line];
+            $line+=1;
+            while(!empty($question_text_aux[$line])){
+                $question_text=$question_text . "\n" . $question_text_aux[$line];
+                $line+=1;
+            }
+            $this->question_text=str_replace("<","&lt",$this->question_text);
+            $this->question_text=str_replace(">","&gt",$this->question_text);
             if($this->session_is_admin==false){
                 $this->questions[$this->questions_nr]=   "<a class='question' href='chapter_" . (string)$chapter_id . "_view_question/" . $question_id . "'>
                                                                     <p class='text'>" . $question_text . "</p>
@@ -144,7 +157,6 @@ class View_Questions extends Controller
                                                                     <p class='details'> Validation: " . $validation . "</p>
                                                                     <p class='details'> Chapter: " . $chapter_name . "</p>
                                                             </a>";
-                
             }else{
                 $this->questions[$this->questions_nr]=   "<a class='question' href='chapter_" . (string)$chapter_id . "_view_question/" . $question_id . "'>
                                                                     <p class='text'>" . $question_text . "</p>

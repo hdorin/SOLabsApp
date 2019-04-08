@@ -143,7 +143,7 @@ class Chapter_1_Submit extends Controller
     public function process(){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
-        if($this->can_submit_quesion($chapter_id)==false){
+        if($this->can_submit_quesion(self::CHAPTER_ID)==false){
             die("You cannot access this!");
         }
         $this->my_sem_acquire($this->session_user_id);

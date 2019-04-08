@@ -24,10 +24,10 @@
         <div class="outputs">
             <div class="userbox">
                 <div class="questionCodeTitle">
-                    <h1>Your command</h1>
+                    <h1>Your code</h1>
                 </div>
                 <div class="questionCode">
-                    <p><?php echo $data['user_command']; ?></p>
+                    <p><?php echo $data['user_code']; ?></p>
                 </div>
                 <div class="questionOutputTitle">
                     <h1>Output</h1>
@@ -38,13 +38,13 @@
             </div>
             <div class="authorBox">
                 <div class="questionCodeTitle">
-                    <h1>Author's command</h1>
+                    <h1>Author's code</h1>
                 </div>
                 <div class="questionCode">
                     <p><?php if(empty($data['result_correct'])) {
                                 echo "Hidden";
                             }else{
-                                echo $data['author_command'];
+                                echo $data['author_code'];
                             }
                     ?></p>
                 </div>

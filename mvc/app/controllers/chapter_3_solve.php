@@ -1,5 +1,5 @@
 <?php
-//Chapter Commands
+//Chapter C Linux
 class Chapter_3_Solve extends Controller
 {
     private $question_text;
@@ -165,7 +165,7 @@ class Chapter_3_Solve extends Controller
         fclose($code_file);
         try{
             $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');
-            $_SESSION["exec_msg"]=$ssh_connection->execute('gcc code.c -o code.out ; ./code.out',$ssh_timeout_seconds);
+            $_SESSION["exec_msg"]=$ssh_connection->execute('gcc code.c -o code.out && ./code.out ',$ssh_timeout_seconds);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
@@ -174,10 +174,10 @@ class Chapter_3_Solve extends Controller
         }
         $ssh_connection->close();
     }
-    private function submit($command,$skip=false){
+    private function submit($code,$skip=false){
         $chapter_id=self::CHAPTER_ID;
         if($skip==false){
-            $this->execute($command);
+            $this->execute($code);
         }
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
@@ -204,8 +204,8 @@ class Chapter_3_Solve extends Controller
             $question_code=$question_code_aux[0];
             $this->execute($question_code);
             $aux_output=$_SESSION["exec_msg"];
-            $this->execute($command);
-            if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($question_code,$command)==0){
+            $this->execute($code);
+            if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($question_code,$code)==0){
                 $this->correct_answer();
                 $right_answers=$right_answers+1;
                 $_SESSION['result_correct']="You answerd correctly!";
@@ -225,9 +225,9 @@ class Chapter_3_Solve extends Controller
             $this->get_question();
             $_SESSION['question_id']=$last_question_id;
             $_SESSION['question_text']=$this->question_text;
-            $_SESSION['user_command']=$command;
+            $_SESSION['user_code']=$code;
             $_SESSION['user_output']=$_SESSION["exec_msg"];
-            $_SESSION['author_command']=$question_code;
+            $_SESSION['author_code']=$question_code;
             $_SESSION['author_output']=$aux_output;
         }
         
@@ -242,14 +242,14 @@ class Chapter_3_Solve extends Controller
             $this->reload("Characters limit exceeded!");
         }
         if($_POST["action"]!="Skip" && empty($code=$_POST["code_field"])==true){
-            $this->reload("You did not enter a command!");
+            $this->reload("You did not enter any code!");
         }
         $_SESSION["code_field"]=$_POST["code_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($code);
             header('Location: ../chapter_' . (string)$chapter_id . '_solve'); 
         }else if($_POST["action"]=="Submit"){
-            $this->submit($command);
+            $this->submit($code);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
