@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Chapter: C Linux</title>
+    <title>Chapter: <?=$data['chapter_name']?></title>
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
-    <link rel="stylesheet" href="resources/stylesheets/chapter_2_solve.css" type="text/css" />
+    <link rel="stylesheet" href="resources/stylesheets/chapter_<?=$data['chapter_id']?>_solve.css" type="text/css" />
 </head>
 <body>
     <?php
@@ -14,9 +14,9 @@
         <div class="questionText">
             <p><?php echo $data['question_text']?></p>
         </div>
-        <form class="questionCode" action="chapter_2_solve/process" method="POST">
+        <form class="questionCode" action="chapter_<?=$data['chapter_id']?>_solve/process" method="POST">
         <div class="textarea">
-            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="1500"><?php echo $data['code_field']; ?></textarea>
+            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
         </div>
             <input class="btnExecute" name="action" type="submit" value="Execute" />
             <input class="btnSubmit" name="action" type="submit" value="Submit" />

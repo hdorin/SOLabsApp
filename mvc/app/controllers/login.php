@@ -48,10 +48,10 @@ class Login extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT id,is_admin,hash_pass,ssh_pass FROM users WHERE `user_name`=?');
+        $sql=$link->prepare('SELECT id,is_admin,pass_hash,ssh_pass FROM users WHERE `user_name`=?');
         $sql->bind_param('s', $user);
         $sql->execute();
-        $sql->bind_result($user_id,$is_admin,$hash_pass,$ssh_pass);
+        $sql->bind_result($user_id,$is_admin,$pass_hash,$ssh_pass);
         if(!$sql->fetch()){/*If not, create one*/
             $external_ssh_check=$config->get('external_ssh','check');
             if($external_ssh_check=="true"){/*false = does not ckeck the external ssh connection*/
@@ -93,22 +93,40 @@ class Login extends Controller
             }
             
             $ssh_connection->close();
-            $hash_pass=password_hash($pass, PASSWORD_DEFAULT);
-            $sql=$link->prepare('INSERT INTO users (user_name,date_created,hash_pass,ssh_pass) VALUES (?,now(),?,?)');
-            $sql->bind_param('sss', $user,$hash_pass,$ssh_pass);
+            $pass_hash=password_hash($pass, PASSWORD_DEFAULT);
+            $sql=$link->prepare('INSERT INTO users (`user_name`,date_created,pass_hash,ssh_pass) VALUES (?,now(),?,?)');
+            $sql->bind_param('sss', $user,$pass_hash,$ssh_pass);
             $sql->execute();
             $sql->close();
 
-            $sql=$link->prepare('SELECT id,is_admin FROM users WHERE `user_name`=?');
-            $sql->bind_param('s', $user);
-            $sql->execute();
-            $sql->bind_result($user_id,$is_admin);
-            $sql->fetch();
-            $sql->close();
+            
             
         }else{
-            if(password_verify($pass,$hash_pass)==false){
-                $this->reload("Invalid username/password!");
+            $sql->close();
+            if(password_verify($pass,$pass_hash)==false){/*The password user provided does not match the hashed one*/
+                $external_ssh_check=$config->get('external_ssh','check');
+                if($external_ssh_check=="true"){/*false = does not ckeck the external ssh connection*/
+                    $external_ssh_host=$config->get('external_ssh','host');
+                    $external_ssh_port=$config->get('external_ssh','port');
+       
+                    $ssh_connection->configure($external_ssh_host,$external_ssh_port);/*Check external Linux machine, e.g. fenrir*/
+                    try{    
+                        if(!$ssh_connection->connect($user,$pass)){
+                            $ssh_connection->close();
+                            $this->reload("Invalid username/password!");
+                        }   
+                    }catch(Exception $e){
+                        $this->reload($e->getMessage());
+                    }
+                    $ssh_connection->close();
+                }
+                /*Rehash the password for the user*/
+                $pass_hash=password_hash($pass, PASSWORD_DEFAULT);
+                $sql=$link->prepare('UPDATE users SET pass_hash=? WHERE `user_name`=?');
+                $sql->bind_param('ss',$pass_hash,$user);
+                $sql->execute();
+                $sql->close();
+                //$this->reload("Invalid username/password!");
             }
         }
         $db_connection->close();

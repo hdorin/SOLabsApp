@@ -14,7 +14,8 @@ class Chapter_1_Solve extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name , 'question_text' => $this->question_text, 'code_field' =>$code_field, 'code_field_max_len' =>self::CODE_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -39,23 +40,26 @@ class Chapter_1_Solve extends Controller
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
         $sql->close();
-        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
-        $sql->bind_param('i',$chapter_id);
+        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid" AND id != ? AND `user_id`!=?');
+        $sql->bind_param('iii',$chapter_id,$last_question_id,$this->session_user_id);
         $sql->execute();
         $sql->bind_result($questions_nr);
         $sql->fetch();
         $sql->close();
-        do{/*The user won't get the same question twice in a row or his/her own questions*/
-            $sql=$link->prepare('SELECT id,`user_id` FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
-            $sql->bind_param('i',$chapter_id);
-            $sql->execute();
-            $sql->bind_result($question_id,$user_id);
-            
-            for($i=1;$i<=rand(1,$questions_nr);$i++){
-                $sql->fetch();
-            }
-            $sql->close();
-        }while($last_question_id==$question_id || $user_id==$this->session_user_id);
+
+        if($questions_nr<1){
+            die("Could not find a suitable question!");
+        }
+        
+        $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid" AND id != ? AND `user_id`!=?');
+        $sql->bind_param('iii',$chapter_id,$last_question_id,$this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($question_id);    
+        for($i=1;$i<=rand(1,$questions_nr);$i++){
+            $sql->fetch();
+        }
+        $sql->close();
+        
         $sql=$link->prepare('UPDATE chapter_' . (string)$chapter_id . ' SET last_question_id=? WHERE `user_id`=?');        
         $sql->bind_param('ii',$question_id,$this->session_user_id);
         $sql->execute();
@@ -110,7 +114,9 @@ class Chapter_1_Solve extends Controller
         }
         $sql->close();
         $db_connection->close();
-        exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        exec("cat " . $app_local_path . "/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
         $this->question_text=$question_text_aux[0];
     }
     private function correct_answer(){ /*add question_id*/
@@ -190,7 +196,9 @@ class Chapter_1_Solve extends Controller
         $sql->fetch();
         $sql->close();
         if($skip==false){
-            exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
+            $config=$this->model('JSONConfig');
+            $app_local_path=$config->get('app','local_path');
+            exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
             $question_code=$question_code_aux[0];
             $this->execute($question_code);
             $aux_output=$_SESSION["exec_msg"];

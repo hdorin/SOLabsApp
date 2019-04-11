@@ -1,8 +1,8 @@
 <?php
-//Chapter Commands
-class Chapter_2_Result extends Controller
+//Chapter C Linux
+class Chapter_3_Result extends Controller
 {
-    const CHAPTER_ID=2;
+    const CHAPTER_ID=3;
     const REPORT_MAX_LEN=100;
     private $question_id;
     public function index()
@@ -14,14 +14,15 @@ class Chapter_2_Result extends Controller
             die("You can't access this!");
         }
         $question_text=$this->session_extract('question_text');
-        $user_command=$this->session_extract('user_command');
+        $user_code=$this->session_extract('user_code');
         $user_output=$this->session_extract('user_output');
-        $author_command=$this->session_extract('author_command');
+        $author_code=$this->session_extract('author_code');
         $author_output=$this->session_extract('author_output');
         $result_correct=$this->session_extract('result_correct');
         $result_incorrect=$this->session_extract('result_incorrect');
         $error_msg=$this->session_extract("error_msg",true);
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_result',['error_msg' => $error_msg,'result_correct' => $result_correct,'result_incorrect' => $result_incorrect,'question_text' => $question_text, 'user_command' => $user_command,'user_output' => $user_output, 'author_command' => $author_command, 'author_output' => $author_output]);
+        $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_result',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'error_msg' => $error_msg,'result_correct' => $result_correct,'result_incorrect' => $result_incorrect,'question_text' => $question_text, 'user_code' => $user_code,'user_output' => $user_output, 'author_code' => $author_code, 'author_output' => $author_output]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -92,9 +93,9 @@ class Chapter_2_Result extends Controller
         /*Clear output message*/
         $this->session_extract('question_id',true);
         $this->session_extract('question_text',true);
-        $this->session_extract('user_command',true);
+        $this->session_extract('user_code',true);
         $this->session_extract('user_output',true);
-        $this->session_extract('author_command',true);
+        $this->session_extract('author_code',true);
         $this->session_extract('author_output',true);
         $this->session_extract('result_correct',true);
         $this->session_extract('result_incorrect',true);

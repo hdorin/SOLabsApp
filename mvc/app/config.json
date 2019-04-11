@@ -13,7 +13,7 @@
         "sudo_user":"hdorin",
         "sudo_pass":"halogenuri",
         "quota_limit":"10M",
-        "timeout_seconds":"1s",
+        "timeout_seconds":"2s",
         "procs_limit":"25"
     },
     "db": {

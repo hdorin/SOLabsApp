@@ -17,7 +17,8 @@ class Chapter_1_Submit extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'code_field' => $code_field, 'code_field_max_len'=>self::CODE_MAX_LEN, 'text_field' => $text_field, 'text_field_max_len'=>self::TEXT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -143,7 +144,7 @@ class Chapter_1_Submit extends Controller
     public function process(){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
-        if($this->can_submit_quesion($chapter_id)==false){
+        if($this->can_submit_quesion(self::CHAPTER_ID)==false){
             die("You cannot access this!");
         }
         $this->my_sem_acquire($this->session_user_id);

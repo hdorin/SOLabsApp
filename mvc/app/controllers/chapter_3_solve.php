@@ -1,10 +1,10 @@
 <?php
-//Chapter Commands
-class Chapter_2_Solve extends Controller
+//Chapter C Linux
+class Chapter_3_Solve extends Controller
 {
     private $question_text;
     private $get_question_i0nput;
-    const CHAPTER_ID=2;
+    const CHAPTER_ID=3;
     const CODE_MAX_LEN=1500;
     public function index()
     {   
@@ -14,7 +14,8 @@ class Chapter_2_Solve extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['question_text' => $this->question_text, 'code_field' =>$code_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'question_text' => $this->question_text, 'code_field' =>$code_field, 'code_field_max_len' =>self::CODE_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -39,30 +40,33 @@ class Chapter_2_Solve extends Controller
         $sql->bind_result($last_question_id);
         $status=$sql->fetch();
         $sql->close();
-        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
-        $sql->bind_param('i',$chapter_id);
+        $sql=$link->prepare('SELECT COUNT(id) FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid" AND id != ? AND `user_id`!=?');
+        $sql->bind_param('iii',$chapter_id,$last_question_id,$this->session_user_id);
         $sql->execute();
         $sql->bind_result($questions_nr);
         $sql->fetch();
         $sql->close();
-        do{/*The user won't get the same question twice in a row or his/her own questions*/
-            $sql=$link->prepare('SELECT id,`user_id` FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid"');
-            $sql->bind_param('i',$chapter_id);
-            $sql->execute();
-            $sql->bind_result($question_id,$user_id);
-            
-            for($i=1;$i<=rand(1,$questions_nr);$i++){
-                $sql->fetch();
-            }
-            $sql->close();
-        }while($last_question_id==$question_id || $user_id==$this->session_user_id);
+
+        if($questions_nr<1){
+            die("Could not find a suitable question!");
+        }
+        
+        $sql=$link->prepare('SELECT id FROM questions WHERE chapter_id=? AND `status`="posted" AND `validation`!="invalid" AND id != ? AND `user_id`!=?');
+        $sql->bind_param('iii',$chapter_id,$last_question_id,$this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($question_id);    
+        for($i=1;$i<=rand(1,$questions_nr);$i++){
+            $sql->fetch();
+        }
+        $sql->close();
+        
         $sql=$link->prepare('UPDATE chapter_' . (string)$chapter_id . ' SET last_question_id=? WHERE `user_id`=?');        
         $sql->bind_param('ii',$question_id,$this->session_user_id);
         $sql->execute();
         $sql->close();
         $db_connection->close();
     }
-  
+    
     private function get_question(){
         $chapter_id=self::CHAPTER_ID;
         $config=$this->model('JSONConfig');
@@ -110,8 +114,18 @@ class Chapter_2_Solve extends Controller
         }
         $sql->close();
         $db_connection->close();
-        exec("cat /var/www/html/AplicatieSO/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
-        $this->question_text=$question_text_aux[0];
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        exec("cat " . $app_local_path . "/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
+        
+        $line=0;
+        //Forming string with new lines
+        $this->question_text= $question_text_aux[$line];
+        $line+=1;
+        while(!empty($question_text_aux[$line])){
+            $this->question_text=$this->question_text . "\n" . $question_text_aux[$line];
+            $line+=1;
+        }
     }
     private function correct_answer(){ /*add question_id*/
         $chapter_id=self::CHAPTER_ID;
@@ -155,18 +169,14 @@ class Chapter_2_Solve extends Controller
             $this->reload($e->getMessage());
         }
         
-        
         $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
         $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
         fwrite($code_file,$code);
         fclose($code_file);
         try{
-            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code');
-            //$_SESSION["exec_msg"]=$ssh_connection->execute('echo "' .  $code . '" > .code.c',$ssh_timeout_seconds);
-            //create SCP connection
-            //$_SESSION["exec_msg"]=$ssh_connection->execute('gcc .code.c -o .code.out',$ssh_timeout_seconds);
-            //$_SESSION["exec_msg"]=$ssh_connection->execute('./.code.out',$ssh_timeout_seconds);
+            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');
+            $_SESSION["exec_msg"]=$ssh_connection->execute('gcc code.c -o code.out && ./code.out ',$ssh_timeout_seconds);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
@@ -175,10 +185,10 @@ class Chapter_2_Solve extends Controller
         }
         $ssh_connection->close();
     }
-    private function submit($command,$skip=false){
+    private function submit($code,$skip=false){
         $chapter_id=self::CHAPTER_ID;
         if($skip==false){
-            $this->execute($command);
+            $this->execute($code);
         }
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
@@ -201,12 +211,24 @@ class Chapter_2_Solve extends Controller
         $sql->fetch();
         $sql->close();
         if($skip==false){
-            exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
-            $question_code=$question_code_aux[0];
+            $config=$this->model('JSONConfig');
+            $app_local_path=$config->get('app','local_path');
+            $question_code_aux=null;
+            exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
+            $line=0;
+            //Forming string with new lines
+            $question_code= $question_code_aux[$line];
+            $line+=1;
+            while(!empty($question_code_aux[$line])){
+                $question_code=$question_code . "\n" . $question_code_aux[$line];
+                $line+=1;
+            }
+            
             $this->execute($question_code);
             $aux_output=$_SESSION["exec_msg"];
-            $this->execute($command);
-            if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($question_code,$command)==0){
+            $this->execute($code);
+            
+            if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($question_code,$code)==0){
                 $this->correct_answer();
                 $right_answers=$right_answers+1;
                 $_SESSION['result_correct']="You answerd correctly!";
@@ -226,9 +248,9 @@ class Chapter_2_Solve extends Controller
             $this->get_question();
             $_SESSION['question_id']=$last_question_id;
             $_SESSION['question_text']=$this->question_text;
-            $_SESSION['user_command']=$command;
+            $_SESSION['user_code']=$code;
             $_SESSION['user_output']=$_SESSION["exec_msg"];
-            $_SESSION['author_command']=$question_code;
+            $_SESSION['author_code']=$question_code;
             $_SESSION['author_output']=$aux_output;
         }
         
@@ -243,14 +265,14 @@ class Chapter_2_Solve extends Controller
             $this->reload("Characters limit exceeded!");
         }
         if($_POST["action"]!="Skip" && empty($code=$_POST["code_field"])==true){
-            $this->reload("You did not enter a command!");
+            $this->reload("You did not enter any code!");
         }
         $_SESSION["code_field"]=$_POST["code_field"];
         if($_POST["action"]=="Execute"){
             $this->execute($code);
             header('Location: ../chapter_' . (string)$chapter_id . '_solve'); 
         }else if($_POST["action"]=="Submit"){
-            $this->submit($command);
+            $this->submit($code);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);

@@ -1,10 +1,10 @@
 <?php
-//Chapter Commands
-class Chapter_2_Submit extends Controller
+//Chapter C Linux
+class Chapter_3_Submit extends Controller
 {
-    const CHAPTER_ID=2;
-    const TEXT_MAX_LEN=1500;
-    const CODE_MAX_LEN=150;
+    const CHAPTER_ID=3;
+    const TEXT_MAX_LEN=500;
+    const CODE_MAX_LEN=1500;
     public function index()
     {
         $chapter_id=self::CHAPTER_ID;
@@ -17,7 +17,8 @@ class Chapter_2_Submit extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['code_field' => $code_field, 'text_field' => $text_field,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'code_field' => $code_field, 'code_field_max_len'=>self::CODE_MAX_LEN, 'text_field' => $text_field, 'text_field_max_len'=>self::TEXT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -26,7 +27,7 @@ class Chapter_2_Submit extends Controller
         $this->my_sem_release();
         die;
     }
-    private function execute($command){
+    private function execute($code){
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
@@ -43,17 +44,25 @@ class Chapter_2_Submit extends Controller
         }catch(Exception $e){
             $this->reload($e->getMessage());
         }
-        try{    
-            $_SESSION["exec_msg"]=$ssh_connection->execute($command,$ssh_timeout_seconds);
+        
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
+        fwrite($code_file,$code);
+        fclose($code_file);
+        try{
+            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');
+            $_SESSION["exec_msg"]=$ssh_connection->execute('gcc code.c -o code.out && ./code.out',$ssh_timeout_seconds);
+            
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
             }
             $this->reload($e->getMessage());
         }
-        
-        $ssh_connection->close();execexec
+        $ssh_connection->close();
     }
+    
     private function can_submit_quesion($chapter_id){
         if($this->session_is_admin==true){
             return true;
@@ -96,10 +105,10 @@ class Chapter_2_Submit extends Controller
         
     
     }
-    private function submit($text,$command){
-        $this->execute($command);
+    private function submit($text,$code){
+        $this->execute($code);
         $aux_output=$_SESSION["exec_msg"];
-        $this->execute($command);
+        $this->execute($code);
         if(strcmp($aux_output,$_SESSION["exec_msg"])!=0){
             $exec_msg=$this->session_extract("exec_msg",true);
             $this->reload("Code is not deterministic!");
@@ -121,7 +130,7 @@ class Chapter_2_Submit extends Controller
         $sql->bind_param('iis', $this->session_user_id,$chapter_id,$status);
         $sql->execute();
         $sql->bind_result($question_id);
-        $sql->fetch();exec
+        $sql->fetch();
         $sql->close();
         $sql=$link->prepare('UPDATE questions SET `status`=? WHERE id=?');        
         $status="posted";
@@ -133,7 +142,7 @@ class Chapter_2_Submit extends Controller
         $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
         $code_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.code','w');
-        fwrite($code_file,$command);
+        fwrite($code_file,$code);
         fclose($code_file);
         $text_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text','w');
         fwrite($text_file,$text);
@@ -142,7 +151,7 @@ class Chapter_2_Submit extends Controller
     public function process(){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
-        if($this->can_submit_quesion($chapter_id)==false){
+        if($this->can_submit_quesion(self::CHAPTER_ID)==false){
             die("You cannot access this!");
         }
         $this->my_sem_acquire($this->session_user_id);
@@ -152,17 +161,17 @@ class Chapter_2_Submit extends Controller
         if(empty($text=$_POST["text_field"])==true){
             $this->reload("You did not enter the question text!");
         }
-        if(empty($command=$_POST["code_field"])==true){
-            $this->reload("You did not enter a command!");
+        if(empty($code=$_POST["code_field"])==true){
+            $this->reload("You did not enter a code!");
         }
         $_SESSION["code_field"]=$_POST["code_field"];
         $_SESSION["text_field"]=$_POST["text_field"];
         if($_POST["action"]=="Execute"){
-            $this->execute($command);
+            $this->execute($code);
             header('Location: ../chapter_' . (string)self::CHAPTER_ID . '_submit');
         }else{
 
-            $this->submit($text,$command);
+            $this->submit($text,$code);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
             header('Location: ../submit_question');

@@ -28,8 +28,8 @@ class Chapter_1_View_Question extends Controller
         $code_fieold=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
         $can_delete=$this->check_can_delete_question($question_id);
-        
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['question_id'=>$question_id, 'can_delete' =>$can_delete,'answers_left'=>$this->answers_left,
+        $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'question_id'=>$question_id, 'can_delete' =>$can_delete,'answers_left'=>$this->answers_left,
                                                                                   'all_answers' =>$this->all_answers, 'right_answers'=>$this->right_answers,
                                                                                   'validation' =>$this->validation, 'question_text' => $this->question_text,
                                                                                   'question_code' => $this->question_code,'date_submitted'=>$this->date_submitted,
@@ -129,10 +129,22 @@ class Chapter_1_View_Question extends Controller
         }
         $sql->close();
         $db_connection->close();
-        exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.code',$question_code_aux);
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.code',$question_code_aux);
         $this->question_code=$question_code_aux[0];
-        exec('cat /var/www/html/AplicatieSO/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
-        $this->question_text=$question_text_aux[0];
+        
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
+        $line=0;
+        //Forming string with new lines
+        $this->question_text=$question_text_aux[$line];
+        $line+=1;
+        while(!empty($question_text_aux[$line])){
+            $this->question_text=$this->question_text . "\n" . $question_text_aux[$line];
+            $line+=1;
+        }
         return true;
     }
     private function get_reports($question_id){

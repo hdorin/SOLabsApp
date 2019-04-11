@@ -30,6 +30,7 @@
                 text-decoration: none;
                 text-align: left;
                 margin-left: 5%;
+                white-space: pre-wrap;
                 
             }
             .questionsBox .question .details{
