@@ -38,6 +38,10 @@
         font-family: 'Times New Roman', Times, serif;
         
     }
+    .questionCode{
+        text-align: justify;
+        margin-left: 30%;
+    }
 
     .questionBox .validateQuestion{
         width: 25%;

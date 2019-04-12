@@ -141,15 +141,8 @@ class View_Questions extends Controller
             $question_text=$question_text_aux=null;
             $line=0;
             exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
-            //Forming string with new lines
-            $question_text= $question_text_aux[$line];
-            $line+=1;
-            while(!empty($question_text_aux[$line])){
-                $question_text=$question_text . "\n" . $question_text_aux[$line];
-                $line+=1;
-            }
-            $this->question_text=str_replace("<","&lt",$this->question_text);
-            $this->question_text=str_replace(">","&gt",$this->question_text);
+            $question_text=$this->build_string_from_array($question_text_aux);
+            $question_text=$this->replace_html_special_characters($question_text);
             if($this->session_is_admin==false){
                 $this->questions[$this->questions_nr]=   "<a class='question' href='chapter_" . (string)$chapter_id . "_view_question/" . $question_id . "'>
                                                                     <p class='text'>" . $question_text . "</p>

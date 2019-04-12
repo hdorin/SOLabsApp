@@ -42,7 +42,7 @@
                 </div>
                 <div class="questionCode">
                     <p><?php if(empty($data['result_correct'])) {
-                                echo "Hidden";
+                                echo "Answer correctly to reveal it!";
                             }else{
                                 echo $data['author_command'];
                             }
