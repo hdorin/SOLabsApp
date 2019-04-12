@@ -154,16 +154,25 @@ class Chapter_3_View_Question extends Controller
         /*check if user is in the chapter_1 users list*/
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT `text`,date_created FROM reports WHERE `question_id`=?');
+        $sql=$link->prepare('SELECT u.user_name,r.`text`,r.date_created FROM reports r JOIN users u ON r.`user_id`=u.id WHERE `question_id`=?');
         $sql->bind_param('i', $question_id);
         $sql->execute();
-        $sql->bind_result($report_text,$date_submitted);
+        $sql->bind_result($user_name,$report_text,$date_submitted);
         $this->reports_nr=0;
         while($sql->fetch()){
-            $this->reports[$this->reports_nr]=   "<div class='report'>
-                                                                <p class='text'>" . $report_text . "</p>
-                                                                <p class='details'> Date submitted: " . $date_submitted . "</p>
-                                                        </div>";
+            if($this->session_is_admin==true){
+                $this->reports[$this->reports_nr]=   "<div class='report'>
+                                                                    <p class='text'>" . $report_text . "</p>
+                                                                    <p class='details'> Date submitted: " . $date_submitted . "</p>
+                                                                    <p class='details'> User name: " . $user_name . "</p>
+                                                            </div>";
+            }else{
+                $this->reports[$this->reports_nr]=   "<div class='report'>
+                                                                    <p class='text'>" . $report_text . "</p>
+                                                                    <p class='details'> Date submitted: " . $date_submitted . "</p>
+                                                                  
+                                                            </div>";
+            }
             $this->reports_nr=$this->reports_nr+1;
         }
         $sql->close();

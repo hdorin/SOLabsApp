@@ -90,9 +90,10 @@
         box-sizing: border-box;
         border-radius: 6px;
     }
-    .report .text{
-        margin-bottom: 0.3%;
+    .report{
+        margin-bottom: 2%;
     }
-    .report .details{
-        margin-top: 0%;
+    .report .text, .report .details{
+        margin-top: 0.2%;
+        margin-bottom: 0.2%;
     }
