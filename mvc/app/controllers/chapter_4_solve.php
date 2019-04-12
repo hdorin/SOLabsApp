@@ -1,10 +1,10 @@
 <?php
 //Chapter C Linux
-class Chapter_3_Solve extends Controller
+class Chapter_4_Solve extends Controller
 {
     private $question_text;
     private $get_question_i0nput;
-    const CHAPTER_ID=3;
+    const CHAPTER_ID=4;
     const CODE_MAX_LEN=1500;
     public function index()
     {   
@@ -167,7 +167,11 @@ class Chapter_3_Solve extends Controller
         fwrite($code_file,$code);
         fclose($code_file);
         try{
-            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');
+            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');;
+            $strace_output=$ssh_connection->execute('gcc code.c -o code.out && (strace -e trace=clone ./code.out) ',$ssh_timeout_seconds,true);
+            if(strcmp($strace_output,"+++ exited with 0 +++\n")==0){
+                throw new Exception("You did not use fork()!");
+            }
             $_SESSION["exec_msg"]=$ssh_connection->execute('gcc code.c -o code.out && ./code.out ',$ssh_timeout_seconds);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){

@@ -98,5 +98,20 @@ class Controller
         $sql->close();
         return $chapter_name;
     }
+    protected function build_string_from_array($array){
+        $lines_nr=count($array)-1;
+        $line=0;
+        $string= $array[$line];
+        while($line<$lines_nr){
+            $line+=1;
+            $string=$string . "\n" . $array[$line];
+        }
+        return $string;
+    }
+    protected function replace_html_special_characters($string){
+        $string=str_replace("<","&lt",$string);
+        $string=str_replace(">","&gt",$string);
+        return $string;
+    }
     
 }

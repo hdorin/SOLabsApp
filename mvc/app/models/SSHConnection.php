@@ -44,12 +44,17 @@ class SSHConnection
         //ssh2_disconnect($this->connection);
         unset($this->connection);
     }
-    public function execute($command,$timeout_seconds){
+    public function execute($command,$timeout_seconds,$use_strace=false){
         $stream = ssh2_exec($this->connection, "sleep " . $timeout_seconds . "; pkill --signal SIGKILL -u " . $this->execution_user);/*kill all processes after timeout_seconds*/
         $stream = ssh2_exec($this->connection, $command); 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
         $out_msg=stream_get_contents($stream_out);
+        if($use_strace==true){
+            $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
+            $err_msg=stream_get_contents($stream_err);    
+            return $err_msg;
+        }
         if(empty($out_msg)==true){
             $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
             $err_msg=stream_get_contents($stream_err);    

@@ -32,47 +32,44 @@
     
 }
 
-    .questionBox .questionText p, .questionBox .questionCode p, .questionBox .questionOutput p{
+    .questionBox .questionText, .questionBox .questionCode{
         white-space: pre-wrap;
         font-size: 20px;
         font-family: 'Times New Roman', Times, serif;
-    }
-    .questionBox .questionResultCorrect{
-        font-size: 100%;
-        font-family: Arial, Helvetica, sans-serif;
-        color: green;
-        margin-bottom: -1%;
-    }
-    .questionBox .questionResultIncorrect{
-        font-size: 100%;
-        font-family: Arial, Helvetica, sans-serif;
-        color: red;
-        margin-bottom: -1%;
-    }
-    .questionBox .questionTextTitle, .questionCodeTitle{
-        font-size: 80%;
-        font-family: Arial, Helvetica, sans-serif;
-        color: #3D4597;
-        margin-bottom: -1%;
-    }
-    .questionBox .questionOutputTitle{
-        font-size: 80%;
-        font-family: Arial, Helvetica, sans-serif;
-        color: black;
-        margin-bottom: -1%;
-    }
-    .questionBox .resultActions{
-        margin-top: 1.5%;
-    }
-    .questionBox .resultActions input[type="text"]{
-        width: 25%;
+        
     }
 
-    .questionBox .resultActions .btnReport{
+    .questionBox .validateQuestion{
+        width: 25%;
+        height: 30px;
+        box-sizing: border-box;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .questionBox .validateQuestion h3{
+        width: 33.3%;
+        float: left;
+        margin-top:1%;
+        margin-bottom:0%;
+    }
+    .questionBox .validateQuestion select,.questionBox .validateQuestion input{
+        width: 33.3%;
+        float: left;
+        margin-top:0%;
+        margin-bottom:0%;
+    }
+
+    .questionBox .btnDelete{
         margin: 0.2%;
         color: red;
         font-weight: 500;
         box-shadow: 0 0px 2px 0 red, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+    }
+    .questionBox .btnDeleteGray{
+        margin: 0.2%;
+        color: gray;
+        font-weight: 500;
+        box-shadow: 0 0px 2px 0 gray, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
     }
     .questionBox .resultActions .btnContinue{
         margin: 0.2%;
@@ -83,7 +80,6 @@
     .resultBox{
         margin-top:2%;
         width: 80%;
-
         margin-left: auto;
         margin-right: auto;
         text-align: center;
@@ -94,4 +90,10 @@
         color: red;
         box-sizing: border-box;
         border-radius: 6px;
+    }
+    .report .text{
+        margin-bottom: 0.3%;
+    }
+    .report .details{
+        margin-top: 0%;
     }

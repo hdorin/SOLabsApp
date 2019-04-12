@@ -32,7 +32,7 @@
                 <div class="questionOutputTitle">
                     <h1>Output</h1>
                 </div>
-                <div class="questionCode">
+                <div class="questionOutput">
                     <p><?php echo $data['user_output']; ?></p>
                 </div>
             </div>

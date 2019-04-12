@@ -1,8 +1,8 @@
 <?php
 //Chapter C Linux
-class Chapter_3_View_Question extends Controller
+class Chapter_4_View_Question extends Controller
 {
-    const CHAPTER_ID=3;
+    const CHAPTER_ID=4;
     private $answers_left=0;
     private $validation="";
     private $question_text="",$question_code="";
@@ -139,10 +139,8 @@ class Chapter_3_View_Question extends Controller
         exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.code',$question_code_aux);
         $this->question_code=$this->build_string_from_array($question_code_aux);
         
-        $this->question_code=str_replace("<","&lt",$this->question_code);
-        $this->question_code=str_replace(">","&gt",$this->question_code);
-        $this->question_text=str_replace("<","&lt",$this->question_text);
-        $this->question_text=str_replace(">","&gt",$this->question_text);
+        $this->question_code=$this->replace_html_special_characters($this->question_code);
+        $this->question_text=$this->replace_html_special_characters($this->question_text);
         return true;
     }
     private function get_reports($question_id){

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2019 at 06:15 PM
+-- Generation Time: Apr 12, 2019 at 07:51 PM
 -- Server version: 5.7.25-0ubuntu0.18.04.2
 -- PHP Version: 7.2.15-0ubuntu0.18.04.2
 
@@ -42,7 +42,8 @@ CREATE TABLE `chapters` (
 INSERT INTO `chapters` (`id`, `name`, `description`, `status`) VALUES
 (1, 'Commands', 'Commands are fun!', 'posted'),
 (2, 'Scripts', 'Like commands, but better!', 'posted'),
-(3, 'C Linux', 'C Linux is the best!', 'posted');
+(3, 'C Linux', 'C Linux is the best!', 'posted'),
+(4, 'Forking in C', 'Fork usage is being checked!', 'posted');
 
 -- --------------------------------------------------------
 
@@ -125,7 +126,29 @@ CREATE TABLE `chapter_3` (
 --
 
 INSERT INTO `chapter_3` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
+(15, 0, 37, 0),
 (16, 1, 41, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chapter_4`
+--
+
+CREATE TABLE `chapter_4` (
+  `user_id` int(11) NOT NULL,
+  `right_answers` int(11) NOT NULL DEFAULT '0',
+  `last_question_id` int(11) NOT NULL,
+  `deleted_questions` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `chapter_4`
+--
+
+INSERT INTO `chapter_4` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
+(15, 8, 43, 0),
+(16, 11, 44, 0);
 
 -- --------------------------------------------------------
 
@@ -174,13 +197,16 @@ INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`
 (33, 16, 1, 'posted', '2019-03-05', 16, 5, 'None', 1),
 (34, 15, 1, 'posted', '2019-03-05', 66, 6, 'None', 0),
 (35, 16, 1, 'posted', '2019-03-30', 3, 0, 'None', 0),
-(36, 16, 3, 'posted', '2019-04-08', 4, 0, 'None', 0),
-(37, 16, 3, 'posted', '2019-04-08', 0, 0, 'None', 0),
-(38, 16, 3, 'posted', '2019-04-08', 0, 0, 'None', 0),
-(39, 16, 3, 'posted', '2019-04-08', 0, 0, 'None', 0),
-(40, 15, 3, 'posted', '2019-04-08', 3, 1, 'None', 0),
-(41, 15, 3, 'posted', '2019-04-08', 1, 0, 'None', 0),
-(42, 16, 1, 'posted', '2019-04-08', 0, 0, 'None', 0);
+(36, 16, 3, 'posted', '2019-04-08', 7, 0, 'None', 0),
+(37, 16, 3, 'posted', '2019-04-08', 1, 0, 'None', 0),
+(38, 16, 3, 'posted', '2019-04-08', 1, 0, 'None', 0),
+(39, 16, 3, 'posted', '2019-04-08', 1, 0, 'None', 0),
+(40, 15, 3, 'posted', '2019-04-08', 4, 1, 'None', 0),
+(41, 15, 3, 'posted', '2019-04-08', 2, 0, 'None', 0),
+(42, 16, 1, 'posted', '2019-04-08', 0, 0, 'None', 0),
+(43, 15, 4, 'posted', '2019-04-12', 12, 11, 'None', 0),
+(44, 15, 4, 'posted', '2019-04-12', 9, 8, 'None', 0),
+(45, 16, 4, 'posted', '2019-04-12', 0, 0, 'None', 0);
 
 -- --------------------------------------------------------
 
@@ -228,7 +254,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `user_name`, `is_admin`, `date_created`, `pass_hash`, `ssh_pass`) VALUES
 (15, 'test', 0, '2019-02-10', '$2y$10$cVdU54xSntC5fk4O.d9luO0RkpmLTovany3beYqmRY/i.mz6fPrgO', 'KRxOaeRE7mLsUwveMSKJ'),
-(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$2o4G2OAVwVZShUNEownXfeSFAYx52D2hsLRSiC7Gzz0EXz8IeyRE.', '2YGCf22KLo3aw6uws59T'),
+(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$1NlZhOMGqax5zVQB7VrL8u4BBn1baybFEhV8QggwT3qGiLUr0S94C', '2YGCf22KLo3aw6uws59T'),
 (17, 'dorin', 0, '2019-02-14', '$2y$10$5Ci38nuBJ1LKjlTXYE3Mm.XpdSwvH9MMI9hwNIYyiPYzhpjLWsLKK', 'Lh0iJX7yzMJHK8Sz3zP0'),
 (18, 'hdorin', 0, '2019-02-23', '$2y$10$iTFS1IpvlYWgCDBRpnggl.rLKv3PiBXx6ODOBc.v9LErE.KjqNknq', 'K6VB0q1D6PHFeZSvwimF'),
 (22, 'test1', 0, '2019-02-23', '$2y$10$eUluGdzXiMwbIFERQVloOuCCvNdLKd.hK78PIg91D7ENdI8Fhh6Oa', 'B6S3WtVEvRamtwdCyxkq'),
@@ -266,6 +292,12 @@ ALTER TABLE `chapter_3`
   ADD PRIMARY KEY (`user_id`);
 
 --
+-- Indexes for table `chapter_4`
+--
+ALTER TABLE `chapter_4`
+  ADD PRIMARY KEY (`user_id`);
+
+--
 -- Indexes for table `news`
 --
 ALTER TABLE `news`
@@ -299,7 +331,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `chapters`
 --
 ALTER TABLE `chapters`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `news`
@@ -311,7 +343,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `reports`

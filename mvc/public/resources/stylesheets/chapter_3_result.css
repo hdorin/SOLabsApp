@@ -32,7 +32,7 @@
     
 }
 
-    .questionBox .questionText p, .questionBox .questionCode p{
+    .questionBox .questionText p, .questionBox .questionCode p, .questionBox .questionOutput p{
         white-space: pre-wrap;
         font-size: 20px;
         font-family: 'Times New Roman', Times, serif;
