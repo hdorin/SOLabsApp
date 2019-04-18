@@ -1,10 +1,10 @@
 <?php
 //Chapter C Linux
-class Chapter_4_Solve extends Controller
+class Chapter_2_Solve extends Controller
 {
     private $question_text;
     private $get_question_i0nput;
-    const CHAPTER_ID=4;
+    const CHAPTER_ID=2;
     const CODE_MAX_LEN=1500;
     public function index()
     {   
@@ -14,8 +14,8 @@ class Chapter_4_Solve extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
-        $this->question_text=$this->replace_html_special_characters($this->question_text);
         $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
+        $this->question_text=$this->replace_html_special_characters($this->question_text);
         $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'question_text' => $this->question_text, 'code_field' =>$code_field, 'code_field_max_len' =>self::CODE_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
@@ -168,12 +168,8 @@ class Chapter_4_Solve extends Controller
         fwrite($code_file,$code);
         fclose($code_file);
         try{
-            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','c');;
-            $strace_output=$ssh_connection->execute('gcc code.c -o code.out && (strace -e trace=clone ./code.out) ',$ssh_timeout_seconds,true);
-            if(strcmp($strace_output,"+++ exited with 0 +++\n")==0){
-                throw new Exception("You did not use fork()!");
-            }
-            $_SESSION["exec_msg"]=$ssh_connection->execute('./code.out ',$ssh_timeout_seconds);
+            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','sh');
+            $_SESSION["exec_msg"]=$ssh_connection->execute('chmod 0775 code.sh ; ./code.sh',$ssh_timeout_seconds);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
