@@ -65,34 +65,19 @@
     }
     .questionBox .btnDeleteGray{
         margin: 0.2%;
+        margin-bottom: -2%;
         color: gray;
         font-weight: 500;
         box-shadow: 0 0px 2px 0 gray, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
     }
-    .questionBox .resultActions .btnContinue{
-        margin: 0.2%;
-        color: green;
-        font-weight: 500;
-        box-shadow: 0 0px 2px 0 green, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
-    }
-    .resultBox{
-        margin-top:2%;
-        width: 80%;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-    }
-    .errorMsg{
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 18px;
-        color: red;
-        box-sizing: border-box;
-        border-radius: 6px;
+    .questionDetailsBox .questionDetails{
+        margin: 0.3%;
     }
     .report{
         margin-bottom: 2%;
     }
     .report .text, .report .details{
-        margin-top: 0.2%;
-        margin-bottom: 0.2%;
+        margin-top: 0.3%;
+        margin-bottom: 0.3%;
     }
+    
