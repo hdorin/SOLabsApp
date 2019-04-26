@@ -235,8 +235,8 @@ class Chapter_3_View_Question extends Controller
             die("You cannot do that!");
         }
 
-        if(strcmp($_POST["validation_field"],"None")==0){
-            $validation="None";
+        if(strcmp($_POST["validation_field"],"Unvalidated")==0){
+            $validation="Unvalidated";
         }else if(strcmp($_POST["validation_field"],"Valid")==0){
             $validation="Valid";
         }else if(strcmp($_POST["validation_field"],"Invalid")==0){

@@ -169,7 +169,7 @@ class Chapter_2_Solve extends Controller
         fclose($code_file);
         try{
             $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','sh');
-            $_SESSION["exec_msg"]=$ssh_connection->execute('chmod 0775 code.sh ; ./code.sh',$ssh_timeout_seconds);
+            $_SESSION["exec_msg"]=$ssh_connection->execute('chmod 0775 code.sh && ./code.sh',$ssh_timeout_seconds);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
@@ -255,9 +255,11 @@ class Chapter_2_Solve extends Controller
         }
         $_SESSION["code_field"]=$_POST["code_field"];
         if($_POST["action"]=="Execute"){
+            $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
             $this->execute($code);
             header('Location: ../chapter_' . (string)$chapter_id . '_solve'); 
         }else if($_POST["action"]=="Submit"){
+            $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
             $this->submit($code);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);

@@ -18,14 +18,24 @@
         <div class="textarea">
             <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
         </div>
-            <input class="btnExecute" name="action" type="submit" value="Execute" />
-            <input class="btnSubmit" name="action" type="submit" value="Submit" />
+            <input class="btnExecute" name="action" type="submit" value="Execute" onclick="executeFunction()"/>
+            <input class="btnSubmit" name="action" type="submit" value="Submit" onclick="submitFunction()"/>
             <input class="btnSkip" name="action" type="submit" value="Skip"  formnovalidate/>
+            <script>
+                function executeFunction() {
+                    document.getElementById("execMsg").innerHTML = "Executing ...";
+                    document.getElementById("errorMsg").innerHTML = " ";
+                }
+                function submitFunction() {
+                    document.getElementById("execMsg").innerHTML = "Submitting ...";
+                    document.getElementById("errorMsg").innerHTML = " ";
+                }
+                </script>
         </form> 
     </div>
     <div class="resultBox">
-        <p class="errorMsg"><?=$data['error_msg']?></p>
-        <p class="execMsg"><?=$data['exec_msg']?></p>
+        <p class="errorMsg" id="errorMsg"><?=$data['error_msg']?></p>
+        <p class="execMsg" id="execMsg"><?=$data['exec_msg']?></p>
     </div>
 </body>
 </html>

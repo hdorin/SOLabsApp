@@ -31,7 +31,6 @@
     padding-left: 1.8%;
     
 }
-
     .questionBox .questionText p, .questionBox .questionCode p, .questionBox .questionOutput p{
         white-space: pre-wrap;
         font-size: 20px;
@@ -39,6 +38,7 @@
     }
     .questionBox .questionCode p{
         text-align: justify;
+        margin-left: 15%;
     }
     .questionBox .questionResultCorrect{
         font-size: 100%;
