@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2019 at 07:51 PM
+-- Generation Time: Apr 26, 2019 at 07:34 PM
 -- Server version: 5.7.25-0ubuntu0.18.04.2
--- PHP Version: 7.2.15-0ubuntu0.18.04.2
+-- PHP Version: 7.2.17-0ubuntu0.18.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -71,8 +71,8 @@ INSERT INTO `chapter_1` (`user_id`, `right_answers`, `last_question_id`, `delete
 (12, 20, 2, 0),
 (13, 2, 1, 9),
 (14, 20, 4, 0),
-(15, 2, 32, 0),
-(16, 11, 32, 0),
+(15, 6, 35, 0),
+(16, 13, 34, 0),
 (19, 0, 6, 0),
 (21, 0, 6, 0),
 (22, 0, 6, 0),
@@ -103,8 +103,8 @@ INSERT INTO `chapter_2` (`user_id`, `right_answers`, `last_question_id`, `delete
 (5, 0, 4, 0),
 (6, 0, 2, 0),
 (10, 31, 9, 0),
-(15, 0, 9, 0),
-(16, 0, 9, 0),
+(15, 0, 45, 0),
+(16, 0, 45, 0),
 (20, 0, 9, 0),
 (22, 0, 9, 0);
 
@@ -126,8 +126,8 @@ CREATE TABLE `chapter_3` (
 --
 
 INSERT INTO `chapter_3` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
-(15, 0, 37, 0),
-(16, 1, 41, 0);
+(15, 0, 36, 0),
+(16, 1, 39, 0);
 
 -- --------------------------------------------------------
 
@@ -148,7 +148,7 @@ CREATE TABLE `chapter_4` (
 
 INSERT INTO `chapter_4` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
 (15, 8, 43, 0),
-(16, 11, 44, 0);
+(16, 15, 48, 1);
 
 -- --------------------------------------------------------
 
@@ -184,7 +184,7 @@ CREATE TABLE `questions` (
   `date_created` date NOT NULL,
   `all_answers` int(11) NOT NULL DEFAULT '0',
   `right_answers` int(11) NOT NULL DEFAULT '0',
-  `validation` varchar(20) NOT NULL DEFAULT 'None',
+  `validation` varchar(20) NOT NULL DEFAULT 'Unvalidated',
   `reports_nr` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -193,20 +193,23 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`, `reports_nr`) VALUES
-(32, 15, 1, 'posted', '2019-02-26', 19, 1, 'None', 0),
-(33, 16, 1, 'posted', '2019-03-05', 16, 5, 'None', 1),
-(34, 15, 1, 'posted', '2019-03-05', 66, 6, 'None', 0),
-(35, 16, 1, 'posted', '2019-03-30', 3, 0, 'None', 0),
+(32, 15, 1, 'posted', '2019-02-26', 35, 1, 'None', 1),
+(33, 16, 1, 'posted', '2019-03-05', 22, 7, 'None', 2),
+(34, 15, 1, 'posted', '2019-03-05', 80, 7, 'None', 0),
+(35, 16, 1, 'posted', '2019-03-30', 13, 1, 'None', 0),
 (36, 16, 3, 'posted', '2019-04-08', 7, 0, 'None', 0),
-(37, 16, 3, 'posted', '2019-04-08', 1, 0, 'None', 0),
-(38, 16, 3, 'posted', '2019-04-08', 1, 0, 'None', 0),
-(39, 16, 3, 'posted', '2019-04-08', 1, 0, 'None', 0),
-(40, 15, 3, 'posted', '2019-04-08', 4, 1, 'None', 0),
-(41, 15, 3, 'posted', '2019-04-08', 2, 0, 'None', 0),
-(42, 16, 1, 'posted', '2019-04-08', 0, 0, 'None', 0),
-(43, 15, 4, 'posted', '2019-04-12', 12, 11, 'None', 0),
-(44, 15, 4, 'posted', '2019-04-12', 9, 8, 'None', 0),
-(45, 16, 4, 'posted', '2019-04-12', 0, 0, 'None', 0);
+(37, 16, 3, 'posted', '2019-04-08', 2, 0, 'Valid', 0),
+(38, 16, 3, 'posted', '2019-04-08', 2, 0, 'None', 1),
+(39, 15, 3, 'posted', '2019-04-08', 2, 0, 'None', 0),
+(40, 15, 3, 'posted', '2019-04-08', 4, 1, 'Invalid', 0),
+(41, 15, 3, 'posted', '2019-04-08', 6, 0, 'None', 0),
+(42, 16, 1, 'posted', '2019-04-08', 9, 1, 'None', 1),
+(43, 15, 4, 'deleted', '2019-04-12', 12, 11, 'None', 0),
+(44, 15, 4, 'posted', '2019-04-12', 13, 12, 'None', 0),
+(45, 15, 2, 'posted', '2019-04-12', 2, 0, 'None', 0),
+(46, 15, 2, 'posted', '2019-04-15', 2, 1, 'Invalid', 1),
+(47, 15, 2, 'posted', '2019-04-18', 5, 0, 'None', 0),
+(48, 15, 4, 'posted', '2019-04-18', 0, 0, 'None', 0);
 
 -- --------------------------------------------------------
 
@@ -231,7 +234,12 @@ INSERT INTO `reports` (`id`, `user_id`, `question_id`, `text`, `date_created`) V
 (10, 10, 8, 'Enter report message', '2018-10-19'),
 (11, 10, 10, 'Enter report message', '2018-10-19'),
 (12, 14, 4, 'Ce faci?', '2018-12-07'),
-(13, 16, 33, 'De ce nu a venit Tiplea?', '2019-03-05');
+(13, 16, 33, 'De ce nu a venit Tiplea?', '2019-03-05'),
+(14, 15, 38, 'NUUUU', '2019-04-12'),
+(15, 15, 33, 'DE CEEEEE', '2019-04-12'),
+(16, 16, 32, 'GRESIT CICA', '2019-04-12'),
+(17, 16, 46, 'M-ai pacalit!', '2019-04-15'),
+(18, 15, 42, 'Te-am raportat din c309!', '2019-04-16');
 
 -- --------------------------------------------------------
 
@@ -253,15 +261,15 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `user_name`, `is_admin`, `date_created`, `pass_hash`, `ssh_pass`) VALUES
-(15, 'test', 0, '2019-02-10', '$2y$10$cVdU54xSntC5fk4O.d9luO0RkpmLTovany3beYqmRY/i.mz6fPrgO', 'KRxOaeRE7mLsUwveMSKJ'),
-(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$1NlZhOMGqax5zVQB7VrL8u4BBn1baybFEhV8QggwT3qGiLUr0S94C', '2YGCf22KLo3aw6uws59T'),
+(15, 'test', 0, '2019-02-10', '$2y$10$kkkHetMQNXssy8vyE79YMOGsfEc0A0wP7FRQXxpx74mlAlLKuzPuq', 'KRxOaeRE7mLsUwveMSKJ'),
+(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$wAVwWN8PkeBiVkcDY3MR8uWh9efmgtKqTY5Dz6aGRd2vl12UncV3a', '2YGCf22KLo3aw6uws59T'),
 (17, 'dorin', 0, '2019-02-14', '$2y$10$5Ci38nuBJ1LKjlTXYE3Mm.XpdSwvH9MMI9hwNIYyiPYzhpjLWsLKK', 'Lh0iJX7yzMJHK8Sz3zP0'),
 (18, 'hdorin', 0, '2019-02-23', '$2y$10$iTFS1IpvlYWgCDBRpnggl.rLKv3PiBXx6ODOBc.v9LErE.KjqNknq', 'K6VB0q1D6PHFeZSvwimF'),
-(22, 'test1', 0, '2019-02-23', '$2y$10$eUluGdzXiMwbIFERQVloOuCCvNdLKd.hK78PIg91D7ENdI8Fhh6Oa', 'B6S3WtVEvRamtwdCyxkq'),
 (23, 'test2', 0, '2019-02-26', '$2y$10$YdVPHHpBH2XGcYS3rJchAejuSFIgCJiNMZLdNIyRuSWHriVYx0A2u', 'XAwftlN1YQsLvWGeCWlm'),
 (24, 'test3', 0, '2019-02-26', '$2y$10$VFeB2IT7BG.TqSO8/KGPy.ihGW9FeJrE.ndReg29ALQm7HKC4BOgO', 'Q5EZo1RAr1yLOc851hS3'),
 (25, 'test4', 0, '2019-02-26', '$2y$10$pxYe/FMAcPE5Blap0EbW7eyr3i1vVTshOpPFYCAJkCiY0h0DnAM9K', 'gj7sB8h7mO1UipBK5SZF'),
-(26, 'test5', 0, '2019-02-26', '$2y$10$7HGsBgSRBV3KKP3UN1zUz.NaE5kikdniWO2STBGdFfQTkk9UKTzXS', 'M4p838kUEt434QvSfY5P');
+(26, 'test5', 0, '2019-02-26', '$2y$10$7HGsBgSRBV3KKP3UN1zUz.NaE5kikdniWO2STBGdFfQTkk9UKTzXS', 'M4p838kUEt434QvSfY5P'),
+(27, 'test1', 0, '2019-04-23', '$2y$10$ND3otCSuMeYxPVJvplvJFezAJFpdsJe7AvcUDnVobFnVoux.EQnCG', 'B2Z0AC6319igrFW1DWux');
 
 --
 -- Indexes for dumped tables
@@ -343,19 +351,19 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
