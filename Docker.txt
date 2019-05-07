@@ -5,3 +5,5 @@ Trimit fisiere cu SCP cu numele studentilor: dorin.haloca.code dorin.haloca.run 
 Le montez in container si apelez scriptul .run ca sa nu faca injectie stundetii
 - .run contine ./dorin.haloca.code, docker timeout kill, modificare de useri conectati, apelat docker diff etc.
 
+sudo docker run -v ~/Desktop/code.sh:/code.sh -v ~/Desktop/data:/data  --rm ubuntu bash code.sh
+
