@@ -48,16 +48,15 @@ class Login extends Controller
         $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare('SELECT id,is_admin,pass_hash,ssh_pass FROM users WHERE `user_name`=?');
+        $sql=$link->prepare('SELECT id,is_admin,pass_hash FROM users WHERE `user_name`=?');
         $sql->bind_param('s', $user);
         $sql->execute();
-        $sql->bind_result($user_id,$is_admin,$pass_hash,$ssh_pass);
+        $sql->bind_result($user_id,$is_admin,$pass_hash);
         if(!$sql->fetch()){/*If not, create one*/
             $external_ssh_check=$config->get('external_ssh','check');
             if($external_ssh_check=="true"){/*false = does not ckeck the external ssh connection*/
                 $external_ssh_host=$config->get('external_ssh','host');
                 $external_ssh_port=$config->get('external_ssh','port');
-   
                 $ssh_connection->configure($external_ssh_host,$external_ssh_port);/*Check external Linux machine, e.g. fenrir*/
                 try{    
                     if(!$ssh_connection->connect($user,$pass)){
@@ -68,39 +67,13 @@ class Login extends Controller
                     $this->reload($e->getMessage());
                 }
                 $ssh_connection->close();
-            }   
+            }
             /*The account was found on the external Linux machine, creating one on our Linux machine*/
-            $ssh_host=$config->get('ssh','host');
-            $ssh_port=$config->get('ssh','port');
-            $ssh_sudo_user=$config->get('ssh','sudo_user');
-            $ssh_sudo_pass=$config->get('ssh','sudo_pass');
-            $ssh_quota_limit=$config->get('ssh','quota_limit');
-            $ssh_procs_limit=$config->get('ssh','procs_limit');
-            $ssh_connection->configure($ssh_host,$ssh_port);
-            try{
-                if(!$ssh_connection->connect($ssh_sudo_user,$ssh_sudo_pass)){
-                    $ssh_connection->close();
-                    $this->reload("Could not access administrator account!");
-                }
-            }catch(Exception $e){
-                $this->reload($e->getMessage());
-            }
-            $ssh_pass=$this->generate_random_str();
-            try{
-                $ssh_connection->create_user($user,$ssh_pass,$ssh_quota_limit,$ssh_procs_limit);
-            }catch(Exception $e){
-                $this->reload($e->getMessage());
-            }
-            
-            $ssh_connection->close();
             $pass_hash=password_hash($pass, PASSWORD_DEFAULT);
-            $sql=$link->prepare('INSERT INTO users (`user_name`,date_created,pass_hash,ssh_pass) VALUES (?,now(),?,?)');
-            $sql->bind_param('sss', $user,$pass_hash,$ssh_pass);
+            $sql=$link->prepare('INSERT INTO users (`user_name`,date_created,pass_hash) VALUES (?,now(),?)');
+            $sql->bind_param('ss', $user,$pass_hash);
             $sql->execute();
-            $sql->close();
-
-            
-            
+            $sql->close();    
         }else{
             $sql->close();
             if(password_verify($pass,$pass_hash)==false){/*The password user provided does not match the hashed one*/
@@ -108,7 +81,6 @@ class Login extends Controller
                 if($external_ssh_check=="true"){/*false = does not ckeck the external ssh connection*/
                     $external_ssh_host=$config->get('external_ssh','host');
                     $external_ssh_port=$config->get('external_ssh','port');
-       
                     $ssh_connection->configure($external_ssh_host,$external_ssh_port);/*Check external Linux machine, e.g. fenrir*/
                     try{    
                         if(!$ssh_connection->connect($user,$pass)){
@@ -125,20 +97,21 @@ class Login extends Controller
                 $sql=$link->prepare('UPDATE users SET pass_hash=? WHERE `user_name`=?');
                 $sql->bind_param('ss',$pass_hash,$user);
                 $sql->execute();
-                $sql->close();
-                //$this->reload("Invalid username/password!");
+                $sql->close();                
             }
         }
         $db_connection->close();
         /*Authenticate user on our Linux machine*/
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
+        $ssh_user=$config->get('ssh','user');
+        $ssh_pass=$config->get('ssh','pass');
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
             
-            if(!$ssh_connection->connect($user,$ssh_pass)){
+            if(!$ssh_connection->connect($ssh_user,$ssh_pass)){
                 $ssh_connection->close();
-                $this->reload("Invalid SSH username/password!");
+                $this->reload("Could not connect via SSH!");
             }
         }catch(Exception $e){
             $this->reload($e->getMessage());
@@ -146,9 +119,8 @@ class Login extends Controller
         $ssh_connection->close();
         $_SESSION['user_id']=$user_id;
         $_SESSION['user']=$user;
-        $_SESSION['pass']=$ssh_pass;
         $_SESSION['is_admin']=$is_admin;
-        header('Location: ../');/*redict to home controller after login*/
+        header('Location: ../');/*redirect to home controller after login*/
         $this->my_sem_release();
     }
 }

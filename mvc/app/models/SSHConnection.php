@@ -10,25 +10,6 @@ class SSHConnection
         $this->host=$host;
         $this->port=$port;
     }
-    public function create_user($user,$pass,$quota_limit,$procs_limit){
-        $stream = ssh2_exec($this->connection, 'cat ./CreateUser.sh ');/*check for script to create new user*/ 
-        stream_set_blocking($stream, true);
-        $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
-        $out_msg=stream_get_contents($stream_out);
-        if(empty($out_msg)==true){
-            $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
-            $err_msg=stream_get_contents($stream_err);    
-            throw new Exception($err_msg);
-        }else{
-            $stream=ssh2_exec($this->connection, 'sudo ./CreateUser.sh ' . $pass . ' '. $user . ' ' . $quota_limit);
-            stream_set_blocking($stream, true);
-            $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
-            $out_msg=stream_get_contents($stream_out);
-            if(empty($out_msg)==true){
-                throw new Exception("Could not execute CreateUser.sh!");
-            }
-        }
-    }
     public function connect($user,$pass){
         $this->execution_user=$user;
         if (!($this->connection = ssh2_connect($this->host, $this->port))) {

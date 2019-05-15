@@ -3,15 +3,15 @@
         "local_path": "/var/www/html/AplicatieSO"
     },
     "external_ssh": {
-        "check": "false", 
+        "check": "true", 
         "host":"students.info.uaic.ro",
         "port":"22"
     },
     "ssh": {
         "host":"127.0.0.1",
         "port":"22",
-        "sudo_user":"hdorin",
-        "sudo_pass":"halogenuri",
+        "user":"hdorin",
+        "pass":"halogenuri",
         "quota_limit":"10M",
         "timeout_seconds":"2s",
         "procs_limit":"25"
