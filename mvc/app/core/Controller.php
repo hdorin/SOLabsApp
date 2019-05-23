@@ -4,7 +4,6 @@ class Controller
 {
     protected $session_user_id;
     protected $session_user;
-    protected $session_pass;
     protected $session_is_admin;
     protected $semaphore;
     protected function model($model)
@@ -23,7 +22,6 @@ class Controller
         }
         $this->session_user_id=$_SESSION['user_id'];
         $this->session_user=$_SESSION['user'];
-        $this->session_pass=$_SESSION['pass'];
         $this->session_is_admin=$_SESSION['is_admin'];
         if(isset($_SESSION['user'])==false){
             $this->view('home/login',['error_msg' => $error_msg]);
