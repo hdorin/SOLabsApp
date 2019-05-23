@@ -3,7 +3,6 @@
 class Chapter_1_Solve extends Controller
 {
     private $question_text;
-    private $get_question_i0nput;
     const CHAPTER_ID=1;
     const CODE_MAX_LEN=150;
     public function index()
@@ -147,9 +146,9 @@ class Chapter_1_Solve extends Controller
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
+        $ssh_user=$config->get('ssh','user');
+        $ssh_pass=$config->get('ssh','pass');
         $ssh_timeout_seconds=$config->get('ssh','timeout_seconds');
-        $ssh_user=$this->session_user;
-        $ssh_pass=$this->session_pass;
         $ssh_connection=$this->model('SSHConnection');
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
@@ -160,8 +159,14 @@ class Chapter_1_Solve extends Controller
         }catch(Exception $e){
             $this->reload($e->getMessage());
         }
-        try{    
-            $_SESSION["exec_msg"]=$ssh_connection->execute($command,$ssh_timeout_seconds);
+        $config=$this->model('JSONConfig');
+        $app_local_path=$config->get('app','local_path');
+        $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
+        fwrite($code_file,$command);
+        fclose($code_file);
+        try{
+            $ssh_connection->send_code_file($this->session_user, $app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','.sh');
+            $_SESSION["exec_msg"]=$ssh_connection->execute($this->session_user,$command,$ssh_timeout_seconds);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
@@ -242,7 +247,10 @@ class Chapter_1_Solve extends Controller
         if($_POST["action"]!="Skip" && empty($command=$_POST["code_field"])==true){
             $this->reload("You did not enter a command!");
         }
-        $_SESSION["code_field"]=$_POST["code_field"];
+        $_SESSION["code_field"]=$_POST["code_field"];/*I put it here so the user don't lose all progess because of a unintended new line*/
+        if(strstr($_POST["code_field"],PHP_EOL)==true){
+            $this->reload("New line not permitted!");
+        }
         if($_POST["action"]=="Execute"){
             $this->execute($command);
             header('Location: ../chapter_' . (string)$chapter_id . '_solve'); 

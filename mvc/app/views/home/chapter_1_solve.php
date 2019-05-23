@@ -16,7 +16,7 @@
         </div>
         <form class="questionCode" action="chapter_<?=$data['chapter_id']?>_solve/process" method="POST">
         <div class="textarea">
-            <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
+            <textarea class="codeField" name="code_field" rows="1" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
         </div>
             <input class="btnExecute" name="action" type="submit" value="Execute" onclick="executeFunction()"/>
             <input class="btnSubmit" name="action" type="submit" value="Submit" onclick="submitFunction()"/>
