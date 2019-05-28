@@ -1,1 +1,4 @@
-ls
+for (( c=1; c<=5; c=0 ))
+do  
+   echo "Welcome $c times"
+done

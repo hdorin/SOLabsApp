@@ -148,9 +148,9 @@ class Chapter_2_Solve extends Controller
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
+        $ssh_user=$config->get('ssh','user');
+        $ssh_pass=$config->get('ssh','pass');
         $ssh_timeout_seconds=$config->get('ssh','timeout_seconds');
-        $ssh_user=$this->session_user;
-        $ssh_pass=$this->session_pass;
         $ssh_connection=$this->model('SSHConnection');
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
@@ -162,14 +162,18 @@ class Chapter_2_Solve extends Controller
             $this->reload($e->getMessage());
         }
         
-        $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
         $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
         fwrite($code_file,$code);
         fclose($code_file);
+        $run_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run','w');
+        fwrite($run_file,"chmod +x code.sh && ./code.sh" . $args);
+        fclose($run_file); 
+
         try{
-            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','sh');
-            $_SESSION["exec_msg"]=$ssh_connection->execute('chmod 0775 code.sh && ./code.sh',$ssh_timeout_seconds);
+            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code', $this->session_user . '.sh');
+            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run',$this->session_user . '.run');
+            $_SESSION["exec_msg"]=$ssh_connection->execute("(sleep " . $ssh_timeout_seconds . " &&  docker kill " . $this->session_user . ") | docker run --name " . $this->session_user . " -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . $this->session_user . ".run:/code.run --rm ubuntu bash ./code.run");
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
