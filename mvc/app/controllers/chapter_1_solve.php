@@ -248,7 +248,7 @@ class Chapter_1_Solve extends Controller
             $this->reload("You did not enter a command!");
         }
         $_SESSION["code_field"]=$_POST["code_field"];/*I put it here so the user don't lose all progess because of a unintended new line*/
-        if(strstr($_POST["code_field"],PHP_EOL)==true){
+        if(strstr($_POST["code_field"],"\n")==true){
             $this->reload("New line not permitted!");
         }
         if($_POST["action"]=="Execute"){

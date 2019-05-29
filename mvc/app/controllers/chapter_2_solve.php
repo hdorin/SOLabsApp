@@ -6,6 +6,8 @@ class Chapter_2_Solve extends Controller
     private $get_question_i0nput;
     const CHAPTER_ID=2;
     const CODE_MAX_LEN=1500;
+    const ARGS_MAX_LEN=100;
+    const INPUT_MAX_LEN=500;
     public function index()
     {   
         $this->check_login();
@@ -14,9 +16,13 @@ class Chapter_2_Solve extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
+        $args_field=$this->session_extract("args_field");
+        $input_field=$this->session_extract("input_field");
         $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
         $this->question_text=$this->replace_html_special_characters($this->question_text);
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'question_text' => $this->question_text, 'code_field' =>$code_field, 'code_field_max_len' =>self::CODE_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_solve',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,
+                                                                           'question_text' => $this->question_text, 'code_field' =>$code_field,'args_field' =>$args_field,'input_field' =>$input_field, 'code_field_max_len' =>self::CODE_MAX_LEN,
+                                                                           'args_field_max_len' =>self::ARGS_MAX_LEN,'input_field_max_len' =>self::INPUT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -144,7 +150,7 @@ class Chapter_2_Solve extends Controller
         $sql->close();
         $db_connection->close();
     }
-    private function execute($code){
+    private function execute($code,$args,$input){
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
@@ -167,13 +173,18 @@ class Chapter_2_Solve extends Controller
         fwrite($code_file,$code);
         fclose($code_file);
         $run_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run','w');
-        fwrite($run_file,"chmod +x code.sh && ./code.sh" . $args);
+        fwrite($run_file,"chmod +x code.sh && ./code.sh " . $args);
         fclose($run_file); 
-
+        $input_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input','w');
+        fwrite($input_file,$input);
+        fclose($input_file);
+        
         try{
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code', $this->session_user . '.sh');
-            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run',$this->session_user . '.run');
-            $_SESSION["exec_msg"]=$ssh_connection->execute("(sleep " . $ssh_timeout_seconds . " &&  docker kill " . $this->session_user . ") | docker run --name " . $this->session_user . " -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . $this->session_user . ".run:/code.run --rm ubuntu bash ./code.run");
+            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run', $this->session_user . '.run');
+            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input', $this->session_user . '.input');
+            $docker_command="docker run -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . $this->session_user . ".run:/code.run --rm ubuntu bash ./code.run";
+            $_SESSION["exec_msg"]=$ssh_connection->execute("timeout --signal=SIGKILL " . $ssh_timeout_seconds . " " . $docker_command);
         }catch(Exception $e){
             if(empty($e->getMessage())==true){
                 $this->reload("Output cannot be empty!");
@@ -252,20 +263,36 @@ class Chapter_2_Solve extends Controller
         $this->check_chapter_posted(self::CHAPTER_ID);
         $this->my_sem_acquire($this->session_user_id);
         if(strlen($_POST["code_field"])>self::CODE_MAX_LEN){
-            $this->reload("Characters limit exceeded!");
+            $this->reload("Characters limit exceeded for code!");
+        }
+        if(strlen($_POST["args_field"])>self::ARGS_MAX_LEN){
+            $this->reload("Characters limit exceeded for arguments!");
+        }
+        if(strstr($_POST["args_field"],"\n")==true){
+            $this->reload("New line not permitted for arguments!");
+        }
+        if(strlen($_POST["input_field"])>self::INPUT_MAX_LEN){
+            $this->reload("Characters limit exceeded for input!");
         }
         if($_POST["action"]!="Skip" && empty($code=$_POST["code_field"])==true){
             $this->reload("You did not enter any code!");
         }
         $_SESSION["code_field"]=$_POST["code_field"];
+        $_SESSION["args_field"]=$_POST["args_field"];
+        $_SESSION["input_field"]=$_POST["input_field"];
+        $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
+        $args=$_POST["args_field"];
+        $args=str_replace("\r","",$args);//Converting DOS line end to Linux version
+        $input=$_POST["input_field"];
+        $input=str_replace("\r","",$input);//Converting DOS line end to Linux version
         if($_POST["action"]=="Execute"){
-            $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
-            $this->execute($code);
+            $this->execute($code,$args,$input);
             header('Location: ../chapter_' . (string)$chapter_id . '_solve'); 
         }else if($_POST["action"]=="Submit"){
-            $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
             $this->submit($code);
             $this->session_extract("code_field",true);
+            $this->session_extract("args_field",true);
+            $this->session_extract("input_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
             $this->session_extract("exec_msg",true);
@@ -273,6 +300,8 @@ class Chapter_2_Solve extends Controller
         }else{
             $this->submit("",true);
             $this->session_extract("code_field",true);
+            $this->session_extract("args_field",true);
+            $this->session_extract("input_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
             $this->session_extract("exec_msg",true);  
