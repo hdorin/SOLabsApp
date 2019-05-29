@@ -285,6 +285,8 @@ class Chapter_2_Solve extends Controller
             $this->get_question();
             $_SESSION['question_id']=$last_question_id;
             $_SESSION['question_text']=$this->question_text;
+            $_SESSION['question_args']=$author_args;
+            $_SESSION['question_input']=$author_input;
             $_SESSION['user_code']=$code;
             $_SESSION['author_code']=$author_code;
             if(empty($aux_output)==false){
@@ -315,9 +317,11 @@ class Chapter_2_Solve extends Controller
         if(strlen($_POST["input_field"])>self::INPUT_MAX_LEN){
             $this->reload("Characters limit exceeded for input!");
         }
-        if($_POST["action"]!="Skip" && empty($code=$_POST["code_field"])==true){
+        
+        if($_POST["action"]!="Skip" && empty($_POST["code_field"])==true){
             $this->reload("You did not enter any code!");
         }
+        $code=$_POST["code_field"];
         $_SESSION["code_field"]=$_POST["code_field"];
         $_SESSION["args_field"]=$_POST["args_field"];
         $_SESSION["input_field"]=$_POST["input_field"];

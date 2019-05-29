@@ -21,6 +21,12 @@
         <div class="questionText">
             <p><?php echo $data['question_text']; ?></p>
         </div>
+        <div class="questionArgs">
+            <p>Arguments: <?php echo $data['question_args']; ?></p>
+        </div>
+        <div class="questionInput">
+            <p>Input:<?php echo $data['question_input']; ?></p>
+        </div>
         <div class="outputs">
             <div class="userbox">
                 <div class="questionCodeTitle">
