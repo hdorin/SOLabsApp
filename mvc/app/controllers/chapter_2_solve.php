@@ -3,8 +3,9 @@
 class Chapter_2_Solve extends Controller
 {
     private $question_text;
-    private $get_question_i0nput;
+    private $output_file;
     const CHAPTER_ID=2;
+    const TEXT_MAX_LEN=500;
     const CODE_MAX_LEN=1500;
     const ARGS_MAX_LEN=100;
     const INPUT_MAX_LEN=500;
@@ -123,8 +124,9 @@ class Chapter_2_Solve extends Controller
         $db_connection->close();
         $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
-        exec("cat " . $app_local_path . "/mvc/app/questions/" . (string)$last_question_id . ".text",$question_text_aux);
-        $this->question_text=$this->build_string_from_array($question_text_aux);
+        $text_file=fopen($app_local_path . '/mvc/app/questions/' . $last_question_id . '.text','r');
+        $this->question_text=fread($text_file,self::TEXT_MAX_LEN);
+        fclose($text_file);
     }
     private function correct_answer(){ /*add question_id*/
         $chapter_id=self::CHAPTER_ID;
@@ -150,7 +152,7 @@ class Chapter_2_Solve extends Controller
         $sql->close();
         $db_connection->close();
     }
-    private function execute($code,$args,$input){
+    private function execute($code,$args="",$input="",$combine_outputs=false){//the $combine_outputs argument adds output file contents in the exec_msg
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
@@ -183,21 +185,34 @@ class Chapter_2_Solve extends Controller
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code', $this->session_user . '.sh');
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run', $this->session_user . '.run');
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input', $this->session_user . '.input');
-            $docker_command="docker run -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . $this->session_user . ".run:/code.run --rm ubuntu bash ./code.run";
+            $docker_command="docker run -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . $this->session_user . ".output:/code.output -v $(pwd)/" . $this->session_user . ".run:/code.run --rm ubuntu bash ./code.run";
+            /*creating the output file which will be mounted in the container*/
+            $ssh_connection->execute("echo>" . $this->session_user . ".output",true);
+            $_SESSION["output_file"]=0;
             $_SESSION["exec_msg"]=$ssh_connection->execute("timeout --signal=SIGKILL " . $ssh_timeout_seconds . " " . $docker_command);
         }catch(Exception $e){
-            if(empty($e->getMessage())==true){
-                $this->reload("Output cannot be empty!");
-            }
+            
+            $ssh_connection->close();
             $this->reload($e->getMessage());
         }
+        if(empty($_SESSION["exec_msg"])==true){
+            $_SESSION["output_file"]=$ssh_connection->read_file($this->session_user . ".output");//only if the standard output is empty should we read the output file
+            if(empty($_SESSION["output_file"])==true){
+                $ssh_connection->close();
+                $this->reload("Output cannot be empty!");
+            }else{
+                if($combine_outputs==true){
+                    $_SESSION["exec_msg"]=$_SESSION["output_file"];
+                }
+            }
+        }
+        
+        
+        $_SESSION["output_file"]=$ssh_connection->read_file($this->session_user . ".output");//only if the standard output is empty should we read the output file
         $ssh_connection->close();
     }
     private function submit($code,$skip=false){
         $chapter_id=self::CHAPTER_ID;
-        if($skip==false){
-            $this->execute($code);
-        }
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -221,20 +236,41 @@ class Chapter_2_Solve extends Controller
         if($skip==false){
             $config=$this->model('JSONConfig');
             $app_local_path=$config->get('app','local_path');
-            $question_code_aux=null;
-            exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$last_question_id . '.code',$question_code_aux);
-            $question_code=$this->build_string_from_array($question_code_aux);
+            $author_code=null;
             
-            $this->execute($question_code);
+            $code_file=fopen($app_local_path . '/mvc/app/questions/' . $last_question_id . '.code','r');
+            $author_code=fread($code_file,self::CODE_MAX_LEN);
+            fclose($code_file);
+            $args_file=fopen($app_local_path . '/mvc/app/questions/' . $last_question_id . '.args','r');
+            $author_args=fread($args_file,self::ARGS_MAX_LEN);
+            fclose($args_file);
+            $input_file=fopen($app_local_path . '/mvc/app/questions/' . $last_question_id . '.input','r');
+            $author_input=fread($input_file,self::INPUT_MAX_LEN);
+            fclose($input_file);
+        
+            $this->execute($author_code,$author_args,$author_input);
             $aux_output=$_SESSION["exec_msg"];
-            $this->execute($code);
+            $_SESSION["exec_msg"]=$_SESSION["output_file"]="";
+            $aux_output_file=$_SESSION["output_file"];
             
-            if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($question_code,$code)==0){
-                $this->correct_answer();
-                $right_answers=$right_answers+1;
-                $_SESSION['result_correct']="You answerd correctly!";
+            $this->execute($code,$author_args,$author_input);
+            
+            if(empty($aux_output)==false){
+                if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($author_code,$code)==0){
+                    $this->correct_answer();
+                    $right_answers=$right_answers+1;
+                    $_SESSION['result_correct']="You answerd correctly!";
+                }else{
+                    $_SESSION['result_incorrect']="You answerd incorrectly!";
+                }    
             }else{
-                $_SESSION['result_incorrect']="You answerd incorrectly!";
+                if(strcmp($aux_output_file,$_SESSION["output_file"])==0 || strcmp($author_code,$code)==0){
+                    $this->correct_answer();
+                    $right_answers=$right_answers+1;
+                    $_SESSION['result_correct']="You answerd correctly!";
+                }else{
+                    $_SESSION['result_incorrect']="You answerd incorrectly!";
+                }
             }
         }
         /*increment answers for question*/
@@ -250,9 +286,14 @@ class Chapter_2_Solve extends Controller
             $_SESSION['question_id']=$last_question_id;
             $_SESSION['question_text']=$this->question_text;
             $_SESSION['user_code']=$code;
-            $_SESSION['user_output']=$_SESSION["exec_msg"];
-            $_SESSION['author_code']=$question_code;
-            $_SESSION['author_output']=$aux_output;
+            $_SESSION['author_code']=$author_code;
+            if(empty($aux_output)==false){
+                $_SESSION['author_output']=$aux_output;
+                $_SESSION['user_output']=$_SESSION["exec_msg"];
+            }else{
+                $_SESSION['author_output']=$aux_output_file;
+                $_SESSION['user_output']=$_SESSION["output_file"];
+            }
         }
         
         $this->next_question();  
@@ -286,7 +327,7 @@ class Chapter_2_Solve extends Controller
         $input=$_POST["input_field"];
         $input=str_replace("\r","",$input);//Converting DOS line end to Linux version
         if($_POST["action"]=="Execute"){
-            $this->execute($code,$args,$input);
+            $this->execute($code,$args,$input,true);
             header('Location: ../chapter_' . (string)$chapter_id . '_solve'); 
         }else if($_POST["action"]=="Submit"){
             $this->submit($code);
