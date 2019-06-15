@@ -31,14 +31,26 @@
     padding-left: 1.8%;
     
 }
-    .questionBox .questionText p, .questionBox .questionCode p, .questionBox .questionOutput p{
+    .questionBox h3{
+        margin-bottom: 0.5%;
+    }
+    .questionBox .questionText p, .questionBox .questionOutput p{
         white-space: pre-wrap;
         font-size: 20px;
         font-family: 'Times New Roman', Times, serif;
     }
-    .questionBox .questionCode p{
+    .questionBox .questionArgs p,.questionBox .questionKeybd p,.questionBox .questionInput p,.questionBox .questionCode p{
         text-align: justify;
-        margin-left: 15%;
+        white-space: pre-wrap;
+        background-color: white;
+        margin-left: 30%;
+        margin-top:0%;
+        width: 40%;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .questionBox .questionCode p{
+        margin-left: 5%;
+        width: 90%;
     }
     .questionBox .questionResultCorrect{
         font-size: 100%;

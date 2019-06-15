@@ -1,1 +1,1 @@
-echo Hello > code.output
+echo $1 > code.output

@@ -21,8 +21,10 @@
     }
     .questionBox .questionCode h3{
         float: left;
-        margin: 0.4%;
+        margin-top: 0.7%;
+        margin-bottom: 0.5%;
         font-weight: normal;
+        text-align: left;
         font-size: 18px;
     }
     .questionBox .questionCode .textareaArgs{
@@ -31,7 +33,7 @@
         margin-right: auto;
         
     }
-    .questionBox .questionCode .textareaInput{
+    .questionBox .questionCode .textareaKeybd,.questionBox .questionCode .textareaInput{
         width: 50%;
         margin-left: auto;
         margin-right: auto;
@@ -41,23 +43,18 @@
         margin-left: auto;
         margin-right: auto;
     }
-    .questionBox .questionCode .textareaInput textarea{
-        width: 88%;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 2%;
-    }
     .questionBox .questionCode .codeField{
         font-size: 15px;
         font-family: 'Courier New', Courier, monospace;
         width: 50%;
-        
         margin-left: auto;
         margin-right: auto;
+        margin-top: 1%;
         margin-bottom: 1%;
         word-break: break-word;
+
     }
-    .questionBox .questionCode .argsField,.questionBox .questionCode .inputField{
+    .questionBox .questionCode .argsField,.questionBox .questionCode .keybdField,.questionBox .questionCode .inputField{
         font-size: 15px;
         font-family: 'Courier New', Courier, monospace;
         width: 80%;

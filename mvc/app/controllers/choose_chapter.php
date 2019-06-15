@@ -13,6 +13,7 @@ class Choose_Chapter extends Controller
         $this->session_extract("text_field",true);
         $this->session_extract("code_field",true);
         $this->session_extract("args_field",true);
+        $this->session_extract("keybd_field",true);
         $this->session_extract("input_field",true);
 
         $this->session_extract('question_id',true);

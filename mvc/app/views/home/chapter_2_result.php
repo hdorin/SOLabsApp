@@ -17,15 +17,20 @@
         <div class="questionResultIncorrect">
             <h1><?php echo $data['result_incorrect']; ?></h1>
         </div>
-        
         <div class="questionText">
             <p><?php echo $data['question_text']; ?></p>
         </div>
         <div class="questionArgs">
-            <p>Arguments: <?php echo $data['question_args']; ?></p>
+            <h3>Arguments: </h3>
+            <p><?php echo  $data["question_args"];?></p>
+        </div>
+        <div class="questionKeybd">
+            <h3>Input keyboard: </h3>
+            <p><?php echo  $data["question_keybd"];?></p>
         </div>
         <div class="questionInput">
-            <p>Input:<?php echo $data['question_input']; ?></p>
+            <h3>Input file: </h3>
+            <p><?php echo  $data["question_input"];?></p>
         </div>
         <div class="outputs">
             <div class="userbox">

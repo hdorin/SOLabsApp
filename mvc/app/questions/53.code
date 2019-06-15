@@ -1,0 +1,4 @@
+read c
+read d
+echo $c
+echo $d

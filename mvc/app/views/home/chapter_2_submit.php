@@ -16,7 +16,7 @@
                 <h1>Enter question text*</h1>
             </div>
             <div class="questionText">
-                <textarea name="text_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['text_field_max_len']; ?>"><?php echo $data['text_field']; ?></textarea>
+                <textarea id="textField" name="text_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['text_field_max_len']; ?>"><?php echo $data['text_field']; ?></textarea>
             </div>
             <div class="questionArgsTitle">
                 <h1>Enter question arguments</h1>
@@ -24,8 +24,14 @@
             <div class="questionArgs">
                 <textarea class="argsField" name="args_field" rows="1" cols="50" maxlength="<?php echo (string)$data['args_field_max_len']; ?>"><?php echo $data['args_field']; ?></textarea>
             </div>
+            <div class="questionKeybdTitle">
+                <h1>Enter question keyboard input</h1>
+            </div>
+            <div class="questionKeybd">
+                <textarea class="keybdField" name="keybd_field" rows="2" cols="50" maxlength="<?php echo (string)$data['keybd_field_max_len']; ?>"><?php echo $data['keybd_field']; ?></textarea>
+            </div>            
             <div class="questionInputTitle">
-                <h1>Enter question input</h1>
+                <h1>Enter question file input</h1>
             </div>
             <div class="questionInput">
                 <textarea class="inputField" name="input_field" rows="2" cols="50" maxlength="<?php echo (string)$data['input_field_max_len']; ?>"><?php echo $data['input_field']; ?></textarea>
@@ -34,20 +40,22 @@
                 <h1>Enter question code*</h1>
             </div>
             <div class="questionCode">
-                <textarea class="codeField" name="code_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
+                <textarea id="codeField" class="codeField" name="code_field" rows="4" cols="50" required maxlength="<?php echo (string)$data['code_field_max_len']; ?>"><?php echo $data['code_field']; ?></textarea>
             </div>
-            <input class="btnExecute" name="action" type="submit" value="Execute" onclick="executeFunction()"/>
-            <input class="btnSubmit" name="action" type="submit" value="Submit" onclick="submitFunction()"/>
-            <script>
-                function executeFunction() {
-                    document.getElementById("execMsg").innerHTML = "Executing ...";
-                    document.getElementById("errorMsg").innerHTML = " ";
-                }
-                function submitFunction() {
-                    document.getElementById("execMsg").innerHTML = "Submitting ...";
-                    document.getElementById("errorMsg").innerHTML = " ";
-                }
-            </script>
+                <input class="btnExecute" name="action" type="submit" value="Execute" onclick="buttonFunction('Executing ...')"/>   
+                <input class="btnSubmit" name="action" type="submit" value="Submit" onclick="buttonFunction('Submitting ...')"/>
+                <input class="btnSkip" name="action" type="submit" value="Skip"  formnovalidate/>
+                <script>
+                    function buttonFunction(msg) {
+                        if(document.getElementById("textField").value == ''||document.getElementById("codeField").value == ''){
+                            document.getElementById("execMsg").innerHTML = "";
+                            document.getElementById("errorMsg").innerHTML = "Fill in mandatory fields!";
+                        }else{
+                            document.getElementById("execMsg").innerHTML = msg;
+                            document.getElementById("errorMsg").innerHTML = "";
+                        }
+                    }
+                </script>
         </form> 
     </div>
     <div class="resultBox">

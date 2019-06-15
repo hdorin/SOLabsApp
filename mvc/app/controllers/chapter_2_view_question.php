@@ -6,10 +6,11 @@ class Chapter_2_View_Question extends Controller
     const TEXT_MAX_LEN=500;
     const CODE_MAX_LEN=1500;
     const ARGS_MAX_LEN=100;
+    const KEYBD_MAX_LEN=500;
     const INPUT_MAX_LEN=500;
     private $answers_left=0;
     private $validation="";
-    private $question_text="",$question_code="",$question_args="",$question_input="";
+    private $question_text="",$question_code="",$question_args="",$question_keybd="",$question_input="";
     private $right_answers=0,$all_answers=0;
     private $date_submitted="";
     private $reports,$reports_nr=0;
@@ -35,7 +36,7 @@ class Chapter_2_View_Question extends Controller
         $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
         $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'question_id'=>$question_id, 'can_delete' =>$can_delete,'answers_left'=>$this->answers_left,
                                                                                   'all_answers' =>$this->all_answers, 'right_answers'=>$this->right_answers,'validation' =>$this->validation, 'question_text' => $this->question_text,'question_code' => $this->question_code,
-                                                                                  'question_args' => $this->question_args,'question_input' => $this->question_input,'date_submitted'=>$this->date_submitted,
+                                                                                  'question_args' => $this->question_args,'question_keybd' => $this->question_keybd,'question_input' => $this->question_input,'date_submitted'=>$this->date_submitted,
                                                                                   'reports' => $this->reports,'reports_nr' => $this->reports_nr]);
     }
     private function reload(){
@@ -144,6 +145,9 @@ class Chapter_2_View_Question extends Controller
         $args_file=fopen($app_local_path . '/mvc/app/questions/' .  (string)$question_id . '.args','r');
         $this->question_args=fread($args_file,self::ARGS_MAX_LEN);
         fclose($args_file);
+        $keybd_file=fopen($app_local_path . '/mvc/app/questions/' .  (string)$question_id . '.keybd','r');
+        $this->question_keybd=fread($keybd_file,self::KEYBD_MAX_LEN);
+        fclose($keybd_file);
         $input_file=fopen($app_local_path . '/mvc/app/questions/' .  (string)$question_id . '.input','r');
         $this->question_input=fread($input_file,self::INPUT_MAX_LEN);
         fclose($input_file);
