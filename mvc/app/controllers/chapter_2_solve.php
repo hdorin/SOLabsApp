@@ -175,7 +175,7 @@ class Chapter_2_Solve extends Controller
         fwrite($code_file,$code);
         fclose($code_file);
         $run_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run','w');
-        fwrite($run_file,"chmod +x code.sh && ./code.sh " . $args);
+        fwrite($run_file,"chmod +x code.sh && ./code.sh " . $args . " " . $keyboard);
         fclose($run_file); 
         $input_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input','w');
         fwrite($input_file,$input);
@@ -197,7 +197,7 @@ class Chapter_2_Solve extends Controller
         }
         if(empty($_SESSION["exec_msg"])==true){
             $_SESSION["output_file"]=$ssh_connection->read_file($this->session_user . ".output");//only if the standard output is empty should we read the output file
-            if(empty($_SESSION["output_file"])==true){
+            if(empty($_SESSION["output_file"])==true || ord($_SESSION["exec_msg"][0])==10){
                 $ssh_connection->close();
                 $this->reload("Output cannot be empty!");
             }else{
@@ -250,13 +250,12 @@ class Chapter_2_Solve extends Controller
         
             $this->execute($author_code,$author_args,$author_input);
             $aux_output=$_SESSION["exec_msg"];
-            $_SESSION["exec_msg"]=$_SESSION["output_file"]="";
             $aux_output_file=$_SESSION["output_file"];
+            $_SESSION["exec_msg"]=$_SESSION["output_file"]="";
             
-            $this->execute($code,$author_args,$author_input);
-            
+            $this->execute($code,$author_args,$author_input);           
             if(empty($aux_output)==false){
-                if(strcmp($aux_output,$_SESSION["exec_msg"])==0 || strcmp($author_code,$code)==0){
+                if(strcmp($aux_output,$_SESSION["exec_msg"])==0){//|| strcmp($author_code,$code)==0
                     $this->correct_answer();
                     $right_answers=$right_answers+1;
                     $_SESSION['result_correct']="You answerd correctly!";
@@ -264,7 +263,7 @@ class Chapter_2_Solve extends Controller
                     $_SESSION['result_incorrect']="You answerd incorrectly!";
                 }    
             }else{
-                if(strcmp($aux_output_file,$_SESSION["output_file"])==0 || strcmp($author_code,$code)==0){
+                if(strcmp($aux_output_file,$_SESSION["output_file"])==0){// || strcmp($author_code,$code)==0
                     $this->correct_answer();
                     $right_answers=$right_answers+1;
                     $_SESSION['result_correct']="You answerd correctly!";
@@ -311,6 +310,9 @@ class Chapter_2_Solve extends Controller
         if(strlen($_POST["args_field"])>self::ARGS_MAX_LEN){
             $this->reload("Characters limit exceeded for arguments!");
         }
+        if(strlen($_POST["input_field"])>self::INPUT_MAX_LEN){
+            $this->reload("Characters limit exceeded for input!");
+        }
         if(strstr($_POST["args_field"],"\n")==true){
             $this->reload("New line not permitted for arguments!");
         }
@@ -321,14 +323,11 @@ class Chapter_2_Solve extends Controller
         if($_POST["action"]!="Skip" && empty($_POST["code_field"])==true){
             $this->reload("You did not enter any code!");
         }
-        $code=$_POST["code_field"];
-        $_SESSION["code_field"]=$_POST["code_field"];
-        $_SESSION["args_field"]=$_POST["args_field"];
-        $_SESSION["input_field"]=$_POST["input_field"];
+        $code=$_SESSION["code_field"]=$_POST["code_field"];
+        $args=$_SESSION["args_field"]=$_POST["args_field"];
+        $input=$_SESSION["input_field"]=$_POST["input_field"];
         $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
-        $args=$_POST["args_field"];
         $args=str_replace("\r","",$args);//Converting DOS line end to Linux version
-        $input=$_POST["input_field"];
         $input=str_replace("\r","",$input);//Converting DOS line end to Linux version
         if($_POST["action"]=="Execute"){
             $this->execute($code,$args,$input,true);

@@ -12,7 +12,8 @@ class Submit_Question extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $this->session_extract("text_field",true);
         $this->session_extract("code_field",true);
-
+        $this->session_extract("args_field",true);
+        $this->session_extract("input_field",true);
         $this->get_chapters();
         $this->view('home/choose_chapter',['title_message'=>self::TITLE_MESSAGE,'error_msg' => $error_msg,'chapters' => $this->chapters,'chapters_nr' => $this->chapters_nr]);
     }

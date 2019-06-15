@@ -39,7 +39,7 @@
                     document.getElementById("execMsg").innerHTML = "Submitting ...";
                     document.getElementById("errorMsg").innerHTML = " ";
                 }
-                </script>
+            </script>
         </form> 
     </div>
     <div class="resultBox">

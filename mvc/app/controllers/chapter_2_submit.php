@@ -5,6 +5,8 @@ class Chapter_2_Submit extends Controller
     const CHAPTER_ID=2;
     const TEXT_MAX_LEN=500;
     const CODE_MAX_LEN=1500;
+    const ARGS_MAX_LEN=100;
+    const INPUT_MAX_LEN=500;
     public function index()
     {
         $chapter_id=self::CHAPTER_ID;
@@ -17,8 +19,12 @@ class Chapter_2_Submit extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_field=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
+        $args_field=$this->session_extract("args_field");
+        $input_field=$this->session_extract("input_field");
         $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
-        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'code_field' => $code_field, 'code_field_max_len'=>self::CODE_MAX_LEN, 'text_field' => $text_field, 'text_field_max_len'=>self::TEXT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
+        $this->view('home/chapter_' . (string)$chapter_id . '_submit',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'code_field' => $code_field, 'code_field_max_len'=>self::CODE_MAX_LEN,
+                                                                       'args_field' => $args_field,'args_field_max_len'=>self::ARGS_MAX_LEN,'input_field' => $input_field,'input_field_max_len'=>self::INPUT_MAX_LEN,
+                                                                       'text_field' => $text_field, 'text_field_max_len'=>self::TEXT_MAX_LEN,'error_msg' => $error_msg, 'exec_msg' => $exec_msg]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
@@ -27,13 +33,13 @@ class Chapter_2_Submit extends Controller
         $this->my_sem_release();
         die;
     }
-    private function execute($code){
+    private function execute($code,$args="",$input="",$combine_outputs=false){//the $combine_outputs argument adds output file contents in the exec_msg
         $config=$this->model('JSONConfig');
         $ssh_host=$config->get('ssh','host');
         $ssh_port=$config->get('ssh','port');
+        $ssh_user=$config->get('ssh','user');
+        $ssh_pass=$config->get('ssh','pass');
         $ssh_timeout_seconds=$config->get('ssh','timeout_seconds');
-        $ssh_user=$this->session_user;
-        $ssh_pass=$this->session_pass;
         $ssh_connection=$this->model('SSHConnection');
         $ssh_connection->configure($ssh_host,$ssh_port);
         try{
@@ -45,23 +51,46 @@ class Chapter_2_Submit extends Controller
             $this->reload($e->getMessage());
         }
         
-        $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
         $code_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','w');
         fwrite($code_file,$code);
         fclose($code_file);
+        $run_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run','w');
+        fwrite($run_file,"chmod +x code.sh && ./code.sh " . $args);
+        fclose($run_file); 
+        $input_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input','w');
+        fwrite($input_file,$input);
+        fclose($input_file);
+        
         try{
-            $ssh_connection->write_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code','sh');
-            $_SESSION["exec_msg"]=$ssh_connection->execute('chmod 0775 code.sh && ./code.sh',$ssh_timeout_seconds);
+            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.code', $this->session_user . '.sh');
+            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run', $this->session_user . '.run');
+            $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input', $this->session_user . '.input');
+            $docker_command="docker run -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . $this->session_user . ".output:/code.output -v $(pwd)/" . $this->session_user . ".run:/code.run --rm ubuntu bash ./code.run";
+            /*creating the output file which will be mounted in the container*/
+            $ssh_connection->execute("echo>" . $this->session_user . ".output",true);
+            $_SESSION["output_file"]=0;
+            $_SESSION["exec_msg"]=$ssh_connection->execute("timeout --signal=SIGKILL " . $ssh_timeout_seconds . " " . $docker_command);
         }catch(Exception $e){
-            if(empty($e->getMessage())==true){
-                $this->reload("Output cannot be empty!");
-            }
+            
+            $ssh_connection->close();
             $this->reload($e->getMessage());
         }
+        if(empty($_SESSION["exec_msg"])==true || ord($_SESSION["exec_msg"][0])==10){
+            $_SESSION["output_file"]=$ssh_connection->read_file($this->session_user . ".output");//only if the standard output is empty should we read the output file
+            if(empty($_SESSION["output_file"])==true){
+                $ssh_connection->close();
+                $this->reload("Output cannot be empty!");
+            }else{
+                if($combine_outputs==true){
+                    $_SESSION["exec_msg"]=$_SESSION["output_file"];
+                }
+            }
+        }    
+        $_SESSION["output_file"]=$ssh_connection->read_file($this->session_user . ".output");//only if the standard output is empty should we read the output file
         $ssh_connection->close();
     }
-
+    
     private function can_submit_quesion($chapter_id){
         if($this->session_is_admin==true){
             return true;
@@ -101,13 +130,11 @@ class Chapter_2_Submit extends Controller
             $this->answers_left=(-1)*$answers_left;
             return false;
         }
-        
-    
     }
-    private function submit($text,$code){
-        $this->execute($code);
+    private function submit($text,$code,$args,$input){
+        $this->execute($code,$args,$input,true);
         $aux_output=$_SESSION["exec_msg"];
-        $this->execute($code);
+        $this->execute($code,$args,$input,true);
         if(strcmp($aux_output,$_SESSION["exec_msg"])!=0){
             $exec_msg=$this->session_extract("exec_msg",true);
             $this->reload("Code is not deterministic!");
@@ -146,6 +173,12 @@ class Chapter_2_Submit extends Controller
         $text_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text','w');
         fwrite($text_file,$text);
         fclose($text_file);
+        $args_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.args','w');
+        fwrite($args_file,$args);
+        fclose($args_file);
+        $input_file=fopen($app_local_path . '/mvc/app/questions/' . (string)$question_id . '.input','w');
+        fwrite($input_file,$input);
+        fclose($input_file);
     }
     public function process(){
         $this->check_login();
@@ -154,26 +187,44 @@ class Chapter_2_Submit extends Controller
             die("You cannot access this!");
         }
         $this->my_sem_acquire($this->session_user_id);
-        if(strlen($_POST["text_field"])>self::TEXT_MAX_LEN || strlen($_POST["code_field"])>self::CODE_MAX_LEN){
-            $this->reload("Characters limit exceeded!");
+        if(strlen($_POST["text_field"])>self::TEXT_MAX_LEN){
+            $this->reload("Characters limit exceeded for text!");
+        }
+        if(strlen($_POST["code_field"])>self::CODE_MAX_LEN){
+            $this->reload("Characters limit exceeded for code!");
+        }
+        if(strlen($_POST["args_field"])>self::ARGS_MAX_LEN){
+            $this->reload("Characters limit exceeded for arguments!");
+        }
+        if(strstr($_POST["args_field"],"\n")==true){
+            $this->reload("New line not permitted for arguments!");
+        }
+        if(strlen($_POST["input_field"])>self::INPUT_MAX_LEN){
+            $this->reload("Characters limit exceeded for input!");
         }
         if(empty($text=$_POST["text_field"])==true){
             $this->reload("You did not enter the question text!");
         }
         if(empty($code=$_POST["code_field"])==true){
-            $this->reload("You did not enter a code!");
+            $this->reload("You did not enter the question code!");
         }
-        $_SESSION["code_field"]=$_POST["code_field"];
-        $_SESSION["text_field"]=$_POST["text_field"];
+        $code=$_SESSION["code_field"]=$_POST["code_field"];
+        $text=$_SESSION["text_field"]=$_POST["text_field"];
+        $args=$_SESSION["args_field"]=$_POST["args_field"];
+        $input=$_SESSION["input_field"]=$_POST["input_field"];
+        $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
+        $text=str_replace("\r","",$text);//Converting DOS line end to Linux version
+        $args=str_replace("\r","",$args);//Converting DOS line end to Linux version
+        $input=str_replace("\r","",$input);//Converting DOS line end to Linux version
         if($_POST["action"]=="Execute"){
-            $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
-            $this->execute($code);
+            $this->execute($code,$args.$input,true);
             header('Location: ../chapter_' . (string)self::CHAPTER_ID . '_submit');
         }else{
-            $code=str_replace("\r","",$code);//Converting DOS line end to Linux version
-            $this->submit($text,$code);
+            $this->submit($text,$code,$args,$input);
             $this->session_extract("code_field",true);
             $this->session_extract("text_field",true);
+            $this->session_extract("args_field",true);
+            $this->session_extract("input_field",true);
             header('Location: ../submit_question');
         }
         $this->my_sem_release();

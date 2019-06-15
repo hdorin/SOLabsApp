@@ -11,10 +11,17 @@
     border-radius: 6px;
     box-shadow: 0 0px 2px 0 #1d67f0, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
 }
-    .questionBox .questionTextTitle, .questionCodeTitle{
+    .questionBox .questionTextTitle,.questionBox .questionCodeTitle{
         font-size: 80%;
         font-family: Arial, Helvetica, sans-serif;
         color: #3D4597;
+        margin-bottom: -1%;
+
+    }
+    .questionBox .questionArgsTitle,.questionBox .questionInputTitle{
+        font-size: 70%;
+        font-family: Arial, Helvetica, sans-serif;
+        color: black;
         margin-bottom: -1%;
 
     }
@@ -37,6 +44,26 @@
         font-size: 15px;
         font-family: 'Courier New', Courier, monospace;
         width: 50%;
+        padding: 0.3%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1%;
+        word-break: break-word;
+    }
+    .questionBox .submitQuestion .argsField{
+        font-size: 15px;
+        font-family: 'Courier New', Courier, monospace;
+        width: 40%;
+        padding: 0.3%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1%;
+        word-break: break-word;
+    }
+    .questionBox .submitQuestion .inputField{
+        font-size: 15px;
+        font-family: 'Courier New', Courier, monospace;
+        width: 45%;
         padding: 0.3%;
         margin-left: auto;
         margin-right: auto;

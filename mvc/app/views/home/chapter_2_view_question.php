@@ -12,6 +12,8 @@
     ?>
     <div class='questionBox' >
         <p class='questionText'> <?php echo  $data["question_text"];?></p>
+        <p class='questionArgs'>Arguments: <?php echo  $data["question_args"];?></p>
+        <p class='questionInput'>Input: <?php echo  $data["question_input"];?></p>
         <p class='questionCode'><?php echo  $data["question_code"]; ?></p>
         <form class='deleteQuestion' method="POST" action="chapter_<?=$data['chapter_id']?>_view_question/delete_question/<?php echo $data['question_id'] ?>">
             <?php 

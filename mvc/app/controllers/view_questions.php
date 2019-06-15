@@ -5,6 +5,7 @@ class View_Questions extends Controller
     private $chapters,$chapters_nr;
     private $page_controls;
     private const QUESTIONS_PER_PAGE=6;
+    private const TEXT_MAX_LEN=500;
     public function index($page='test')
     {        
         $this->check_login();
@@ -14,6 +15,8 @@ class View_Questions extends Controller
                 $_SESSION["questions_page"]=1;
             }
             $this->reload();
+        }else{
+            unset($_SESSION["criteria_posted"]);
         }
         //echo "Page number=". $_SESSION["questions_page"];
         $this->session_extract("exec_msg",true);
@@ -24,7 +27,8 @@ class View_Questions extends Controller
         $this->generate_page_controls();
         $this->get_questions();
         $this->get_chapters();
-        $this->view('home/view_questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,'chapters_nr'=>$this->chapters_nr, 'page_controls' =>$this->page_controls]);
+        $this->view('home/view_questions',['questions' => $this->questions,'questions_nr' => $this->questions_nr,'chapters' => $this->chapters,
+                                           'chapters_nr'=>$this->chapters_nr, 'page_controls' =>$this->page_controls]);
     }
     public function refresh_criteria(){
         $this->check_login();
@@ -140,9 +144,9 @@ class View_Questions extends Controller
         while($sql->fetch() && $this->questions_nr<self::QUESTIONS_PER_PAGE){
             $question_text=$question_text_aux=null;
             $line=0;
-            exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
-            $question_text=$this->build_string_from_array($question_text_aux);
-            $question_text=$this->replace_html_special_characters($question_text);
+            $text_file=fopen($app_local_path . '/mvc/app/questions/' . $question_id . '.text','r');
+            $question_text=fread($text_file,self::TEXT_MAX_LEN);
+            fclose($text_file);$question_text=$this->replace_html_special_characters($question_text);
             if($this->session_is_admin==false){
                 $this->questions[$this->questions_nr]=   "<a class='question' href='chapter_" . (string)$chapter_id . "_view_question/" . $question_id . "'>
                                                                     <p class='text'>" . $question_text . "</p>
@@ -238,8 +242,8 @@ class View_Questions extends Controller
         $sql->fetch();
         $sql->close();
         $db_connection->close();
-        if(intval($questions_total/self::QUESTIONS_PER_PAGE)+1<$_SESSION["questions_page"]){
-            $_SESSION["questions_page"]=intval($questions_total/self::QUESTIONS_PER_PAGE)+1;
+        if(ceil($questions_total/self::QUESTIONS_PER_PAGE)<$_SESSION["questions_page"]){
+            $_SESSION["questions_page"]=ceil($questions_total/self::QUESTIONS_PER_PAGE);
         }
         
         $this->page_controls='<div class="pageNumber">
@@ -252,11 +256,11 @@ class View_Questions extends Controller
         }
         $this->page_controls=$this->page_controls . '</form>
                 <form class="pageNumberValue" action="view_questions/jump_to_page" method="POST">
-                    <input type="number" min="1" max="' . (string)intval($questions_total/self::QUESTIONS_PER_PAGE+1) . '"name="number_field" value="' . (string)$_SESSION["questions_page"] . '" required/>
+                    <input type="number" min="1" max="' . (string)ceil(($questions_total/self::QUESTIONS_PER_PAGE)) . '"name="number_field" value="' . (string)$_SESSION["questions_page"] . '" required/>
                     <input type="submit" value="Jump"/>
                 </form>
                 <form class="pageNumberNext" action="view_questions/' . (string)($_SESSION["questions_page"]+1) . '" method="POST">';
-        if(intval($questions_total/self::QUESTIONS_PER_PAGE) - $_SESSION["questions_page"]>=0){
+        if(ceil($questions_total/self::QUESTIONS_PER_PAGE) - $_SESSION["questions_page"]>0){
             $this->page_controls=$this->page_controls . '<input type="submit" value="Next Page"/>';
         }else{
             $this->page_controls=$this->page_controls . '<input type="submit" value="Next Page" disabled/>';

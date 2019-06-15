@@ -3,9 +3,13 @@
 class Chapter_2_View_Question extends Controller
 {
     const CHAPTER_ID=2;
+    const TEXT_MAX_LEN=500;
+    const CODE_MAX_LEN=1500;
+    const ARGS_MAX_LEN=100;
+    const INPUT_MAX_LEN=500;
     private $answers_left=0;
     private $validation="";
-    private $question_text="",$question_code="";
+    private $question_text="",$question_code="",$question_args="",$question_input="";
     private $right_answers=0,$all_answers=0;
     private $date_submitted="";
     private $reports,$reports_nr=0;
@@ -30,9 +34,8 @@ class Chapter_2_View_Question extends Controller
         $can_delete=$this->check_can_delete_question($question_id);
         $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
         $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'question_id'=>$question_id, 'can_delete' =>$can_delete,'answers_left'=>$this->answers_left,
-                                                                                  'all_answers' =>$this->all_answers, 'right_answers'=>$this->right_answers,
-                                                                                  'validation' =>$this->validation, 'question_text' => $this->question_text,
-                                                                                  'question_code' => $this->question_code,'date_submitted'=>$this->date_submitted,
+                                                                                  'all_answers' =>$this->all_answers, 'right_answers'=>$this->right_answers,'validation' =>$this->validation, 'question_text' => $this->question_text,'question_code' => $this->question_code,
+                                                                                  'question_args' => $this->question_args,'question_input' => $this->question_input,'date_submitted'=>$this->date_submitted,
                                                                                   'reports' => $this->reports,'reports_nr' => $this->reports_nr]);
     }
     private function reload(){
@@ -132,17 +135,22 @@ class Chapter_2_View_Question extends Controller
 
         $config=$this->model('JSONConfig');
         $app_local_path=$config->get('app','local_path');
-        exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.text',$question_text_aux);
-        $this->question_text=$this->build_string_from_array($question_text_aux);
+        $code_file=fopen($app_local_path . '/mvc/app/questions/' .  (string)$question_id . '.code','r');
+        $this->question_code=fread($code_file,self::CODE_MAX_LEN);
+        fclose($code_file);
+        $text_file=fopen($app_local_path . '/mvc/app/questions/' .  (string)$question_id . '.text','r');
+        $this->question_text=fread($text_file,self::TEXT_MAX_LEN);
+        fclose($text_file);
+        $args_file=fopen($app_local_path . '/mvc/app/questions/' .  (string)$question_id . '.args','r');
+        $this->question_args=fread($args_file,self::ARGS_MAX_LEN);
+        fclose($args_file);
+        $input_file=fopen($app_local_path . '/mvc/app/questions/' .  (string)$question_id . '.input','r');
+        $this->question_input=fread($input_file,self::INPUT_MAX_LEN);
+        fclose($input_file);
         
-        
-        exec('cat ' . $app_local_path . '/mvc/app/questions/' . (string)$question_id . '.code',$question_code_aux);
-        $this->question_code=$this->build_string_from_array($question_code_aux);
-        
-        $this->question_code=str_replace("<","&lt",$this->question_code);
-        $this->question_code=str_replace(">","&gt",$this->question_code);
-        $this->question_text=str_replace("<","&lt",$this->question_text);
-        $this->question_text=str_replace(">","&gt",$this->question_text);
+        $this->question_text=$this->replace_html_special_characters($this->question_text);
+        $this->question_code=$this->replace_html_special_characters($this->question_code);
+        $this->question_input=$this->replace_html_special_characters($this->question_input);
         return true;
     }
     private function get_reports($question_id){

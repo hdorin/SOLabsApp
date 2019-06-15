@@ -12,6 +12,8 @@ class Choose_Chapter extends Controller
         $error_msg=$this->session_extract("error_msg",true);
         $this->session_extract("text_field",true);
         $this->session_extract("code_field",true);
+        $this->session_extract("args_field",true);
+        $this->session_extract("input_field",true);
 
         $this->session_extract('question_id',true);
         $this->session_extract('question_text',true);
