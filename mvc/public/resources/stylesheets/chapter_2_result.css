@@ -41,10 +41,14 @@
     }
     .questionBox .questionArgs p,.questionBox .questionKeybd p,.questionBox .questionInput p,.questionBox .questionCode p{
         text-align: justify;
-        white-space: pre-wrap;
+        overflow: scroll;
+        white-space: pre;
+        resize: both;
         background-color: white;
         margin-left: 30%;
         margin-top:0%;
+        margin-left: auto;
+        margin-right: auto;
         width: 40%;
         font-family: 'Courier New', Courier, monospace;
     }

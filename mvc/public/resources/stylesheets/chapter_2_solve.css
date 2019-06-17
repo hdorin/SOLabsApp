@@ -15,6 +15,9 @@
         font-size: 22px;
         text-decoration: none;
         white-space: pre-wrap;
+        width: 80%;
+        margin-left: auto;
+        margin-right:auto;
     }
     .questionBox .questionCode{
         margin: 0.5%;
@@ -42,6 +45,7 @@
         width: 80%;
         margin-left: auto;
         margin-right: auto;
+        white-space: nowrap;
     }
     .questionBox .questionCode .codeField{
         font-size: 15px;
@@ -52,13 +56,15 @@
         margin-top: 1%;
         margin-bottom: 1%;
         word-break: break-word;
-
+        overflow: scroll;
+        white-space: pre;
     }
     .questionBox .questionCode .argsField,.questionBox .questionCode .keybdField,.questionBox .questionCode .inputField{
         font-size: 15px;
         font-family: 'Courier New', Courier, monospace;
         width: 80%;
         float: right;
+        white-space: pre;
     }
     .questionBox .questionCode .btnSubmit{
         margin: 0.2%;

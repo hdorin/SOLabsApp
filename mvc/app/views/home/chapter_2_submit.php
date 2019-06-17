@@ -44,7 +44,6 @@
             </div>
                 <input class="btnExecute" name="action" type="submit" value="Execute" onclick="buttonFunction('Executing ...')"/>   
                 <input class="btnSubmit" name="action" type="submit" value="Submit" onclick="buttonFunction('Submitting ...')"/>
-                <input class="btnSkip" name="action" type="submit" value="Skip"  formnovalidate/>
                 <script>
                     function buttonFunction(msg) {
                         if(document.getElementById("textField").value == ''||document.getElementById("codeField").value == ''){
