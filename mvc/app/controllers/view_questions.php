@@ -33,7 +33,6 @@ class View_Questions extends Controller
         if($this->session_is_admin==false){
             die("You cannot access this!");
         }
-        
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -45,8 +44,10 @@ class View_Questions extends Controller
         
         if(strcmp($_POST["status_field"],"posted")==0){
             $_SESSION["criteria_posted"]="AND q.`status`='posted'";
+            $_SESSION["raw_criteria_posted"]='posted';
         }else{
             $_SESSION["criteria_posted"]="AND q.`status`='deleted'";
+            $_SESSION["raw_criteria_posted"]='deleted';
         }
         if(!empty($_POST["user_field"])){
             $sql=$link->prepare('SELECT id FROM users WHERE `user_name`=?');
@@ -58,37 +59,52 @@ class View_Questions extends Controller
             }
             $sql->close();
             $_SESSION["criteria_user"]="AND q.`user_id`=" . $aux_user_id;
+            $_SESSION["raw_criteria_user"]=$_POST["user_field"];
         }else{
             $_SESSION["criteria_user"]=" ";
+            unset($_SESSION["raw_criteria_user"]);
         }
         if(empty($_POST["chapter_field"]) || strcmp($_POST["chapter_field"],"all")==0){
             $_SESSION["criteria_chapter"]=" ";
+            unset($_SESSION["raw_criteria_chapter"]);
         }else{
             $_SESSION["criteria_chapter"]="AND q.chapter_id=" . (string)intval($_POST["chapter_field"]);/*prevents SQL injection*/
+            $_SESSION["raw_criteria_chapter"]=intval($_POST["chapter_field"]);
         }
         if(empty($_POST["validation_field"]) || strcmp($_POST["validation_field"],"All")==0){
             $_SESSION["criteria_validation"]=" ";
+            unset($_SESSION["raw_criteria_validation"]);
         }else if(strcmp($_POST["validation_field"],"None")==0){
             $_SESSION["criteria_validation"]="AND q.validation='None'";
+            $_SESSION["raw_criteria_validation"]='None';
         }else if(strcmp($_POST["validation_field"],"Valid")==0){
             $_SESSION["criteria_validation"]="AND q.validation='Valid'";
+            $_SESSION["raw_criteria_validation"]='Valid';
         }else if(strcmp($_POST["validation_field"],"Invalid")==0){
             $_SESSION["criteria_validation"]="AND q.validation='Invalid'";
+            $_SESSION["raw_criteria_validation"]='Invalid';
         }else{
             $_SESSION["criteria_validation"]=" ";
+            unset($_SESSION["raw_criteria_user"]);
         }
         if(empty($_POST["sort_field"]) || strcmp($_POST["sort_field"],"none")==0){
             $_SESSION["criteria_sort"]=" ";
+            unset($_SESSION["raw_criteria_sort"]);
         }else if(strcmp($_POST["sort_field"],"reports_asc")==0){
             $_SESSION["criteria_sort"]="ORDER BY q.reports_nr ASC";
+            $_SESSION["raw_criteria_sort"]="reports_asc";
         }else if(strcmp($_POST["sort_field"],"reports_desc")==0){
             $_SESSION["criteria_sort"]="ORDER BY q.reports_nr DESC";
+            $_SESSION["raw_criteria_sort"]="reports_desc";
         }else if(strcmp($_POST["sort_field"],"date_asc")==0){
             $_SESSION["criteria_sort"]="ORDER BY q.date_created ASC";
+            $_SESSION["raw_criteria_sort"]="date_asc";
         }else if(strcmp($_POST["sort_field"],"date_desc")==0){
             $_SESSION["criteria_sort"]="ORDER BY q.date_created DESC";
+            $_SESSION["raw_criteria_sort"]="date_desc";
         }
         $db_connection->close();
+        $_SESSION["questions_page"]=1;
         $this->reload();
     }
     private function reload(){
@@ -183,7 +199,11 @@ class View_Questions extends Controller
         $this->chapters_nr=1;
         $this->chapters[0]='<option value="all">All</option>';
         while($sql->fetch()){
-                $this->chapters[$this->chapters_nr]='<option value="' . (string)$chapter_id . '">' . $chapter_name . '</option>';
+                if(!empty($_SESSION['raw_criteria_chapter']) && $chapter_id==$_SESSION['raw_criteria_chapter']){
+                    $this->chapters[$this->chapters_nr]='<option value="' . (string)$chapter_id . '" selected="selected">' . $chapter_name . '</option>';
+                }else{
+                    $this->chapters[$this->chapters_nr]='<option value="' . (string)$chapter_id . '">' . $chapter_name . '</option>';
+                }
             $this->chapters_nr=$this->chapters_nr+1;
         }
         $sql->close();
