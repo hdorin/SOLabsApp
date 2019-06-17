@@ -12,6 +12,17 @@
     ?>
     <div class='questionBox' >
         <p class='questionText'> <?php echo  $data["question_text"];?></p>
+        <?php
+            if($_SESSION['is_admin']==true){
+                echo "<form class='restoreQuestion' method='POST' action='chapter_" . $data['chapter_id'] . "_view_question/restore_question/" . $data['question_id'] . "'>";
+                if($data['can_delete']==true){
+                    echo "<input class='btnRestoreGray' type='submit' value='Restore' disabled/>";        
+                }else{
+                    echo "<input class='btnRestore' type='submit' value='Restore'/>";        
+                }
+                echo "</form>";
+            }
+        ?>
         <form class='deleteQuestion' method="POST" action="chapter_<?=$data['chapter_id']?>_view_question/delete_question/<?php echo $data['question_id'] ?>">
             <?php 
                 if($data['can_delete']==false){
@@ -19,8 +30,8 @@
                 }else{
                     echo "<input class='btnDelete' type='submit' value='Delete'/>";        
                 }
-            ?>   
-        </form>
+            ?>
+        </form>   
         <h3>Arguments: </h3>
         <p class='questionArgs'><?php echo  $data["question_args"];?></p>
         <h3>Input keyboard: </h3>

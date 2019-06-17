@@ -9,7 +9,7 @@ class Chapter_2_View_Question extends Controller
     const KEYBD_MAX_LEN=500;
     const INPUT_MAX_LEN=500;
     private $answers_left=0;
-    private $validation="";
+    private $status="",$validation="";
     private $question_text="",$question_code="",$question_args="",$question_keybd="",$question_input="";
     private $right_answers=0,$all_answers=0;
     private $date_submitted="";
@@ -32,7 +32,11 @@ class Chapter_2_View_Question extends Controller
         $exec_msg=$this->session_extract("exec_msg",true);
         $code_fieold=$this->session_extract("code_field");
         $text_field=$this->session_extract("text_field");
-        $can_delete=$this->check_can_delete_question($question_id);
+        if($this->status=='deleted'){
+            $can_delete=false;
+        }else{
+            $can_delete=$this->check_can_delete_question($question_id);
+        }
         $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
         $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_view_question',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'question_id'=>$question_id, 'can_delete' =>$can_delete,'answers_left'=>$this->answers_left,
                                                                                   'all_answers' =>$this->all_answers, 'right_answers'=>$this->right_answers,'validation' =>$this->validation, 'question_text' => $this->question_text,'question_code' => $this->question_code,
@@ -122,10 +126,10 @@ class Chapter_2_View_Question extends Controller
         $db_name=$config->get('db','name');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
-        $sql=$link->prepare("SELECT all_answers, right_answers,`validation`,date_created  FROM questions WHERE `id`=?");
+        $sql=$link->prepare("SELECT all_answers, right_answers,`status`,`validation`,date_created  FROM questions WHERE `id`=?");
         $sql->bind_param('i',$question_id);
         $sql->execute();
-        $sql->bind_result($this->all_answers,$this->right_answers,$this->validation,$this->date_submitted);
+        $sql->bind_result($this->all_answers,$this->right_answers,$this->status,$this->validation,$this->date_submitted);
         if(!$sql->fetch()){//Could not find question
             $sql->close();
             $db_connection->close();
@@ -190,6 +194,55 @@ class Chapter_2_View_Question extends Controller
         $sql->close();
         $db_connection->close();
     }
+    public function restore_question($question_id){
+        $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
+        $this->my_sem_acquire($this->session_user_id);
+        if($this->can_view_quesion($question_id)==false){
+            die("You cannot do that!");
+        }
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $db_connection=$this->model('DBConnection');
+        /*mark question as deleted*/
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $sql=$link->prepare('SELECT `status` FROM questions WHERE `id`=?');
+        $sql->bind_param('i', $question_id);
+        $sql->execute();
+        $sql->bind_result($question_status);
+        $sql->fetch();
+        $sql->close();
+        if(strcmp($question_status,'deleted')!=0){
+            die("Question is not deleted!");
+        }
+        $sql=$link->prepare("UPDATE questions SET `status`='posted' WHERE `id`=?");        
+        $sql->bind_param('i',$question_id);
+        $sql->execute();
+        $sql->close();
+        /*decrement deleted_questions*/
+        $chapter_id=self::CHAPTER_ID;
+        $sql=$link->prepare('SELECT deleted_questions FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
+        $sql->bind_param('i', $this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($deleted_questions);
+        $sql->fetch();
+        $sql->close();
+        $deleted_questions=$deleted_questions-1;
+        $sql=$link->prepare("UPDATE chapter_" . (string)$chapter_id . " SET deleted_questions=? WHERE `user_id`=?");        
+        $sql->bind_param('ii',$deleted_questions,$this->session_user_id);
+        $sql->execute();
+        $sql->close();
+        //die("AICI!" . $deleted_questions . $chapter_id);
+        $db_connection->close();
+        $this->my_sem_release();
+        $new_url="../" . $question_id;
+        header('Location: '.$new_url);
+        die;
+    }
+    
     public function delete_question($question_id){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
