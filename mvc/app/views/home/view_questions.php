@@ -52,9 +52,9 @@
                     <select name="validation_field">
                         <option value="All">All</option>';
                 if(!empty($_SESSION["raw_criteria_validation"]) &&strstr($_SESSION["raw_criteria_validation"],"None")){    
-                    echo '<option value="None" selected>None</option>';
+                    echo '<option value="None" selected="selected">None</option>';
                 }else{
-                    echo '<option value="None" selected>None</option>';
+                    echo '<option value="None">None</option>';
                 }
                 if(!empty($_SESSION["raw_criteria_validation"]) &&strstr($_SESSION["raw_criteria_validation"],"Valid")){    
                         echo '<option value="Valid" selected="selected">Valid</option>';

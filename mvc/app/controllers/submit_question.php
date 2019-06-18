@@ -26,28 +26,21 @@ class Submit_Question extends Controller
         $db_user=$config->get('db','user');
         $db_pass=$config->get('db','pass');
         $db_name=$config->get('db','name');
+        $ssh_connection=$this->model('SSHConnection');
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)$chapter_id;
-        $sql=$link->prepare("SELECT right_answers,deleted_questions FROM " . $chapter_name_aux . " WHERE `user_id`=?");
+        $sql=$link->prepare("SELECT right_answers,posted_questions,deleted_questions FROM " . $chapter_name_aux . " WHERE `user_id`=?");
         $sql->bind_param('i',$this->session_user_id);
         $sql->execute();
-        $sql->bind_result($right_answers,$deleted_questions);
+        $sql->bind_result($right_answers,$posted_questions,$deleted_questions);
         $sql->fetch();
         $sql->close();
-        
-        $sql=$link->prepare("SELECT COUNT(id) FROM questions WHERE `user_id`=? AND chapter_id=?");
-        $sql->bind_param('ii',$this->session_user_id,$chapter_id);
-        $sql->execute();
-        $sql->bind_result($posted_questions);
-        $sql->fetch();
-        $sql->close();
-        $db_connection->close();
-        
+        /*formula to calculate questions to answer left until can submit question for a chapter*/
         $formulas=$this->model('Formulas');
         $auxx=$formulas->can_submit_question($posted_questions,$right_answers,$deleted_questions);
         $answers_left=$formulas->get_answers_left();        
-        
+
         if($answers_left>=0){
             $this->answers_left=$answers_left;
             return true;

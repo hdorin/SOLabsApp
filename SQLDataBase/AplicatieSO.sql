@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2019 at 07:34 PM
--- Server version: 5.7.25-0ubuntu0.18.04.2
--- PHP Version: 7.2.17-0ubuntu0.18.04.1
+-- Generation Time: Jun 18, 2019 at 07:14 PM
+-- Server version: 5.7.26-0ubuntu0.18.04.1
+-- PHP Version: 7.2.19-0ubuntu0.18.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -55,6 +55,7 @@ CREATE TABLE `chapter_1` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
+  `posted_questions` int(11) NOT NULL DEFAULT '0' COMMENT 'Only questions with status of "posted"',
   `deleted_questions` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -62,24 +63,25 @@ CREATE TABLE `chapter_1` (
 -- Dumping data for table `chapter_1`
 --
 
-INSERT INTO `chapter_1` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
-(4, 23, 8, 0),
-(5, 0, 4, 0),
-(6, 0, 2, 0),
-(10, 26, 11, 0),
-(11, 20, 8, 0),
-(12, 20, 2, 0),
-(13, 2, 1, 9),
-(14, 20, 4, 0),
-(15, 6, 35, 0),
-(16, 13, 34, 0),
-(19, 0, 6, 0),
-(21, 0, 6, 0),
-(22, 0, 6, 0),
-(23, 0, 6, 0),
-(25, 0, 6, 0),
-(26, 0, 6, 0),
-(31, 0, 6, 0);
+INSERT INTO `chapter_1` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
+(4, 23, 8, 0, 0),
+(5, 0, 4, 0, 0),
+(6, 0, 2, 0, 0),
+(10, 26, 11, 0, 0),
+(11, 20, 8, 0, 0),
+(12, 20, 2, 0, 0),
+(13, 2, 1, 0, 9),
+(14, 20, 4, 0, 0),
+(15, 9, 42, 0, 0),
+(16, 13, 34, 0, 0),
+(18, 0, 32, 0, 0),
+(19, 0, 6, 0, 0),
+(21, 0, 6, 0, 0),
+(22, 0, 6, 0, 0),
+(23, 0, 6, 0, 0),
+(25, 0, 6, 0, 0),
+(26, 0, 6, 0, 0),
+(31, 0, 6, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -91,6 +93,7 @@ CREATE TABLE `chapter_2` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
+  `posted_questions` int(11) NOT NULL DEFAULT '0',
   `deleted_questions` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -98,15 +101,15 @@ CREATE TABLE `chapter_2` (
 -- Dumping data for table `chapter_2`
 --
 
-INSERT INTO `chapter_2` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
-(4, 2, 8, 0),
-(5, 0, 4, 0),
-(6, 0, 2, 0),
-(10, 31, 9, 0),
-(15, 0, 45, 0),
-(16, 0, 45, 0),
-(20, 0, 9, 0),
-(22, 0, 9, 0);
+INSERT INTO `chapter_2` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
+(4, 2, 8, 0, 0),
+(5, 0, 4, 0, 0),
+(6, 0, 2, 0, 0),
+(10, 31, 9, 0, 0),
+(15, 90, 51, 4, 0),
+(16, 1, 49, 4, 3),
+(20, 0, 9, 0, 0),
+(22, 0, 9, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -118,6 +121,7 @@ CREATE TABLE `chapter_3` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
+  `posted_questions` int(11) NOT NULL DEFAULT '0',
   `deleted_questions` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -125,9 +129,9 @@ CREATE TABLE `chapter_3` (
 -- Dumping data for table `chapter_3`
 --
 
-INSERT INTO `chapter_3` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
-(15, 0, 36, 0),
-(16, 1, 39, 0);
+INSERT INTO `chapter_3` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
+(15, 0, 36, 0, 0),
+(16, 1, 39, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -139,6 +143,7 @@ CREATE TABLE `chapter_4` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
+  `posted_questions` int(11) NOT NULL DEFAULT '0',
   `deleted_questions` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -146,9 +151,9 @@ CREATE TABLE `chapter_4` (
 -- Dumping data for table `chapter_4`
 --
 
-INSERT INTO `chapter_4` (`user_id`, `right_answers`, `last_question_id`, `deleted_questions`) VALUES
-(15, 8, 43, 0),
-(16, 15, 48, 1);
+INSERT INTO `chapter_4` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
+(15, 8, 43, 0, 0),
+(16, 15, 48, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -194,22 +199,38 @@ CREATE TABLE `questions` (
 
 INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`, `reports_nr`) VALUES
 (32, 15, 1, 'posted', '2019-02-26', 35, 1, 'None', 1),
-(33, 16, 1, 'posted', '2019-03-05', 22, 7, 'None', 2),
+(33, 16, 1, 'posted', '2019-03-05', 23, 8, 'Invalid', 2),
 (34, 15, 1, 'posted', '2019-03-05', 80, 7, 'None', 0),
-(35, 16, 1, 'posted', '2019-03-30', 13, 1, 'None', 0),
+(35, 16, 1, 'posted', '2019-03-30', 14, 2, 'None', 0),
 (36, 16, 3, 'posted', '2019-04-08', 7, 0, 'None', 0),
 (37, 16, 3, 'posted', '2019-04-08', 2, 0, 'Valid', 0),
 (38, 16, 3, 'posted', '2019-04-08', 2, 0, 'None', 1),
 (39, 15, 3, 'posted', '2019-04-08', 2, 0, 'None', 0),
 (40, 15, 3, 'posted', '2019-04-08', 4, 1, 'Invalid', 0),
 (41, 15, 3, 'posted', '2019-04-08', 6, 0, 'None', 0),
-(42, 16, 1, 'posted', '2019-04-08', 9, 1, 'None', 1),
-(43, 15, 4, 'deleted', '2019-04-12', 12, 11, 'None', 0),
+(42, 16, 1, 'posted', '2019-04-08', 10, 2, 'None', 1),
+(43, 15, 4, 'posted', '2019-04-12', 12, 11, 'None', 0),
 (44, 15, 4, 'posted', '2019-04-12', 13, 12, 'None', 0),
-(45, 15, 2, 'posted', '2019-04-12', 2, 0, 'None', 0),
-(46, 15, 2, 'posted', '2019-04-15', 2, 1, 'Invalid', 1),
-(47, 15, 2, 'posted', '2019-04-18', 5, 0, 'None', 0),
-(48, 15, 4, 'posted', '2019-04-18', 0, 0, 'None', 0);
+(45, 15, 2, 'deleted', '2019-04-12', 9, 0, 'Invalid', 0),
+(46, 14, 2, 'posted', '2019-04-15', 2, 1, 'Invalid', 1),
+(47, 16, 2, 'posted', '2019-04-18', 31, 0, 'None', 0),
+(49, 15, 2, 'posted', '2019-04-18', 27, 12, 'None', 0),
+(50, 16, 2, 'posted', '2019-05-30', 11, 0, 'Unvalidated', 0),
+(51, 16, 2, 'posted', '2019-05-30', 10, 0, 'Unvalidated', 0),
+(52, 16, 2, 'posted', '2019-06-11', 5, 1, 'Unvalidated', 0),
+(53, 16, 2, 'posted', '2019-06-15', 2, 1, 'Unvalidated', 0),
+(54, 16, 2, 'posted', '2019-06-17', 1, 1, 'Unvalidated', 0),
+(55, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(58, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(59, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(60, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(61, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(62, 15, 2, 'deleted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(63, 15, 2, 'deleted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(64, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(65, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(66, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
+(67, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0);
 
 -- --------------------------------------------------------
 
@@ -252,24 +273,19 @@ CREATE TABLE `users` (
   `user_name` varchar(30) NOT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   `date_created` date NOT NULL,
-  `pass_hash` varchar(256) NOT NULL,
-  `ssh_pass` varchar(100) NOT NULL
+  `pass_hash` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `user_name`, `is_admin`, `date_created`, `pass_hash`, `ssh_pass`) VALUES
-(15, 'test', 0, '2019-02-10', '$2y$10$kkkHetMQNXssy8vyE79YMOGsfEc0A0wP7FRQXxpx74mlAlLKuzPuq', 'KRxOaeRE7mLsUwveMSKJ'),
-(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$wAVwWN8PkeBiVkcDY3MR8uWh9efmgtKqTY5Dz6aGRd2vl12UncV3a', '2YGCf22KLo3aw6uws59T'),
-(17, 'dorin', 0, '2019-02-14', '$2y$10$5Ci38nuBJ1LKjlTXYE3Mm.XpdSwvH9MMI9hwNIYyiPYzhpjLWsLKK', 'Lh0iJX7yzMJHK8Sz3zP0'),
-(18, 'hdorin', 0, '2019-02-23', '$2y$10$iTFS1IpvlYWgCDBRpnggl.rLKv3PiBXx6ODOBc.v9LErE.KjqNknq', 'K6VB0q1D6PHFeZSvwimF'),
-(23, 'test2', 0, '2019-02-26', '$2y$10$YdVPHHpBH2XGcYS3rJchAejuSFIgCJiNMZLdNIyRuSWHriVYx0A2u', 'XAwftlN1YQsLvWGeCWlm'),
-(24, 'test3', 0, '2019-02-26', '$2y$10$VFeB2IT7BG.TqSO8/KGPy.ihGW9FeJrE.ndReg29ALQm7HKC4BOgO', 'Q5EZo1RAr1yLOc851hS3'),
-(25, 'test4', 0, '2019-02-26', '$2y$10$pxYe/FMAcPE5Blap0EbW7eyr3i1vVTshOpPFYCAJkCiY0h0DnAM9K', 'gj7sB8h7mO1UipBK5SZF'),
-(26, 'test5', 0, '2019-02-26', '$2y$10$7HGsBgSRBV3KKP3UN1zUz.NaE5kikdniWO2STBGdFfQTkk9UKTzXS', 'M4p838kUEt434QvSfY5P'),
-(27, 'test1', 0, '2019-04-23', '$2y$10$ND3otCSuMeYxPVJvplvJFezAJFpdsJe7AvcUDnVobFnVoux.EQnCG', 'B2Z0AC6319igrFW1DWux');
+INSERT INTO `users` (`id`, `user_name`, `is_admin`, `date_created`, `pass_hash`) VALUES
+(15, 'test', 0, '2019-02-10', '$2y$10$u0WtHiTQIxaP/NTiBxXYaeQM68qxKjutZ2HWc7HNXQTqhW8fdcIm6'),
+(16, 'dorin.haloca', 1, '2019-02-11', '$2y$10$ugtUTomp2AXDdDL4IcoEwuobnhxis1yW2WWJK5K4zXO1mijZ6xule'),
+(17, 'dorin', 0, '2019-02-14', '$2y$10$5Ci38nuBJ1LKjlTXYE3Mm.XpdSwvH9MMI9hwNIYyiPYzhpjLWsLKK'),
+(18, 'hdorin', 0, '2019-02-23', '$2y$10$lr3Rdr3QbmRpBcAzi8J9DudLTSyZEGCc4Eb9q508sTjnoum/CBzlS'),
+(29, 'test2', 0, '2019-05-15', '$2y$10$nkKwnQ8irIu6NmjLzBCL0ehcoELOTph81gMDm9xdRq8VS25RX3FD.');
 
 --
 -- Indexes for dumped tables
@@ -316,7 +332,8 @@ ALTER TABLE `news`
 --
 ALTER TABLE `questions`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `chapter_id` (`chapter_id`);
 
 --
 -- Indexes for table `reports`
@@ -351,7 +368,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `reports`
@@ -363,7 +380,7 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
