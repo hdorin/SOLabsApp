@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 18, 2019 at 07:14 PM
+-- Generation Time: Jun 18, 2019 at 10:06 PM
 -- Server version: 5.7.26-0ubuntu0.18.04.1
 -- PHP Version: 7.2.19-0ubuntu0.18.04.1
 
@@ -40,18 +40,18 @@ CREATE TABLE `chapters` (
 --
 
 INSERT INTO `chapters` (`id`, `name`, `description`, `status`) VALUES
-(1, 'Commands', 'Commands are fun!', 'posted'),
-(2, 'Scripts', 'Like commands, but better!', 'posted'),
-(3, 'C Linux', 'C Linux is the best!', 'posted'),
-(4, 'Forking in C', 'Fork usage is being checked!', 'posted');
+(11, 'Commands', 'Commands are fun!', 'posted'),
+(21, 'Scripts', 'Like commands, but better!', 'posted'),
+(31, 'C Linux', 'C Linux is the best!', 'posted'),
+(32, 'Forking in C', 'Fork usage is being checked!', 'posted');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chapter_1`
+-- Table structure for table `chapter_11`
 --
 
-CREATE TABLE `chapter_1` (
+CREATE TABLE `chapter_11` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
@@ -59,37 +59,13 @@ CREATE TABLE `chapter_1` (
   `deleted_questions` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `chapter_1`
---
-
-INSERT INTO `chapter_1` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
-(4, 23, 8, 0, 0),
-(5, 0, 4, 0, 0),
-(6, 0, 2, 0, 0),
-(10, 26, 11, 0, 0),
-(11, 20, 8, 0, 0),
-(12, 20, 2, 0, 0),
-(13, 2, 1, 0, 9),
-(14, 20, 4, 0, 0),
-(15, 9, 42, 0, 0),
-(16, 13, 34, 0, 0),
-(18, 0, 32, 0, 0),
-(19, 0, 6, 0, 0),
-(21, 0, 6, 0, 0),
-(22, 0, 6, 0, 0),
-(23, 0, 6, 0, 0),
-(25, 0, 6, 0, 0),
-(26, 0, 6, 0, 0),
-(31, 0, 6, 0, 0);
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chapter_2`
+-- Table structure for table `chapter_21`
 --
 
-CREATE TABLE `chapter_2` (
+CREATE TABLE `chapter_21` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
@@ -98,26 +74,19 @@ CREATE TABLE `chapter_2` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `chapter_2`
+-- Dumping data for table `chapter_21`
 --
 
-INSERT INTO `chapter_2` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
-(4, 2, 8, 0, 0),
-(5, 0, 4, 0, 0),
-(6, 0, 2, 0, 0),
-(10, 31, 9, 0, 0),
-(15, 90, 51, 4, 0),
-(16, 1, 49, 4, 3),
-(20, 0, 9, 0, 0),
-(22, 0, 9, 0, 0);
+INSERT INTO `chapter_21` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
+(15, 1, 69, 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chapter_3`
+-- Table structure for table `chapter_31`
 --
 
-CREATE TABLE `chapter_3` (
+CREATE TABLE `chapter_31` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
@@ -125,35 +94,19 @@ CREATE TABLE `chapter_3` (
   `deleted_questions` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `chapter_3`
---
-
-INSERT INTO `chapter_3` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
-(15, 0, 36, 0, 0),
-(16, 1, 39, 0, 0);
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chapter_4`
+-- Table structure for table `chapter_32`
 --
 
-CREATE TABLE `chapter_4` (
+CREATE TABLE `chapter_32` (
   `user_id` int(11) NOT NULL,
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
   `posted_questions` int(11) NOT NULL DEFAULT '0',
   `deleted_questions` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `chapter_4`
---
-
-INSERT INTO `chapter_4` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
-(15, 8, 43, 0, 0),
-(16, 15, 48, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -198,39 +151,8 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`, `reports_nr`) VALUES
-(32, 15, 1, 'posted', '2019-02-26', 35, 1, 'None', 1),
-(33, 16, 1, 'posted', '2019-03-05', 23, 8, 'Invalid', 2),
-(34, 15, 1, 'posted', '2019-03-05', 80, 7, 'None', 0),
-(35, 16, 1, 'posted', '2019-03-30', 14, 2, 'None', 0),
-(36, 16, 3, 'posted', '2019-04-08', 7, 0, 'None', 0),
-(37, 16, 3, 'posted', '2019-04-08', 2, 0, 'Valid', 0),
-(38, 16, 3, 'posted', '2019-04-08', 2, 0, 'None', 1),
-(39, 15, 3, 'posted', '2019-04-08', 2, 0, 'None', 0),
-(40, 15, 3, 'posted', '2019-04-08', 4, 1, 'Invalid', 0),
-(41, 15, 3, 'posted', '2019-04-08', 6, 0, 'None', 0),
-(42, 16, 1, 'posted', '2019-04-08', 10, 2, 'None', 1),
-(43, 15, 4, 'posted', '2019-04-12', 12, 11, 'None', 0),
-(44, 15, 4, 'posted', '2019-04-12', 13, 12, 'None', 0),
-(45, 15, 2, 'deleted', '2019-04-12', 9, 0, 'Invalid', 0),
-(46, 14, 2, 'posted', '2019-04-15', 2, 1, 'Invalid', 1),
-(47, 16, 2, 'posted', '2019-04-18', 31, 0, 'None', 0),
-(49, 15, 2, 'posted', '2019-04-18', 27, 12, 'None', 0),
-(50, 16, 2, 'posted', '2019-05-30', 11, 0, 'Unvalidated', 0),
-(51, 16, 2, 'posted', '2019-05-30', 10, 0, 'Unvalidated', 0),
-(52, 16, 2, 'posted', '2019-06-11', 5, 1, 'Unvalidated', 0),
-(53, 16, 2, 'posted', '2019-06-15', 2, 1, 'Unvalidated', 0),
-(54, 16, 2, 'posted', '2019-06-17', 1, 1, 'Unvalidated', 0),
-(55, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(58, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(59, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(60, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(61, 16, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(62, 15, 2, 'deleted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(63, 15, 2, 'deleted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(64, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(65, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(66, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0),
-(67, 15, 2, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0);
+(68, 16, 21, 'posted', '2019-06-18', 1, 1, 'Unvalidated', 0),
+(69, 16, 21, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0);
 
 -- --------------------------------------------------------
 
@@ -245,22 +167,6 @@ CREATE TABLE `reports` (
   `text` varchar(500) NOT NULL,
   `date_created` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `reports`
---
-
-INSERT INTO `reports` (`id`, `user_id`, `question_id`, `text`, `date_created`) VALUES
-(9, 10, 9, 'Enter report message', '2018-10-19'),
-(10, 10, 8, 'Enter report message', '2018-10-19'),
-(11, 10, 10, 'Enter report message', '2018-10-19'),
-(12, 14, 4, 'Ce faci?', '2018-12-07'),
-(13, 16, 33, 'De ce nu a venit Tiplea?', '2019-03-05'),
-(14, 15, 38, 'NUUUU', '2019-04-12'),
-(15, 15, 33, 'DE CEEEEE', '2019-04-12'),
-(16, 16, 32, 'GRESIT CICA', '2019-04-12'),
-(17, 16, 46, 'M-ai pacalit!', '2019-04-15'),
-(18, 15, 42, 'Te-am raportat din c309!', '2019-04-16');
 
 -- --------------------------------------------------------
 
@@ -298,27 +204,27 @@ ALTER TABLE `chapters`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `chapter_1`
+-- Indexes for table `chapter_11`
 --
-ALTER TABLE `chapter_1`
+ALTER TABLE `chapter_11`
   ADD PRIMARY KEY (`user_id`);
 
 --
--- Indexes for table `chapter_2`
+-- Indexes for table `chapter_21`
 --
-ALTER TABLE `chapter_2`
+ALTER TABLE `chapter_21`
   ADD PRIMARY KEY (`user_id`);
 
 --
--- Indexes for table `chapter_3`
+-- Indexes for table `chapter_31`
 --
-ALTER TABLE `chapter_3`
+ALTER TABLE `chapter_31`
   ADD PRIMARY KEY (`user_id`);
 
 --
--- Indexes for table `chapter_4`
+-- Indexes for table `chapter_32`
 --
-ALTER TABLE `chapter_4`
+ALTER TABLE `chapter_32`
   ADD PRIMARY KEY (`user_id`);
 
 --
@@ -368,7 +274,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `reports`

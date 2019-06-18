@@ -59,37 +59,48 @@ class Submit_Question extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         if($this->session_is_admin==true){/*admins can see unposted chapters*/
-            $query="SELECT id,`name` FROM chapters";
+            $query="SELECT id,`name` FROM chapters ORDER BY id";
         }else{
-            $query="SELECT id,`name` FROM chapters WHERE `status`='posted'";
+            $query="SELECT id,`name` FROM chapters WHERE `status`='posted' ORDER BY id";
         }
         $sql=$link->prepare($query);
         $sql->execute();
         $sql->bind_result($chapter_id,$chapter_name);
         $this->chapters_nr=0;
-        
+        $chapter_id_aux=0;
         while($sql->fetch()){
+            if(floor($chapter_id/10)>floor($chapter_id_aux/10)){
+                if($chapter_id_aux==0){
+                    $this->chapters[$this->chapters_nr] = "<div class='chapter'>
+                                                           ";         
+                }else{
+                    $this->chapters[$this->chapters_nr] = "</div>
+                                                        <div class='chapter'>
+                                                        ";         
+                }
+                $chapter_id_aux=$chapter_id;
+            }else{
+                $this->chapters[$this->chapters_nr] =  "<br>                                  
+                                                        ";
+            }
             if($this->session_is_admin==true){
-                $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
+                $this->chapters[$this->chapters_nr] = $this->chapters[$this->chapters_nr] .   "
                                                         <a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
                                                         <p>No need to answer questions</p>
-                                                        </div>";
-            }else if($this->can_submit_quesion($chapter_id)){  
-                        
-                $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
-                                                            <a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
-                                                            <p>Answers extra: " . $this->answers_left . "</p>
-                                                        </div>";
+                                                        ";
+            }else if($this->can_submit_quesion($chapter_id)){                         
+                $this->chapters[$this->chapters_nr]=  $this->chapters[$this->chapters_nr] . "<a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
+                                                        <p>Answers extra: " . $this->answers_left . "</p>
+                                                        ";
             }else{
-                $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
-                                                            <a>" . $chapter_name . "</a>
-                                                            <p>Answers left: " . $this->answers_left . "</p>
-                                                        </div>";
+                $this->chapters[$this->chapters_nr]=  $this->chapters[$this->chapters_nr] ."<a>" . $chapter_name . "</a>
+                                                        <p>Answers left: " . $this->answers_left . "</p>
+                                                        ";
             }
             $this->chapters_nr=$this->chapters_nr+1;
         }
-        
+        $this->chapters[$this->chapters_nr] = "</div>";
         $sql->close();
-        
+        $db_connection->close();        
     }
 }

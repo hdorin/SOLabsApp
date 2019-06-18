@@ -46,20 +46,37 @@ class Choose_Chapter extends Controller
         if($this->session_is_admin==true){/*admins can see unposted chapters*/
             $query="SELECT id,`name`,`description` FROM chapters";
         }else{
-            $query="SELECT id,`name`,`description` FROM chapters WHERE `status`='posted'";
+            $query="SELECT id,`name`,`description` FROM chapters WHERE `status`='posted' ORDER BY id";
         }
         $sql=$link->prepare($query);
         $sql->execute();
         $sql->bind_result($chapter_id,$chapter_name,$chapter_description);
         $this->chapters_nr=0;
-        
+        $chapter_id_aux=0;
         while($sql->fetch()){
-                $this->chapters[$this->chapters_nr]=   "<div class='chapter'>
+            if(floor($chapter_id/10)>floor($chapter_id_aux/10)){
+                if($chapter_id_aux==0){
+                    $this->chapters[$this->chapters_nr] = "<div class='chapter'>
                                                             <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
                                                             <p>" . $chapter_description . "</p>
-                                                        </div>";
+                                                           ";         
+                }else{
+                    $this->chapters[$this->chapters_nr] = "</div>
+                                                        <div class='chapter'>
+                                                        <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
+                                                        <p>" . $chapter_description . "</p>
+                                                        ";         
+                }
+                $chapter_id_aux=$chapter_id;
+            }else{
+                $this->chapters[$this->chapters_nr] =  "<br>
+                                                        <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
+                                                        <p>" . $chapter_description . "</p>
+                                                        ";
+            }
             $this->chapters_nr=$this->chapters_nr+1;
         }
+        $this->chapters[$this->chapters_nr] = "</div>";
         $sql->close();
         $db_connection->close();
     }

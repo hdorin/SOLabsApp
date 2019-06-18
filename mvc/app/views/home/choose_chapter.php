@@ -17,7 +17,7 @@
     <div class="chaptersBox">
         <h1><?php echo $data['title_message'] ?></h1>
         <?php 
-            for($i=0;$i<$data['chapters_nr'];$i++){
+            for($i=0;$i<=$data['chapters_nr'];$i++){
                 echo $data['chapters'][$i];
             }
         ?>
