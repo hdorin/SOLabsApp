@@ -1,1 +1,1 @@
-chmod +x code.sh && ./code.sh 
+gcc code.c -o code.out && ./code.out  < code.keybd
