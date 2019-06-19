@@ -34,10 +34,10 @@
         </div>
         <input class="btnExecute" name="action" type="submit" value="Execute" onclick="buttonFunction('Executing ...')"/>
             <input class="btnSubmit" name="action" type="submit" value="Submit" onclick="buttonFunction('Submitting ...')"/>
-            <input class="btnSkip" name="action" type="submit" value="Skip"  formnovalidate/>
+            <input class="btnSkip" name="action" type="submit" value="Skip" onclick="buttonFunction('Skipping ...')" formnovalidate/>
             <script>
                 function buttonFunction(msg) {
-                    if(document.getElementById("codeField").value == ''){
+                    if(document.getElementById("codeField").value == '' && msg!="Skipping ..."){
                         document.getElementById("execMsg").innerHTML = "";
                         document.getElementById("errorMsg").innerHTML = "Fill in mandatory fields!";
                     }else{

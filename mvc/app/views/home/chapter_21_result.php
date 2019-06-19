@@ -52,12 +52,12 @@
                     <h1>Author's code</h1>
                 </div>
                 <div class="questionCode">
-                    <p><?php if(empty($data['result_correct'])) {
-                                echo "Answer correctly to reveal it!";
+                    <?php if(empty($data['result_correct'])) {
+                                echo $data['reveal'];
                             }else{
-                                echo $data['author_code'];
+                                echo "<p>" . $data['author_code'] . "</p>";
                             }
-                    ?></p>
+                    ?>
                 </div>
                 <div class="questionOutputTitle">
                     <h1>Output</h1>

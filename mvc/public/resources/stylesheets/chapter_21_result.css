@@ -86,7 +86,20 @@
     .questionBox .resultActions input[type="text"]{
         width: 25%;
     }
-
+    .questionBox .revealForm .btnReveal{
+        margin: 0.2%;
+        margin-bottom: 1%;
+        color: #3D4597;
+        font-weight: 500;
+        box-shadow: 0 0px 2px 0 #3D4597, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+    }
+    .questionBox .btnRevealGray{
+        margin: 0.2%;
+        margin-bottom: 1%;
+        color: gray;
+        font-weight: 500;
+        box-shadow: 0 0px 2px 0 gray, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+    }
     .questionBox .resultActions .btnReport{
         margin: 0.2%;
         color: red;

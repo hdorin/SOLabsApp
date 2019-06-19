@@ -5,6 +5,7 @@ class Chapter_21_Result extends Controller
     const CHAPTER_ID=21;
     const REPORT_MAX_LEN=100;
     private $question_id;
+    private $answers_left;
     public function index()
     {
         $this->check_login();
@@ -27,7 +28,12 @@ class Chapter_21_Result extends Controller
         $result_incorrect=$this->session_extract('result_incorrect');
         $error_msg=$this->session_extract("error_msg",true);
         $chapter_name=$this->get_chapter_name(self::CHAPTER_ID);
-        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_result',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'error_msg' => $error_msg,
+        $reveal="";
+        if(empty($result_correct)) {
+            $reveal=$this->build_reveal();
+            $author_code="";
+        }
+        $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_result',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'error_msg' => $error_msg,'reveal' => $reveal,
                                                                             'result_correct' => $result_correct,'result_incorrect' => $result_incorrect,'question_text' => $question_text, 'question_args' => $question_args,'question_input' => $question_input,
                                                                             'user_code' => $user_code,'user_output' => $user_output, 'author_code' => $author_code, 'author_output' => $author_output]);
     }
@@ -73,6 +79,102 @@ class Chapter_21_Result extends Controller
         $sql->execute();
         $sql->close();
         $db_connection->close();
+    }
+    private function can_reveal_code(){
+        if($this->session_is_admin==true){
+            return true;
+        }
+        $chapter_id=self::CHAPTER_ID;
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $ssh_connection=$this->model('SSHConnection');
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $chapter_name_aux="chapter_".(string)self::CHAPTER_ID;
+        $sql=$link->prepare("SELECT right_answers,posted_questions,deleted_questions,code_reveals FROM " . $chapter_name_aux . " WHERE `user_id`=?");
+        $sql->bind_param('i',$this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($right_answers,$posted_questions,$deleted_questions,$code_reveals);
+        $sql->fetch();
+        $sql->close();
+        $formulas=$this->model('Formulas');
+        $formulas->can_reveal_author_code($right_answers,$posted_questions,$deleted_questions,$code_reveals);
+        $answers_left=$formulas->get_answers_left();        
+        if($answers_left>=0){
+            $this->answers_left=$answers_left;
+            return true;
+        }else{
+            $this->answers_left=(-1)*$answers_left;
+            return false;
+        }
+    }
+    private function build_reveal(){
+        $chapter_id=self::CHAPTER_ID;
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $ssh_connection=$this->model('SSHConnection');
+        $db_connection=$this->model('DBConnection');
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $chapter_name_aux="chapter_".(string)self::CHAPTER_ID;
+        $sql=$link->prepare("SELECT right_answers FROM " . $chapter_name_aux . " WHERE `user_id`=?");
+        $sql->bind_param('i',$this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($right_answers);
+        $sql->fetch();
+        $sql->close();
+        if($this->can_reveal_code()==true){
+            $reveal = "<form class='revealForm' action='chapter_" . (string)$chapter_id . "_result/reveal_author_code' method='POST'>
+                            <input class='btnReveal' name='action' type='submit' value='Reveal'/>
+                            <br>Extra right answers: " . (string)$this->answers_left . "
+                         </form>";
+        }else{
+            $reveal = "<form class='revealForm' action='chapter_" . (string)$chapter_id . "_result/reveal_author_code' method='POST'>
+                                <input class='btnRevealGray' name='action' type='submit' value='Reveal' disabled/>
+                                <br>Additional right answers required: " . $this->answers_left . "
+                         </form>";
+        }
+        return $reveal;
+        }
+    public function reveal_author_code(){
+        $this->check_login();
+        $this->check_chapter_posted(self::CHAPTER_ID);
+        $result_correct=$this->session_extract('result_correct');
+        if($this->can_reveal_code()==false || !empty($result_correct)){
+            die("You cannot do that!");
+        }
+        $_SESSION["result_correct"]=" ";
+        $this->my_sem_acquire($this->session_user_id);
+        $config=$this->model('JSONConfig');
+        $db_host=$config->get('db','host');
+        $db_user=$config->get('db','user');
+        $db_pass=$config->get('db','pass');
+        $db_name=$config->get('db','name');
+        $db_connection=$this->model('DBConnection');
+        /*mark question as deleted*/
+        $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        /*decrement deleted_questions*/
+        $chapter_id=self::CHAPTER_ID;
+        $sql=$link->prepare('SELECT code_reveals FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
+        $sql->bind_param('i', $this->session_user_id);
+        $sql->execute();
+        $sql->bind_result($code_reveals);
+        $sql->fetch();
+        $sql->close();
+        $code_reveals=$code_reveals+1;
+        $sql=$link->prepare("UPDATE chapter_" . (string)$chapter_id . " SET code_reveals=? WHERE `user_id`=?");        
+        $sql->bind_param('ii',$code_reveals,$this->session_user_id);
+        $sql->execute();
+        $sql->close();
+        //die("AICI!" . $deleted_questions . $chapter_id);
+        $db_connection->close();
+        $this->my_sem_release();
+        $this->reload();
     }
     public function process(){
         $this->check_login();

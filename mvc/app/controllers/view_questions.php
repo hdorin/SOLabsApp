@@ -130,6 +130,7 @@ class View_Questions extends Controller
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         if($this->session_is_admin==false){
             $chapter_posted="AND c.status='posted'";
+            $question_posted="AND q.status='posted'";
             $search_user="AND q.`user_id`=" . (string)$this->session_user_id;
             $search_chapter=" ";
         }

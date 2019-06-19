@@ -30,15 +30,15 @@ class Submit_Question extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)$chapter_id;
-        $sql=$link->prepare("SELECT right_answers,posted_questions,deleted_questions FROM " . $chapter_name_aux . " WHERE `user_id`=?");
+        $sql=$link->prepare("SELECT right_answers,posted_questions,deleted_questions,code_reveals FROM " . $chapter_name_aux . " WHERE `user_id`=?");
         $sql->bind_param('i',$this->session_user_id);
         $sql->execute();
-        $sql->bind_result($right_answers,$posted_questions,$deleted_questions);
+        $sql->bind_result($right_answers,$posted_questions,$deleted_questions,$code_reveals);
         $sql->fetch();
         $sql->close();
         /*formula to calculate questions to answer left until can submit question for a chapter*/
         $formulas=$this->model('Formulas');
-        $auxx=$formulas->can_submit_question($posted_questions,$right_answers,$deleted_questions);
+        $auxx=$formulas->can_submit_question($right_answers,$posted_questions,$deleted_questions,$code_reveals);
         $answers_left=$formulas->get_answers_left();        
 
         if($answers_left>=0){
@@ -90,11 +90,11 @@ class Submit_Question extends Controller
                                                         ";
             }else if($this->can_submit_quesion($chapter_id)){                         
                 $this->chapters[$this->chapters_nr]=  $this->chapters[$this->chapters_nr] . "<a href='chapter_" . (string)$chapter_id . "_submit'>" . $chapter_name . "</a>
-                                                        <p>Answers extra: " . $this->answers_left . "</p>
+                                                        <p>Extra right answers: " . $this->answers_left . "</p>
                                                         ";
             }else{
                 $this->chapters[$this->chapters_nr]=  $this->chapters[$this->chapters_nr] ."<a>" . $chapter_name . "</a>
-                                                        <p>Answers left: " . $this->answers_left . "</p>
+                                                        <p>Additional right answers required: " . $this->answers_left . "</p>
                                                         ";
             }
             $this->chapters_nr=$this->chapters_nr+1;

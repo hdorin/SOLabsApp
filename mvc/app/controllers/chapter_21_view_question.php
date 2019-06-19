@@ -62,14 +62,14 @@ class Chapter_21_View_Question extends Controller
         $db_connection=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
         $chapter_name_aux="chapter_".(string)self::CHAPTER_ID;
-        $sql=$link->prepare("SELECT right_answers,posted_questions,deleted_questions FROM " . $chapter_name_aux . " WHERE `user_id`=?");
+        $sql=$link->prepare("SELECT right_answers,posted_questions,deleted_questions,code_reveals FROM " . $chapter_name_aux . " WHERE `user_id`=?");
         $sql->bind_param('i',$this->session_user_id);
         $sql->execute();
-        $sql->bind_result($right_answers,$posted_questions,$deleted_questions);
+        $sql->bind_result($right_answers,$posted_questions,$deleted_questions,$code_reveals);
         $sql->fetch();
         $sql->close();
         $formulas=$this->model('Formulas');
-        $formulas->can_delete_question($posted_questions,$right_answers,$deleted_questions);
+        $formulas->can_delete_question($right_answers,$posted_questions,$deleted_questions,$code_reveals);
         $answers_left=$formulas->get_answers_left();        
         if($answers_left>=0){
             $this->answers_left=$answers_left;
@@ -188,10 +188,10 @@ class Chapter_21_View_Question extends Controller
     public function restore_question($question_id){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
-        $this->my_sem_acquire($this->session_user_id);
         if($this->can_view_quesion($question_id)==false){
             die("You cannot do that!");
         }
+        $this->my_sem_acquire($this->session_user_id);
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -234,14 +234,13 @@ class Chapter_21_View_Question extends Controller
         header('Location: '.$new_url);
         die;
     }
-    
     public function delete_question($question_id){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
-        $this->my_sem_acquire($this->session_user_id);
         if($this->can_view_quesion($question_id)==false){
             die("You cannot do that!");
         }
+        $this->my_sem_acquire($this->session_user_id);
         $config=$this->model('JSONConfig');
         $db_host=$config->get('db','host');
         $db_user=$config->get('db','user');
@@ -287,11 +286,10 @@ class Chapter_21_View_Question extends Controller
     public function validate_question($question_id){
         $this->check_login();
         $this->check_chapter_posted(self::CHAPTER_ID);
-        $this->my_sem_acquire($this->session_user_id);
         if($this->session_is_admin==false){
             die("You cannot do that!");
         }
-
+        $this->my_sem_acquire($this->session_user_id);
         if(strcmp($_POST["validation_field"],"Unvalidated")==0){
             $validation="Unvalidated";
         }else if(strcmp($_POST["validation_field"],"Valid")==0){
