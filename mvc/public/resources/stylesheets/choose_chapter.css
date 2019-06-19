@@ -30,9 +30,16 @@
                 font-size: 20px;
                 text-decoration: none;
             }
-            .chaptersBox .chapter p{
+            .chaptersBox .chapter .rightAnswers{
                 font-size: 17px;
-                margin-top: 1.5%;
+                margin: 0.5%;
+                margin-top: 1%;
+                text-decoration: none;
+            }
+            .chaptersBox .chapter .chapterDescription{
+                font-size: 17px;
+                margin-top: 1%;
                 margin-bottom: 6%;
                 text-decoration: none;
             }
+            

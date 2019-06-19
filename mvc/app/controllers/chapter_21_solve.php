@@ -347,7 +347,8 @@ class Chapter_21_Solve extends Controller
             $this->session_extract("error_msg",true);
             $this->session_extract("exec_msg",true);
             header('Location: ../chapter_' . (string)$chapter_id . '_result');       
-        }else{
+        }else{/*skip*/
+            sleep(4);//delaying the skipping process
             $this->submit("",true);
             $this->session_extract("code_field",true);
             $this->session_extract("args_field",true);
@@ -355,7 +356,7 @@ class Chapter_21_Solve extends Controller
             $this->session_extract("input_field",true);
             $this->session_extract("text_field",true);
             $this->session_extract("error_msg",true);
-            $this->session_extract("exec_msg",true);  
+            $this->session_extract("exec_msg",true);
             header('Location: ../chapter_' . (string)$chapter_id . '_solve');  
         }
         $this->my_sem_release();

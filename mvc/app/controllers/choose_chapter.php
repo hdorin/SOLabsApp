@@ -42,9 +42,11 @@ class Choose_Chapter extends Controller
         $db_pass=$config->get('db','pass');
         $db_name=$config->get('db','name');
         $db_connection=$this->model('DBConnection');
+        $db_connection_aux=$this->model('DBConnection');
         $link=$db_connection->connect($db_host,$db_user,$db_pass,$db_name);
+        $link_aux=$db_connection_aux->connect($db_host,$db_user,$db_pass,$db_name);
         if($this->session_is_admin==true){/*admins can see unposted chapters*/
-            $query="SELECT id,`name`,`description` FROM chapters";
+            $query="SELECT id,`name`,`description` FROM chapters ORDER BY id";
         }else{
             $query="SELECT id,`name`,`description` FROM chapters WHERE `status`='posted' ORDER BY id";
         }
@@ -54,24 +56,36 @@ class Choose_Chapter extends Controller
         $this->chapters_nr=0;
         $chapter_id_aux=0;
         while($sql->fetch()){
+            $sql_aux=$link_aux->prepare('SELECT right_answers FROM chapter_' . (string)$chapter_id . ' WHERE `user_id`=?');
+            $sql_aux->bind_param('i', $this->session_user_id);
+            $sql_aux->execute();
+            $sql_aux->bind_result($right_answers);
+            $sql_aux->fetch();
+            $sql_aux->close();
+            if(empty($right_answers)){
+                $right_answers="-";
+            }
             if(floor($chapter_id/10)>floor($chapter_id_aux/10)){
                 if($chapter_id_aux==0){
                     $this->chapters[$this->chapters_nr] = "<div class='chapter'>
                                                             <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
-                                                            <p>" . $chapter_description . "</p>
+                                                            <p class='rightAnswers'>Total right answers: " . (string)$right_answers ." </p>
+                                                            <p class='chapterDescription'>" . $chapter_description . "</p>
                                                            ";         
                 }else{
                     $this->chapters[$this->chapters_nr] = "</div>
                                                         <div class='chapter'>
                                                         <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
-                                                        <p>" . $chapter_description . "</p>
+                                                        <p class='rightAnswers'>Total right answers: " . (string)$right_answers ." </p>
+                                                        <p class='chapterDescription'>" . $chapter_description . "</p>
                                                         ";         
                 }
                 $chapter_id_aux=$chapter_id;
             }else{
                 $this->chapters[$this->chapters_nr] =  "<br>
                                                         <a href='chapter_" . (string)$chapter_id . "_solve'>" . $chapter_name . "</a>
-                                                        <p>" . $chapter_description . "</p>
+                                                        <p class='rightAnswers'>Total right answers: " . (string)$right_answers ." </p>
+                                                        <p class='chapterDescription'>" . $chapter_description . "</p>
                                                         ";
             }
             $this->chapters_nr=$this->chapters_nr+1;
@@ -79,5 +93,6 @@ class Choose_Chapter extends Controller
         $this->chapters[$this->chapters_nr] = "</div>";
         $sql->close();
         $db_connection->close();
+        $db_connection_aux->close();
     }
 }
