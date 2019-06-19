@@ -1,8 +1,8 @@
 <?php
-//Chapter C Linux
-class Chapter_31_Submit extends Controller
+//Chapter C Linux with Forking
+class Chapter_32_Submit extends Controller
 {
-    const CHAPTER_ID=31;
+    const CHAPTER_ID=32;
     const TEXT_MAX_LEN=500;
     const CODE_MAX_LEN=1500;
     const ARGS_MAX_LEN=100;
@@ -57,7 +57,7 @@ class Chapter_31_Submit extends Controller
         fwrite($code_file,$code);
         fclose($code_file);
         $run_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run','w');
-        fwrite($run_file,"gcc code.c -o code.out && ./code.out " . $args . " < code.keybd");
+        fwrite($run_file,"gcc code.c -o code.out && (strace -e trace=clone ./code.out " . $args . " < code.keybd)");
         fclose($run_file); 
         $keybd_file=fopen($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.keybd','w');
         fwrite($keybd_file,$keybd);
@@ -70,12 +70,17 @@ class Chapter_31_Submit extends Controller
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run', $this->session_user . '.run');
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.keybd', $this->session_user . '.keybd');
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input', $this->session_user . '.input');
-            $docker_command="docker run --name " . $this->session_user . " -v $(pwd)/" . $this->session_user . ".c:/code.c -v $(pwd)/" . 
+            $docker_command="docker run --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --security-opt apparmor=unconfined --name " . $this->session_user . " -v $(pwd)/" . $this->session_user . ".c:/code.c -v $(pwd)/" . 
                                                    $this->session_user . ".keybd:/code.keybd:ro -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . 
                                                    $this->session_user . ".output:/code.output -v $(pwd)/" . $this->session_user . ".run:/code.run:ro --rm my_ubuntu bash ./code.run";
             /*creating the output file which will be mounted in the container*/
             $ssh_connection->execute("echo>" . $this->session_user . ".output",true);
             $_SESSION["output_file"]=0;
+            $strace_output=$ssh_connection->execute("timeout --signal=SIGKILL " . $ssh_timeout_seconds . " " . $docker_command,true);
+            if(strcmp($strace_output,"+++ exited with 0 +++\n")==0){
+                throw new Exception("You did not use fork()!");
+            }
+            $ssh_connection->execute("echo>" . $this->session_user . ".output",true);
             $_SESSION["exec_msg"]=$ssh_connection->execute("timeout --signal=SIGKILL " . $ssh_timeout_seconds . " " . $docker_command);
         }catch(Exception $e){
             $ssh_connection->close();

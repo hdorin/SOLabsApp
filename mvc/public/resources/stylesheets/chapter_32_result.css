@@ -31,15 +31,30 @@
     padding-left: 1.8%;
     
 }
-
-    .questionBox .questionText p, .questionBox .questionCode p, .questionBox .questionOutput p{
+    .questionBox h3{
+        margin-bottom: 0.5%;
+    }
+    .questionBox .questionText p, .questionBox .questionOutput p{
         white-space: pre-wrap;
         font-size: 20px;
         font-family: 'Times New Roman', Times, serif;
     }
-    .questionBox .questionCode p{
+    .questionBox .questionArgs p,.questionBox .questionKeybd p,.questionBox .questionInput p,.questionBox .questionCode p{
         text-align: justify;
-        margin-left: 15%;
+        overflow: scroll;
+        white-space: pre;
+        resize: both;
+        background-color: white;
+        margin-left: 30%;
+        margin-top:0%;
+        margin-left: auto;
+        margin-right: auto;
+        width: 40%;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .questionBox .questionCode p{
+        margin-left: 5%;
+        width: 90%;
     }
     .questionBox .questionResultCorrect{
         font-size: 100%;
@@ -71,7 +86,20 @@
     .questionBox .resultActions input[type="text"]{
         width: 25%;
     }
-
+    .questionBox .revealForm .btnReveal{
+        margin: 0.2%;
+        margin-bottom: 1%;
+        color: #3D4597;
+        font-weight: 500;
+        box-shadow: 0 0px 2px 0 #3D4597, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+    }
+    .questionBox .btnRevealGray{
+        margin: 0.2%;
+        margin-bottom: 1%;
+        color: gray;
+        font-weight: 500;
+        box-shadow: 0 0px 2px 0 gray, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+    }
     .questionBox .resultActions .btnReport{
         margin: 0.2%;
         color: red;

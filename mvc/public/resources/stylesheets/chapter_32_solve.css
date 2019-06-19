@@ -1,6 +1,5 @@
 ﻿.questionBox{
-    width: 70%;
-
+    width: 80%;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
@@ -11,59 +10,83 @@
     border-radius: 6px;
     box-shadow: 0 0px 2px 0 #1d67f0, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
 }
-    .questionBox .questionTextTitle, .questionCodeTitle{
-        font-size: 80%;
-        font-family: Arial, Helvetica, sans-serif;
-        color: #3D4597;
-        margin-bottom: -1%;
-
+    .questionBox .questionText p{
+        font-size: 135%;
+        text-decoration: none;
+        white-space: pre-wrap;
+        width: 80%;
+        margin-left: auto;
+        margin-right:auto;
     }
-    .questionBox .submitQuestion .questionText textarea{
-        font-size: 110%;
-        width: 70%;
-        height: 130px;
-        font-family: Arial, Helvetica, sans-serif;
-        padding: 0.3%;
+    .questionBox .questionCode{
+        margin: 0.5%;
+    }
+    .questionBox .questionCode h3{
+        float: left;
+        margin-top: 0.7%;
+        margin-bottom: 0.5%;
+        font-weight: normal;
+        text-align: left;
+        font-size: 115%;
+    }
+    .questionBox .questionCode .textareaArgs{
+        width: 50%;
         margin-left: auto;
         margin-right: auto;
         
-        margin-bottom: 0.3%;
-        word-break: break-word;
     }
-    .questionBox .submitQuestion{
-        margin: 0.5%;
-    }
-    .questionBox .submitQuestion .codeField{
-        font-size: 15px;
-        font-family: 'Courier New', Courier, monospace;
+    .questionBox .questionCode .textareaKeybd,.questionBox .questionCode .textareaInput{
         width: 50%;
-        padding: 0.3%;
         margin-left: auto;
         margin-right: auto;
+    }
+    .questionBox .questionCode .textareaArgs textarea{
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        white-space: nowrap;
+    }
+    .questionBox .questionCode .codeField{
+        font-size: 95%;
+        font-family: 'Courier New', Courier, monospace;
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1%;
         margin-bottom: 1%;
         word-break: break-word;
+        overflow: scroll;
+        white-space: pre;
     }
-    .questionBox .submitQuestion .btnSubmit{
+    .questionBox .questionCode .argsField,.questionBox .questionCode .keybdField,.questionBox .questionCode .inputField{
+        font-size: 100%;
+        font-family: 'Courier New', Courier, monospace;
+        width: 80%;
+        float: right;
+        white-space: pre;
+    }
+    .questionBox .questionCode .btnSubmit{
         margin: 0.2%;
         color: #3D4597;
         font-weight: 500;
         box-shadow: 0 0px 2px 0 #3D4597, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
     }
-    .questionBox .submitQuestion .btnExecute{
+    .questionBox .questionCode .btnExecute{
         margin: 0.2%;
         color: green;
         font-weight: 500;
         box-shadow: 0 0px 2px 0 green, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
-        
     }
-    .questionBox .submitQuestion .textarea{
-        width: 100%;
-        
+    .questionBox .questionCode .btnSkip{
+        margin: 0.2%;
+        color: red;
+        font-weight: 500;
+        box-shadow: 0 0px 2px 0 red, 0 10px 15px 0 rgba(126, 126, 126, 0.12), 0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
     }
+
     .resultBox{
         margin-top:2%;
         width: 80%;
-
         margin-left: auto;
         margin-right: auto;
         text-align: center;

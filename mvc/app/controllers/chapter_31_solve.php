@@ -191,7 +191,7 @@ class Chapter_31_Solve extends Controller
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input', $this->session_user . '.input');
             $docker_command="docker run --name " . $this->session_user . " -v $(pwd)/" . $this->session_user . ".c:/code.c -v $(pwd)/" . 
                                                    $this->session_user . ".keybd:/code.keybd:ro -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . 
-                                                   $this->session_user . ".output:/code.output -v $(pwd)/" . $this->session_user . ".run:/code.run:ro --rm gcc bash ./code.run";
+                                                   $this->session_user . ".output:/code.output -v $(pwd)/" . $this->session_user . ".run:/code.run:ro --rm my_ubuntu bash ./code.run";
             /*creating the output file which will be mounted in the container*/
             $ssh_connection->execute("echo>" . $this->session_user . ".output",true);
             $_SESSION["output_file"]=0;
