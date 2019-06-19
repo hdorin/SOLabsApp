@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 18, 2019 at 10:06 PM
+-- Generation Time: Jun 19, 2019 at 07:49 PM
 -- Server version: 5.7.26-0ubuntu0.18.04.1
 -- PHP Version: 7.2.19-0ubuntu0.18.04.1
 
@@ -56,8 +56,16 @@ CREATE TABLE `chapter_11` (
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
   `posted_questions` int(11) NOT NULL DEFAULT '0' COMMENT 'Only questions with status of "posted"',
-  `deleted_questions` int(11) NOT NULL DEFAULT '0'
+  `deleted_questions` int(11) NOT NULL DEFAULT '0',
+  `code_reveals` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `chapter_11`
+--
+
+INSERT INTO `chapter_11` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`, `code_reveals`) VALUES
+(16, 0, 73, 1, 0, 2);
 
 -- --------------------------------------------------------
 
@@ -70,15 +78,17 @@ CREATE TABLE `chapter_21` (
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
   `posted_questions` int(11) NOT NULL DEFAULT '0',
-  `deleted_questions` int(11) NOT NULL DEFAULT '0'
+  `deleted_questions` int(11) NOT NULL DEFAULT '0',
+  `code_reveals` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `chapter_21`
 --
 
-INSERT INTO `chapter_21` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`) VALUES
-(15, 1, 69, 0, 0);
+INSERT INTO `chapter_21` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`, `code_reveals`) VALUES
+(15, 33, 69, 2, 0, 2),
+(16, 0, 71, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -91,8 +101,16 @@ CREATE TABLE `chapter_31` (
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
   `posted_questions` int(11) NOT NULL DEFAULT '0',
-  `deleted_questions` int(11) NOT NULL DEFAULT '0'
+  `deleted_questions` int(11) NOT NULL DEFAULT '0',
+  `code_reveals` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `chapter_31`
+--
+
+INSERT INTO `chapter_31` (`user_id`, `right_answers`, `last_question_id`, `posted_questions`, `deleted_questions`, `code_reveals`) VALUES
+(16, 0, 74, 0, 0, 2);
 
 -- --------------------------------------------------------
 
@@ -105,7 +123,8 @@ CREATE TABLE `chapter_32` (
   `right_answers` int(11) NOT NULL DEFAULT '0',
   `last_question_id` int(11) NOT NULL,
   `posted_questions` int(11) NOT NULL DEFAULT '0',
-  `deleted_questions` int(11) NOT NULL DEFAULT '0'
+  `deleted_questions` int(11) NOT NULL DEFAULT '0',
+  `code_reveals` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -151,8 +170,14 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `user_id`, `chapter_id`, `status`, `date_created`, `all_answers`, `right_answers`, `validation`, `reports_nr`) VALUES
-(68, 16, 21, 'posted', '2019-06-18', 1, 1, 'Unvalidated', 0),
-(69, 16, 21, 'posted', '2019-06-18', 0, 0, 'Unvalidated', 0);
+(68, 16, 21, 'posted', '2019-06-18', 24, 2, 'Unvalidated', 1),
+(69, 16, 21, 'posted', '2019-06-18', 22, 4, 'Unvalidated', 1),
+(70, 15, 21, 'posted', '2019-06-19', 0, 0, 'Unvalidated', 0),
+(71, 15, 21, 'posted', '2019-06-19', 0, 0, 'Unvalidated', 0),
+(72, 15, 11, 'posted', '2019-06-19', 4, 0, 'Unvalidated', 0),
+(73, 15, 11, 'posted', '2019-06-19', 1, 0, 'Unvalidated', 0),
+(74, 15, 31, 'posted', '2019-06-19', 1, 0, 'Unvalidated', 0),
+(75, 15, 31, 'posted', '2019-06-19', 1, 0, 'Unvalidated', 0);
 
 -- --------------------------------------------------------
 
@@ -167,6 +192,14 @@ CREATE TABLE `reports` (
   `text` varchar(500) NOT NULL,
   `date_created` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `reports`
+--
+
+INSERT INTO `reports` (`id`, `user_id`, `question_id`, `text`, `date_created`) VALUES
+(1, 15, 69, 'Ce-i asta?', '2019-06-19'),
+(2, 15, 68, 'Nu trec la SO asa!', '2019-06-19');
 
 -- --------------------------------------------------------
 
@@ -262,7 +295,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `chapters`
 --
 ALTER TABLE `chapters`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `news`
@@ -274,13 +307,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
