@@ -1,5 +1,5 @@
 <?php
-//Chapter C Linux
+//Chapter Scripts
 class Chapter_21_Solve extends Controller
 {
     private $question_text;
@@ -189,7 +189,9 @@ class Chapter_21_Solve extends Controller
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.run', $this->session_user . '.run');
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.keybd', $this->session_user . '.keybd');
             $ssh_connection->send_code_file($app_local_path . '/mvc/app/scp_cache/' . $this->session_user . '.input', $this->session_user . '.input');
-            $docker_command="docker run -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . $this->session_user . ".keybd:/code.keybd:ro -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . $this->session_user . ".output:/code.output -v $(pwd)/" . $this->session_user . ".run:/code.run:ro --rm ubuntu bash ./code.run";
+            $docker_command="docker run --name " . $this->session_user . " -v $(pwd)/" . $this->session_user . ".sh:/code.sh -v $(pwd)/" . 
+                                                   $this->session_user . ".keybd:/code.keybd:ro -v $(pwd)/" . $this->session_user . ".input:/code.input -v $(pwd)/" . 
+                                                   $this->session_user . ".output:/code.output -v $(pwd)/" . $this->session_user . ".run:/code.run:ro --rm ubuntu bash ./code.run";
             /*creating the output file which will be mounted in the container*/
             $ssh_connection->execute("echo>" . $this->session_user . ".output",true);
             $_SESSION["output_file"]=0;

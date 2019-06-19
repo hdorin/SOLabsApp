@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Chapter: <?=$data['chapter_name']?></title>
+    <title>Chapter: C Linux</title>
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
     <link rel="stylesheet" href="resources/stylesheets/chapter_<?=$data['chapter_id']?>_result.css" type="text/css" />
 </head>
@@ -17,17 +17,20 @@
         <div class="questionResultIncorrect">
             <h1><?php echo $data['result_incorrect']; ?></h1>
         </div>
-        
         <div class="questionText">
             <p><?php echo $data['question_text']; ?></p>
+        </div>
+        <div class="questionInput">
+            <h3>Input file: </h3>
+            <p><?php echo  $data["question_input"];?></p>
         </div>
         <div class="outputs">
             <div class="userbox">
                 <div class="questionCodeTitle">
-                    <h1>Your command</h1>
+                    <h1>Your code</h1>
                 </div>
                 <div class="questionCode">
-                    <p><?php echo $data['user_command']; ?></p>
+                    <p><?php echo $data['user_code']; ?></p>
                 </div>
                 <div class="questionOutputTitle">
                     <h1>Output</h1>
@@ -38,15 +41,15 @@
             </div>
             <div class="authorBox">
                 <div class="questionCodeTitle">
-                    <h1>Author's command</h1>
+                    <h1>Author's code</h1>
                 </div>
                 <div class="questionCode">
-                    <p><?php if(empty($data['result_correct'])) {
-                                echo "Answer correctly to reveal it!";
+                    <?php if(empty($data['result_correct'])) {
+                                echo $data['reveal'];
                             }else{
-                                echo $data['author_command'];
+                                echo "<p>" . $data['author_code'] . "</p>";
                             }
-                    ?></p>
+                    ?>
                 </div>
                 <div class="questionOutputTitle">
                     <h1>Output</h1>

@@ -1,5 +1,5 @@
 <?php
-//Chapter C Linux
+//Chapter Scripts
 class Chapter_21_View_Question extends Controller
 {
     const CHAPTER_ID=21;

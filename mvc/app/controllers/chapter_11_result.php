@@ -1,8 +1,7 @@
 <?php
-//Chapter Scripts
-class Chapter_21_Result extends Controller
+class Chapter_11_Result extends Controller
 {
-    const CHAPTER_ID=21;
+    const CHAPTER_ID=11;
     const REPORT_MAX_LEN=100;
     private $question_id;
     private $answers_left;
@@ -16,9 +15,7 @@ class Chapter_21_Result extends Controller
         }
         $question_text=$this->session_extract('question_text');
         $question_text=$this->replace_html_special_characters($question_text);
-        $question_args=$this->session_extract('question_args');
         $question_input=$this->session_extract('question_input');
-        $question_keybd=$this->session_extract('question_keybd');
         $user_code=$this->session_extract('user_code');
         $user_code=$this->replace_html_special_characters($user_code);
         $user_output=$this->session_extract('user_output');
@@ -35,8 +32,8 @@ class Chapter_21_Result extends Controller
             $author_code="";
         }
         $this->view('home/chapter_' . (string)self::CHAPTER_ID . '_result',['chapter_id' => (string)self::CHAPTER_ID,'chapter_name'=>$chapter_name,'error_msg' => $error_msg,'reveal' => $reveal,
-                                                                            'result_correct' => $result_correct,'result_incorrect' => $result_incorrect,'question_text' => $question_text, 'question_args' => $question_args,'question_input' => $question_input,
-                                                                            'question_keybd' => $question_keybd,'user_code' => $user_code,'user_output' => $user_output, 'author_code' => $author_code, 'author_output' => $author_output]);
+                                                                            'result_correct' => $result_correct,'result_incorrect' => $result_incorrect,'question_text' => $question_text,'question_input' => $question_input,
+                                                                            'user_code' => $user_code,'user_output' => $user_output, 'author_code' => $author_code, 'author_output' => $author_output]);
     }
     private function reload($data=''){
         $_SESSION["error_msg"]=$data;
