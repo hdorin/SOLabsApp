@@ -1,0 +1,1 @@
+chmod +x code.sh && ./code.sh unu < code.keybd

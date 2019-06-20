@@ -4,7 +4,6 @@ class SSHConnection
 {
     private $host,$port;
     private $connection;
-    private $sudo_user,$sudo_pass;
     private $execution_user;
     public function configure($host,$port){
         $this->host=$host;
@@ -25,8 +24,7 @@ class SSHConnection
         //ssh2_disconnect($this->connection);
         unset($this->connection);
     }
-    public function execute($command,$timeout_seconds,$use_strace=false){
-        $stream = ssh2_exec($this->connection, "sleep " . $timeout_seconds . "; pkill --signal SIGKILL -u " . $this->execution_user);/*kill all processes after timeout_seconds*/
+    public function execute($command,$use_strace=false){
         $stream = ssh2_exec($this->connection, $command); 
         stream_set_blocking($stream, true);
         $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
@@ -39,13 +37,26 @@ class SSHConnection
         if(empty($out_msg)==true){
             $stream_err = ssh2_fetch_stream($stream,SSH2_STREAM_STDERR);
             $err_msg=stream_get_contents($stream_err);    
-            throw new Exception($err_msg);
+            if(empty($err_msg)==false){
+                throw new Exception($err_msg);
+            }
         }
         return $out_msg;
     }
-    public function write_code_file($local_file,$extension){
-        if(!ssh2_scp_send($this->connection,$local_file,"code." . $extension)){
+    public function send_code_file($local_file,$remote_file){
+        if(!ssh2_scp_send($this->connection,$local_file, $remote_file)){
             throw new Exception("Could not send file for exection!");
         }
+    }
+    public function read_file($remote_output_file){
+        $stream = ssh2_exec($this->connection, "cat " . $remote_output_file); 
+        stream_set_blocking($stream, true);
+        $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+        $out_msg=stream_get_contents($stream_out);
+        if(ord($out_msg[0])==10){
+            return null;
+        }
+        return $out_msg;
+        
     }
 }

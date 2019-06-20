@@ -32,7 +32,7 @@ class Login extends Controller
         return $randomString;
     }
     public function process(){
-        $this->my_sem_acquire(1);
+        $this->my_sem_acquire(-1);
         if(empty($user=$_POST["user_field"])==1){
             $this->reload("You did not enter a username!");
         }

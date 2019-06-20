@@ -4,7 +4,6 @@ class Controller
 {
     protected $session_user_id;
     protected $session_user;
-    protected $session_pass;
     protected $session_is_admin;
     protected $semaphore;
     protected function model($model)
@@ -23,7 +22,6 @@ class Controller
         }
         $this->session_user_id=$_SESSION['user_id'];
         $this->session_user=$_SESSION['user'];
-        $this->session_pass=$_SESSION['pass'];
         $this->session_is_admin=$_SESSION['is_admin'];
         if(isset($_SESSION['user'])==false){
             $this->view('home/login',['error_msg' => $error_msg]);
@@ -43,8 +41,8 @@ class Controller
     }
     protected function my_sem_acquire($user_id){
         // exclusive control
-	    $semaphore_key = 2112;		// unique integer key for this semaphore (Rush fan!)
-	    $semaphore_max = $user_id;		// The number of processes that can acquire this semaphore
+	    $semaphore_key = $user_id;		// unique integer key for this semaphore (Rush fan!)
+	    $semaphore_max = 1;		// The number of processes that can acquire this semaphore
 	    $semaphore_permissions = 0666;	// Unix style permissions for this semaphore
 	    $semaphore_autorelease = 1;	// Auto release the semaphore if the request shuts down
  
@@ -97,16 +95,6 @@ class Controller
         $sql->fetch();
         $sql->close();
         return $chapter_name;
-    }
-    protected function build_string_from_array($array){
-        $lines_nr=count($array)-1;
-        $line=0;
-        $string= $array[$line];
-        while($line<$lines_nr){
-            $line+=1;
-            $string=$string . "\n" . $array[$line];
-        }
-        return $string;
     }
     protected function replace_html_special_characters($string){
         $string=str_replace("<","&lt",$string);
