@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Chapter: C Linux</title>
+    <title>Chapter: <?=$data['chapter_name']?></title>
     <link rel="stylesheet" href="resources/stylesheets/header.css" type="text/css" />
     <link rel="stylesheet" href="resources/stylesheets/chapter_<?=$data['chapter_id']?>_result.css" type="text/css" />
 </head>
