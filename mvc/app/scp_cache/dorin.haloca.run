@@ -1,1 +1,0 @@
-gcc code.c -o code.out && (strace -e trace=clone ./code.out  < code.keybd)
