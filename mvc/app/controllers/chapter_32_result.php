@@ -132,7 +132,8 @@ class Chapter_32_Result extends Controller
         if($this->can_reveal_code()==true){
             $reveal = "<form class='revealForm' action='chapter_" . (string)$chapter_id . "_result/reveal_author_code' method='POST'>
                             <input class='btnReveal' name='action' type='submit' value='Reveal'/>
-                            <br>Extra right answers: " . (string)$this->answers_left . "
+                            <br>Right answers after reveal: " . (string)$this->answers_left . "
+                            <br>Cost: 3 right answers
                          </form>";
         }else{
             $reveal = "<form class='revealForm' action='chapter_" . (string)$chapter_id . "_result/reveal_author_code' method='POST'>
