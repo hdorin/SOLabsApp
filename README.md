@@ -1,4 +1,4 @@
-# SOLabsApp
+# OSLabsApp
 
 This interactive web application consists of an Apache Web Server which the students will interact with, a Linux machine which will handle the execution of code using Docker containers and a MySQL Database server. Of course, the web server will limit the extent to which a certain student will have access to the Linux environment.
 
