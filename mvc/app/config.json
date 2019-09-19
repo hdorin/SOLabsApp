@@ -1,6 +1,6 @@
 {
     "app": {
-        "local_path": "/var/www/html/AplicatieSO"
+        "local_path": "/var/www/html/OSLabsApp"
     },
     "external_ssh": {
         "check": "false", 
